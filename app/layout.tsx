@@ -1,4 +1,5 @@
 import './globals.css'
+import '@/styles/widget.css'
 
 export default function RootLayout({
   children,
