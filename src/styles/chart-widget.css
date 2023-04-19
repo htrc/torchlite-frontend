@@ -1,0 +1,95 @@
+.centered {
+  display: table;
+  margin: 20px auto;
+}
+
+.graph {
+  width: 50%;
+  margin: 0 auto;
+}
+
+#checkboxes > * {
+  font-size: 14px;
+  display: inline;
+  padding-top: 3px;
+}
+
+.measure-group {
+  display:inline;
+}
+
+.scale-group {
+  padding-left: 40px;
+  display:inline;
+}
+
+button {
+  margin:0 auto;
+  display:block;
+}
+
+.measure, .scale {
+}
+
+.cells path {
+  fill: none;
+  pointer-events: all;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  color: white;
+  white-space: normal;
+  padding: 6px;
+  font-size: 14px;
+  background: rgb(96,125,139);
+  border: 1px solid rgb(96,125,139);
+  border-radius: 2px;
+  pointer-events: none;
+  cursor: none;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgb(96,125,139);
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.continent {}
+
+.legend {
+  fill: rgba(0,0,0,.87);
+}
+
+.article {
+  position: fixed;
+  top: 20px;
+  left: 15px;
+  font-size: 35px;
+  color: rgb(96,125,139);
+}
+
+.article-tt {
+  font-size: 14px;
+  background: rgb(96,125,139);
+  border: 1px solid rgb(96,125,139);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.widget-card {
+  border: 1px solid;
+  background: #fff;
+  padding: 2rem;
+}
+
+.widget-card h3 {
+  text-align: center;
+  color:  #1e98d7;
+}
