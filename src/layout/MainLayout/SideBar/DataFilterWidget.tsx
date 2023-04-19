@@ -18,7 +18,7 @@ const FilterKeys = [
   { label: 'Publication title', checked: false, value: '' }
 ];
 
-const DataFilter = () => {
+const DataFilterWidget = () => {
   const [filterKeys, setFilterKeys] = useState<IMockState[]>(FilterKeys);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setFilterKeys((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
@@ -35,7 +35,7 @@ const DataFilter = () => {
             <Box key={item.label}>
               <FormControlLabel
                 value={item.label}
-                control={<Checkbox checked={item.checked} onChange={handleChange} />}
+                control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
                 label={item.label}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
@@ -43,7 +43,7 @@ const DataFilter = () => {
               {item.checked && (
                 <Stack spacing={1}>
                   <FormControl sx={{ m: 1, minWidth: 120 }} fullWidth>
-                    <Select value={item.value} name={item.label} onChange={handleKeyChange}>
+                    <Select value={item.value} name={item.label} color="secondary" onChange={handleKeyChange}>
                       <MenuItem value="">
                         <em>Select {item.label}</em>
                       </MenuItem>
@@ -58,7 +58,7 @@ const DataFilter = () => {
           ))}
         </FormGroup>
       </FormControl>
-      <Box mb={4}>
+      <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
         <CustomButton
           variant="contained"
           sx={{
@@ -68,9 +68,8 @@ const DataFilter = () => {
             borderRadius: '15px',
             backgroundColor: '#1e98d7',
             boxSizing: 'border-box',
-            fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
             fontSize: '13px',
-            color: '#ffffff',
+            color: '#fff',
             textAlign: 'center',
             lineHeight: 'normal'
           }}
@@ -82,4 +81,4 @@ const DataFilter = () => {
   );
 };
 
-export default DataFilter;
+export default DataFilterWidget;

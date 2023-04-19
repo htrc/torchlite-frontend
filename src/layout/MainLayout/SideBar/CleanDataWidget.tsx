@@ -1,5 +1,17 @@
 import { useState, useCallback } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, TextField, Select, MenuItem } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Stack,
+  TextField,
+  Select,
+  MenuItem,
+  RadioGroup,
+  Radio
+} from '@mui/material';
 import CustomButton from 'components/Button';
 interface IMockState {
   label: string;
@@ -26,7 +38,7 @@ const dataTypes = [
   { label: 'Token Count Limits', checked: false, value: [0, 10] }
 ];
 
-const CleanData = () => {
+const CleanDataWidget = () => {
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
@@ -35,29 +47,92 @@ const CleanData = () => {
   const childItem = useCallback((type: any) => {
     switch (type.label) {
       case 'Apply Stopword':
-        return null;
+        return (
+          <RadioGroup aria-label="size" defaultValue="success" name="radio-buttons-group" sx={{ ml: 3 }}>
+            <Stack direction="row" alignItems="center">
+              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Default" />
+              <CustomButton
+                variant="contained"
+                sx={{
+                  width: '73px',
+                  height: '15px',
+                  padding: '2px',
+                  borderRadius: '5px',
+                  backgroundColor: '#1e98d7',
+                  color: '#fff',
+                  textAlign: 'center',
+                  lineHeight: 'normal'
+                }}
+              >
+                See list
+              </CustomButton>
+            </Stack>
+            <Stack>
+              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload my own" />
+              <CustomButton
+                variant="contained"
+                sx={{
+                  width: '75px',
+                  height: '21px',
+                  padding: '2px',
+                  borderRadius: '10px',
+                  backgroundColor: '#1e98d7',
+                  color: '#fff',
+                  textAlign: 'center',
+                  lineHeight: 'normal'
+                }}
+              >
+                Upload
+              </CustomButton>
+            </Stack>
+          </RadioGroup>
+        );
       case 'Make Lowercase':
         return null;
       case 'Lemmatize':
         return (
-          <TextField id="outlined-multiline-static" fullWidth multiline rows={5} placeholder="Specify parameters" value={type.value} />
+          <TextField
+            id="outlined-multiline-static"
+            color="secondary"
+            fullWidth
+            multiline
+            rows={5}
+            placeholder="Specify parameters"
+            value={type.value}
+          />
         );
       case 'Stem':
         return (
-          <TextField id="outlined-multiline-static" fullWidth multiline rows={5} placeholder="Specify parameters" value={type.value} />
+          <TextField
+            id="outlined-multiline-static"
+            color="secondary"
+            fullWidth
+            multiline
+            rows={5}
+            placeholder="Specify parameters"
+            value={type.value}
+          />
         );
       case 'Search and Replace':
         return (
-          <TextField id="outlined-multiline-static" fullWidth multiline rows={5} placeholder="Specify parameters" value={type.value} />
+          <TextField
+            id="outlined-multiline-static"
+            color="secondary"
+            fullWidth
+            multiline
+            rows={5}
+            placeholder="Specify parameters"
+            value={type.value}
+          />
         );
       case 'Page Features':
         return (
-          <Stack sx={{ ml: '30px' }}>
+          <Stack sx={{ ml: 3 }}>
             {type.value.map((item: any) => (
               <FormControlLabel
                 key={item.subLabel}
                 value={item.subLabel}
-                control={<Checkbox />}
+                control={<Checkbox color="secondary" />}
                 label={item.subLabel}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
@@ -69,7 +144,7 @@ const CleanData = () => {
         return (
           <Stack spacing={1}>
             <FormControl sx={{}} fullWidth>
-              <Select>
+              <Select color="secondary">
                 <MenuItem value="Filter by: ">
                   <em>Filter by: </em>
                 </MenuItem>
@@ -83,8 +158,8 @@ const CleanData = () => {
       case 'Token Count Limits':
         return (
           <Box sx={{ '& .MuiTextField-root': { pb: 1 } }}>
-            <TextField placeholder="Minimum number limit" fullWidth />
-            <TextField placeholder="Maximum number limit" fullWidth />
+            <TextField color="secondary" placeholder="Minimum number limit" fullWidth />
+            <TextField color="secondary" placeholder="Maximum number limit" fullWidth />
           </Box>
         );
     }
@@ -97,7 +172,7 @@ const CleanData = () => {
             <Box key={item.label}>
               <FormControlLabel
                 value={item.label}
-                control={<Checkbox checked={item.checked} onChange={handleChange} />}
+                control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
                 label={item.label}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
@@ -107,19 +182,19 @@ const CleanData = () => {
           ))}
         </FormGroup>
       </FormControl>
-      <Box mb={4}>
+      <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
         <CustomButton
           variant="contained"
+          color="secondary"
           sx={{
             width: '140px',
             height: '40px',
             padding: '2px 2px 2px 2px',
             borderRadius: '15px',
             backgroundColor: '#1e98d7',
-            boxSizing: 'border-box',
             fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
             fontSize: '13px',
-            color: '#ffffff',
+            color: '#fff',
             textAlign: 'center',
             lineHeight: 'normal'
           }}
@@ -131,4 +206,4 @@ const CleanData = () => {
   );
 };
 
-export default CleanData;
+export default CleanDataWidget;

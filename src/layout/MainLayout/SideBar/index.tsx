@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Typography, Box } from '@mui/material';
-import CleanData from './Cleandata';
-import DataFilter from './DataFilter';
-import WorkSet from './Workset';
+import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, useTheme } from '@mui/material';
+import CleanDataWidget from './CleanDataWidget';
+import DataFilterWidget from './DataFilterWidget';
+import WorksetWidget from './WorksetWidget';
 
 const SideBar = () => {
+  const theme = useTheme();
   const [expanded, setExpanded] = useState<string | false>('workset');
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(panel);
@@ -13,15 +14,22 @@ const SideBar = () => {
     <Box
       sx={{
         '& h6:hover': { color: '#1e98d7' },
+        '& .MuiAccordion-root': {
+          border: theme.palette.mode === 'dark' ? '2px solid rgba(255, 255, 255, 0.05)' : '',
+          borderBottom: theme.palette.mode === 'dark' ? 'none' : ''
+        },
         '& .Mui-expanded > h5': { color: '#1e98d7' },
-        '& .MuiAccordionDetails-root': { padding: 0, margin: 0 },
+        '& .MuiAccordionDetails-root': {
+          padding: 0,
+          margin: 0,
+          borderTop: theme.palette.mode === 'dark' ? '2px solid rgba(255, 255, 255, 0.05)' : ''
+        },
         '& .MuiAccordionSummary-expandIconWrapper': { display: 'none' },
         '& .MuiAccordionSummary-root': {
           height: '56px',
           padding: '2px 2px 2px 12px',
-          backgroundColor: '#fff',
+          backgroundColor: 'inherit',
           boxSizing: 'border-box',
-          fontFamily: "'Roboto-Regular', 'Robot', 'sans-serif'",
           textAlign: 'left',
           lineHeight: 'normal',
           letterSpacing: '0.4px'
@@ -34,7 +42,7 @@ const SideBar = () => {
           <Typography variant="h5">Select Workset</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <WorkSet />
+          <WorksetWidget />
         </AccordionDetails>
       </Accordion>
       <Accordion expanded={expanded === 'filter'} onChange={handleChange('filter')}>
@@ -42,7 +50,7 @@ const SideBar = () => {
           <Typography variant="h5">Apply Data Filters</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <DataFilter />
+          <DataFilterWidget />
         </AccordionDetails>
       </Accordion>
       <Accordion expanded={expanded === 'data'} onChange={handleChange('data')}>
@@ -50,7 +58,7 @@ const SideBar = () => {
           <Typography variant="h5">Clean the Data</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <CleanData />
+          <CleanDataWidget />
         </AccordionDetails>
       </Accordion>
     </Box>

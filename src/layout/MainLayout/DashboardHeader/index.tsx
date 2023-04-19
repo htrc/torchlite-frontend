@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent, useTheme } from '@mui/material';
 
 import CustomButton from 'components/Button';
 
 const DashboardHeader = () => {
-  const widgetList = ['Mapping Contrubutor Data', 'Publication Date Timeline', 'Workset Languages'];
-  const list = [
+  const theme = useTheme();
+  const widgetList1 = ['Mapping Contrubutor Data', 'Publication Date Timeline', 'Workset Languages'];
+  const widgetList2 = [
     'Jupyter Notebooks',
     'Extracted Features API Demo',
     'Customize a Dashboard Widget',
     'Combining Extracted Feature and Outside Data'
   ];
-  const [widget1, setWidget1] = useState<string>('Add Widget');
-  const [widget2, setWidget2] = useState<string>(list[0]);
+  const [widget1, setWidget1] = useState<string>(widgetList1[0]);
+  const [widget2, setWidget2] = useState<string>(widgetList2[0]);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
@@ -22,23 +23,25 @@ const DashboardHeader = () => {
 
   return (
     <Stack
-      sx={{ '& .css-nt2730-MuiButtonBase-root-MuiButton-root::after': { boxShadow: 'none' } }}
+      sx={{
+        '& .MuiButton-root::after': { boxShadow: 'none' }
+      }}
       direction="row"
       alignItems="center"
       justifyContent="space-between"
     >
       <CustomButton
         variant="outlined"
+        color="secondary"
         sx={{
           width: '120px',
           height: '32px',
-          color: '#333',
+          color: theme.palette.mode === 'dark' ? 'inherit' : '#333',
           padding: '2px',
           borderRadius: '15px',
           border: '1px solid #797979',
           boxSizing: 'border-box',
           fontSize: '13px',
-          fontFamily: "'ArialMT', 'Arial', sans-serif",
           textAlign: 'center',
           lineHeight: 'normal'
         }}
@@ -55,19 +58,16 @@ const DashboardHeader = () => {
               height: '25px',
               padding: '2px 2px 2px 2px',
               borderRadius: '13px',
-              border: '1px solid #797979',
-              backgroundColor: '#ffffff',
+              backgroundColor: theme.palette.mode === 'dark' ? 'inherit' : '#ffffff',
               boxSizing: 'border-box',
               fontSize: '13px',
-              fontFamily: "'ArialMT', 'Arial', sans-serif",
-              color: '#000000'
+              color: theme.palette.mode === 'dark' ? 'inherit' : '#000000'
             }}
+            color="secondary"
             onChange={handleChange}
           >
-            <MenuItem value="">
-              <em>Add Widgets</em>
-            </MenuItem>
-            {widgetList.map((item) => (
+            <MenuItem value="">Add Widgets</MenuItem>
+            {widgetList1.map((item) => (
               <MenuItem key={item} value={item}>
                 {item}
               </MenuItem>
@@ -83,16 +83,15 @@ const DashboardHeader = () => {
               height: '25px',
               padding: '2px 2px 2px 2px',
               borderRadius: '13px',
-              border: '1px solid #797979',
-              backgroundColor: '#ffffff',
+              backgroundColor: theme.palette.mode === 'dark' ? 'inherit' : '#ffffff',
               boxSizing: 'border-box',
               fontSize: '13px',
-              fontFamily: "'ArialMT', 'Arial', sans-serif",
-              color: '#000000'
+              color: theme.palette.mode === 'dark' ? 'inherit' : '#000000'
             }}
+            color="secondary"
             onChange={handleChange}
           >
-            {list.map((item) => (
+            {widgetList2.map((item) => (
               <MenuItem key={item} value={item}>
                 {item}
               </MenuItem>
@@ -101,6 +100,7 @@ const DashboardHeader = () => {
         </FormControl>
         <CustomButton
           variant="contained"
+          color="secondary"
           sx={{
             width: '145px',
             height: '39px',
@@ -108,7 +108,6 @@ const DashboardHeader = () => {
             borderRadius: '14px',
             backgroundColor: '#1e98d7',
             boxSizing: 'border-box',
-            fontFamily: "'ArialMT', 'Aria', sans-serif",
             color: '#ffffff',
             textAlign: 'center',
             lineHeight: 'normal'

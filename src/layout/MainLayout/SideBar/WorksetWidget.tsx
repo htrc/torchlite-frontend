@@ -24,7 +24,7 @@ const mockTableData = [
   { name: '1', creator: '1', description: '1' },
   { name: '2', creator: '2', description: '2' }
 ];
-const WorkSet = () => {
+const WorksetWidget = () => {
   const [workSetType, setWorkSetType] = useState<string>('Recommended Worksets');
   const [rows, setRows] = useState<ITableItem[]>([]);
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -37,7 +37,7 @@ const WorkSet = () => {
   return (
     <Stack sx={{ margin: '5px' }} spacing={1}>
       <FormControl sx={{ minWidth: 120 }}>
-        <Select value={workSetType} onChange={handleChange}>
+        <Select value={workSetType} color='secondary' onChange={handleChange}>
           <MenuItem value={'Recommended Worksets'}>Recommended Worksets</MenuItem>
           <MenuItem value={'All Worksets'}>All Worksets</MenuItem>
           <MenuItem value={'My Worksets'}>My Worksets</MenuItem>
@@ -70,4 +70,4 @@ const WorkSet = () => {
   );
 };
 
-export default WorkSet;
+export default WorksetWidget;
