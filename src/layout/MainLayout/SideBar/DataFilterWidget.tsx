@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, Select, MenuItem, SelectChangeEvent, useTheme } from '@mui/material';
 import CustomButton from 'components/Button';
 interface IMockState {
   label: string;
@@ -19,6 +19,7 @@ const FilterKeys = [
 ];
 
 const DataFilterWidget = () => {
+  const theme = useTheme();
   const [filterKeys, setFilterKeys] = useState<IMockState[]>(FilterKeys);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setFilterKeys((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
@@ -62,14 +63,15 @@ const DataFilterWidget = () => {
         <CustomButton
           variant="contained"
           sx={{
-            width: '140px',
-            height: '40px',
-            padding: '2px 2px 2px 2px',
+            width: theme.spacing(17.5),
+            height: theme.spacing(5),
+            padding: theme.spacing(0.25),
             borderRadius: '15px',
             backgroundColor: '#1e98d7',
             boxSizing: 'border-box',
+            fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
             fontSize: '13px',
-            color: '#fff',
+            color: theme.palette.common.white,
             textAlign: 'center',
             lineHeight: 'normal'
           }}

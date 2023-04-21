@@ -12,39 +12,61 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  useTheme
 } from '@mui/material';
+import { IWorkset } from 'types/menu';
+import { useDispatch, useSelector } from 'store';
+import { getTimeLineData, getWorksets } from 'store/reducers/dashboard';
+import useUser from 'hooks/useUser';
+import { setSelectedWorkset } from 'store/reducers/dashboard';
 
-interface ITableItem {
-  name: string;
-  creator: string;
-  description: string;
+interface Idata extends IWorkset {
+  selected: boolean;
 }
-const mockTableData = [
-  { name: '1', creator: '1', description: '1' },
-  { name: '2', creator: '2', description: '2' }
-];
 const WorksetWidget = () => {
-  const [workSetType, setWorkSetType] = useState<string>('Recommended Worksets');
-  const [rows, setRows] = useState<ITableItem[]>([]);
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const user = useUser();
+  const [type, setType] = useState<string>('all');
+  const [worksetData, setWorksetData] = useState<Idata[]>([]);
+  const [selected, setSelected] = useState<Partial<IWorkset>>({});
+  const { worksets } = useSelector((state) => state.dashboard);
   const handleChange = (event: SelectChangeEvent<string>) => {
-    setWorkSetType(event.target.value);
+    const { value } = event.target;
+    setType(value);
+    setSelected({});
+  };
+
+  const handleSelectWorkSet = (prop: IWorkset, index: number) => {
+    setSelected(prop);
+    setWorksetData((prev) => prev.map((item, i) => (i === index ? { ...item, selected: true } : { ...item, selected: false })));
   };
 
   useEffect(() => {
-    setRows(mockTableData);
-  }, []);
+    dispatch(getWorksets(type));
+    dispatch(getTimeLineData(type));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
+
+  useEffect(() => {
+    setWorksetData(() => worksets.map((item) => ({ ...item, selected: false })));
+  }, [worksets]);
+
+  useEffect(() => {
+    dispatch(setSelectedWorkset(selected));
+  }, [dispatch, selected]);
   return (
-    <Stack sx={{ margin: '5px' }} spacing={1}>
+    <Stack sx={{ margin: theme.spacing(1) }} spacing={1}>
       <FormControl sx={{ minWidth: 120 }}>
-        <Select value={workSetType} color='secondary' onChange={handleChange}>
-          <MenuItem value={'Recommended Worksets'}>Recommended Worksets</MenuItem>
-          <MenuItem value={'All Worksets'}>All Worksets</MenuItem>
-          <MenuItem value={'My Worksets'}>My Worksets</MenuItem>
+        <Select value={type} color="secondary" onChange={handleChange}>
+          <MenuItem value={'all'}>All Worksets</MenuItem>
+          <MenuItem value={'recommend'}>Recommended Worksets</MenuItem>
+          {user && <MenuItem value={user.name}>My Worksets</MenuItem>}
         </Select>
       </FormControl>
       <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>
-        <Table aria-label="simple table">
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -53,18 +75,23 @@ const WorksetWidget = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell scope="row">{row.name}</TableCell>
-                <TableCell align="right">{row.creator}</TableCell>
-                <TableCell align="right">{row.description}</TableCell>
+            {worksetData.map((item, index) => (
+              <TableRow
+                key={`${item.name}_${index}`}
+                selected={item.selected}
+                onClick={() => handleSelectWorkSet(item, index)}
+                sx={{ '&:hover': { cursor: 'pointer' } }}
+              >
+                <TableCell scope="data">{item.name}</TableCell>
+                <TableCell align="right">{item.creator}</TableCell>
+                <TableCell align="right">{item.description}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Typography variant="h5" color="primary" sx={{ padding: '12px' }}>
-        {'Selected Workset Name'}
+      <Typography variant="h5" color="primary" sx={{ padding: theme.spacing(1.5) }}>
+        Selected Workset Name: {selected?.name}
       </Typography>
     </Stack>
   );

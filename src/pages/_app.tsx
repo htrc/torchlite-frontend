@@ -8,7 +8,6 @@ import 'simplebar/src/simplebar.css';
 // apex-chart
 import 'styles/apex-chart.css';
 import 'styles/react-table.css';
-import 'styles/chart-widget.css';
 
 // next
 import { NextPage } from 'next';

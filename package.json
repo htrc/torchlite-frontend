@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8085",
+    "dev": "next dev -p 8081",
     "build": "next build",
     "start": "next start"
   },
@@ -45,6 +45,7 @@
     "react18-input-otp": "^1.1.0",
     "redux": "^4.2.0",
     "redux-persist": "^6.0.0",
+    "resize-observer-polyfill": "^1.5.1",
     "simplebar": "^5.3.8",
     "simplebar-react": "^2.4.1",
     "stylis-plugin-rtl": "^2.1.1",

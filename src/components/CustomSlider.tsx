@@ -1,5 +1,4 @@
-import { Slider, Stack, Typography } from '@mui/material';
-
+import { Slider, Stack, Typography, useTheme } from '@mui/material';
 interface ISlider {
   value: number[];
   minValue: number;
@@ -8,10 +7,11 @@ interface ISlider {
 }
 
 const CustomSlider = ({ value, minValue, maxValue, handleSliderChange }: ISlider) => {
+  const theme = useTheme();
   return (
-    <Stack sx={{ width: '100%' }} alignItems="center">
+    <Stack sx={{ width: '100%', mt: 3 }} alignItems="start">
       <Typography color="secondary">Adjust years on map</Typography>
-      <Stack sx={{ width: '50%' }} direction="row" justifyContent="space-between">
+      <Stack sx={{ width: '100%' }} direction="row" justifyContent="space-between">
         <Stack alignItems="center">
           <Typography>Min</Typography>
           <Typography>{minValue}</Typography>
@@ -28,16 +28,15 @@ const CustomSlider = ({ value, minValue, maxValue, handleSliderChange }: ISlider
         onChange={handleSliderChange}
         valueLabelDisplay="auto"
         sx={{
-          width: '50%',
           color: '#1e98d7',
           '.MuiSlider-thumb': {
-            color: 'white',
-            width: '30px',
-            height: '30px',
+            backgroundColor: theme.palette.common.white,
+            width: theme.spacing(3.75),
+            height: theme.spacing(3.75),
             border: 'none!important'
           },
           '.MuiSlider-track': {
-            height: '6px'
+            height: theme.spacing(0.75)
           },
           '.MuiSlider-thumb::before': {
             boxShadow: '4px 5px 5px 1px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'

@@ -10,7 +10,8 @@ import {
   Select,
   MenuItem,
   RadioGroup,
-  Radio
+  Radio,
+  useTheme
 } from '@mui/material';
 import CustomButton from 'components/Button';
 interface IMockState {
@@ -39,6 +40,7 @@ const dataTypes = [
 ];
 
 const CleanDataWidget = () => {
+  const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
@@ -59,7 +61,7 @@ const CleanDataWidget = () => {
                   padding: '2px',
                   borderRadius: '5px',
                   backgroundColor: '#1e98d7',
-                  color: '#fff',
+                  color: theme.palette.common.white,
                   textAlign: 'center',
                   lineHeight: 'normal'
                 }}
@@ -77,7 +79,7 @@ const CleanDataWidget = () => {
                   padding: '2px',
                   borderRadius: '10px',
                   backgroundColor: '#1e98d7',
-                  color: '#fff',
+                  color: theme.palette.common.white,
                   textAlign: 'center',
                   lineHeight: 'normal'
                 }}
@@ -187,14 +189,15 @@ const CleanDataWidget = () => {
           variant="contained"
           color="secondary"
           sx={{
-            width: '140px',
-            height: '40px',
-            padding: '2px 2px 2px 2px',
-            borderRadius: '15px',
+            width: theme.spacing(17.5),
+            height: theme.spacing(5),
+            padding: theme.spacing(0.25),
+            borderRadius: theme.spacing(2),
             backgroundColor: '#1e98d7',
+            boxSizing: 'border-box',
             fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
             fontSize: '13px',
-            color: '#fff',
+            color: theme.palette.common.white,
             textAlign: 'center',
             lineHeight: 'normal'
           }}

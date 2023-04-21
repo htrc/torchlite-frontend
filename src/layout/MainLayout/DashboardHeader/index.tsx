@@ -24,6 +24,7 @@ const DashboardHeader = () => {
   return (
     <Stack
       sx={{
+        padding: theme.spacing(2),
         '& .MuiButton-root::after': { boxShadow: 'none' }
       }}
       direction="row"
@@ -34,12 +35,13 @@ const DashboardHeader = () => {
         variant="outlined"
         color="secondary"
         sx={{
-          width: '120px',
+          width: '7.5rem',
           height: '32px',
           color: theme.palette.mode === 'dark' ? 'inherit' : '#333',
           padding: '2px',
           borderRadius: '15px',
-          border: '1px solid #797979',
+          border: '1px solid',
+          borderColor: theme.palette.divider,
           boxSizing: 'border-box',
           fontSize: '13px',
           textAlign: 'center',
@@ -54,14 +56,12 @@ const DashboardHeader = () => {
             value={widget1}
             name={'widget_1'}
             sx={{
-              width: '191px',
-              height: '25px',
-              padding: '2px 2px 2px 2px',
-              borderRadius: '13px',
-              backgroundColor: theme.palette.mode === 'dark' ? 'inherit' : '#ffffff',
+              width: '11.875rem',
+              height: '1.5625rem',
+              padding: theme.spacing(0.25),
+              borderRadius: '0.815rem',
               boxSizing: 'border-box',
-              fontSize: '13px',
-              color: theme.palette.mode === 'dark' ? 'inherit' : '#000000'
+              fontSize: '0.8125rem'
             }}
             color="secondary"
             onChange={handleChange}
@@ -74,19 +74,17 @@ const DashboardHeader = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl sx={{ m: 1, mr: '21px' }}>
+        <FormControl sx={{ m: 1, mr: '1.3125rem' }}>
           <Select
             value={widget2}
             name={'widget_2'}
             sx={{
-              width: '300px',
+              width: '18.75rem',
               height: '25px',
               padding: '2px 2px 2px 2px',
               borderRadius: '13px',
-              backgroundColor: theme.palette.mode === 'dark' ? 'inherit' : '#ffffff',
               boxSizing: 'border-box',
-              fontSize: '13px',
-              color: theme.palette.mode === 'dark' ? 'inherit' : '#000000'
+              fontSize: '13px'
             }}
             color="secondary"
             onChange={handleChange}
