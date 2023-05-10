@@ -50,6 +50,23 @@ export default function App({ Component, pageProps }: AppProps & Props) {
                   <Notistack>
                     <Snackbar />
                     {getLayout(<Component {...pageProps} />)}
+                    <div
+                      id="tooltip"
+                      style={{
+                        position: 'absolute',
+                        textAlign: 'center',
+                        width: '30px',
+                        height: '18px',
+                        padding: '2px',
+                        font: '12px sans-serif',
+                        background: 'lightsteelblue',
+                        border: '0px',
+                        borderRadius: '8px',
+                        pointerEvents: 'none',
+                        zIndex: '10',
+                        opacity: '0'
+                      }}
+                    ></div>
                   </Notistack>
                 </>
               </SessionProvider>

@@ -6,7 +6,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Drawer, Stack, Typo
 
 // project import
 import ThemeMode from './ThemeMode';
-import ThemeMenuLayout from './ThemeMenuLayout';
+// import ThemeMenuLayout from './ThemeMenuLayout';
 import MainCard from 'components/MainCard';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
@@ -14,16 +14,17 @@ import SimpleBar from 'components/third-party/SimpleBar';
 import useConfig from 'hooks/useConfig';
 
 // assets
-import { HighlightOutlined, BorderInnerOutlined, SettingOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { HighlightOutlined, SettingOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 // ==============================|| HEADER CONTENT - CUSTOMIZATION ||============================== //
 
 const Customization = () => {
   const theme = useTheme();
-  const { mode, menuOrientation } = useConfig();
+  // const { mode, menuOrientation } = useConfig();
+  const { mode } = useConfig();
 
   // eslint-disable-next-line
-  const themeMenuLayout = useMemo(() => <ThemeMenuLayout />, [menuOrientation]);
+  // const themeMenuLayout = useMemo(() => <ThemeMenuLayout />, [menuOrientation]);
   // eslint-disable-next-line
   const themeMode = useMemo(() => <ThemeMode />, [mode]);
 
@@ -106,7 +107,7 @@ const Customization = () => {
                   }
                 }}
               >
-                <Accordion defaultExpanded>
+                {/* <Accordion defaultExpanded>
                   <AccordionSummary aria-controls="panel4d-content" id="panel4d-header">
                     <Stack direction="row" spacing={1.5} alignItems="center">
                       <IconButton
@@ -129,7 +130,7 @@ const Customization = () => {
                     </Stack>
                   </AccordionSummary>
                   <AccordionDetails>{themeMenuLayout}</AccordionDetails>
-                </Accordion>
+                </Accordion> */}
                 <Accordion defaultExpanded>
                   <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                     <Stack direction="row" spacing={1.25} alignItems="center">

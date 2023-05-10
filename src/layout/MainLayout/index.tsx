@@ -19,6 +19,7 @@ import { openDrawer } from 'store/reducers/menu';
 // types
 import { RootStateProps } from 'types/root';
 import { LAYOUT_CONST } from 'types/config';
+import { DRAWER_WIDTH } from 'config';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -59,7 +60,7 @@ const MainLayout = ({ children }: Props) => {
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       {!isHorizontal ? <Drawer open={open} handleDrawerToggle={handleDrawerToggle} /> : <HorizontalBar />}
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
+      <Box component="main" sx={{ width: `calc(100% - ${DRAWER_WIDTH}px)`, flexGrow: 1, p: { xs: 2, sm: 3 } }}>
         <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
         <Container
           maxWidth={container ? 'xl' : false}

@@ -6,37 +6,29 @@ import { Box } from '@mui/material';
 import { ITimelineChart } from 'types/chart';
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
-import { useSelector } from 'store';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 
-export const PublicationTimeLineChart = () => {
-  const { timelineData } = useSelector((state) => state.dashboard);
+type TimeLineplotProps = {
+  data: ITimelineChart[];
+};
+
+export const PublicationTimeLineChart = ({ data }: TimeLineplotProps) => {
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
-  const modifiedData = useMemo(() => {
-    return timelineData.reduce((prev: any, curr: ITimelineChart) => {
-      const decadeRange = [Math.floor(curr.pubDate / 10) * 10 + 0, Math.floor(curr.pubDate / 10) * 10 + 9];
-      if (prev[decadeRange[0]]) return { ...prev, [decadeRange[0]]: prev[decadeRange[0]] + 1 };
-      else return { ...prev, [decadeRange[0]]: 1 };
-    }, {});
-  }, [timelineData]);
-
   const [dateRange, setDateRange] = useState<number[]>([]);
 
   const chartData = useMemo(() => {
-    return Object.keys(modifiedData)
-      .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => ({ date: item, value: modifiedData[item] }));
-  }, [modifiedData, dateRange]);
+    return [...data].filter((item) => item.x >= dateRange[0] && item.x <= dateRange[1]);
+  }, [data, dateRange]);
 
   const minDate = useMemo(() => {
-    return Object.keys(modifiedData).length ? Math.min(...Object.keys(modifiedData).map((item: any) => Number(item))) : "";
-  }, [modifiedData]);
+    return Math.min(...data.map((item) => item.x));
+  }, [data]);
 
   const maxDate = useMemo(() => {
-    return Object.keys(modifiedData).length ? Math.max(...Object.keys(modifiedData).map((item: any) => Number(item))) : "";
-  }, [modifiedData]);
+    return Math.max(...data.map((item) => item.x));
+  }, [data]);
 
   useEffect(() => {
     setDateRange([minDate, maxDate]);
@@ -49,38 +41,28 @@ export const PublicationTimeLineChart = () => {
 
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
 
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, Math.max(...Object.values(modifiedData).map((item: any) => Number(item)))])
-    .range([boundsHeight, 0]);
+  const yScale = d3.scaleLinear().domain([35, 85]).range([boundsHeight, 0]);
   const xScale = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
-  const allGroups = chartData.map((d) => String(d.date));
-  const colorScale = d3.scaleOrdinal<string>().domain(allGroups).range(['#6689c6']);
-  const allShapes = chartData.map((d, i) => {
-    const className = hoveredGroup && d.date !== hoveredGroup ? styles.scatterplotCircle + ' ' + styles.dimmed : styles.scatterplotCircle;
+  const allGroups = chartData.map((d) => String(d.group));
+  const colorScale = d3.scaleOrdinal<string>().domain(allGroups).range(['#e0ac2b', '#e85252', '#6689c6', '#9a6fb0', '#a53253']);
 
-    var div = d3.select('#tooltip');
+  const allShapes = chartData.map((d, i) => {
+    const className = hoveredGroup && d.group !== hoveredGroup ? styles.scatterplotCircle + ' ' + styles.dimmed : styles.scatterplotCircle;
+
     return (
       <circle
         key={i}
         r={5}
-        cx={xScale(Number(d.date))}
-        cy={yScale(d.value)}
+        cx={xScale(d.x)}
+        cy={yScale(d.y)}
         className={className}
-        stroke={colorScale(d.date)}
-        fill={colorScale(d.date)}
-        onMouseOver={(e) => {
-          setHoveredGroup(d.date);
-          div.style('opacity', 0.9);
-          div
-            .html(`<strong>${d.value}</strong>`)
-            .style('left', e.pageX + 10 + 'px')
-            .style('top', e.pageY - 12 + 'px')
-            .style('position', 'absolute');
+        stroke={colorScale(d.group)}
+        fill={colorScale(d.group)}
+        onMouseOver={() => {
+          setHoveredGroup(d.group);
         }}
-        onMouseLeave={(e) => {
+        onMouseLeave={() => {
           setHoveredGroup(null);
-          div.style('opacity', 0);
         }}
       />
     );

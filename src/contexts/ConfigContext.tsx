@@ -12,7 +12,7 @@ const initialState: CustomizationProps = {
   ...defaultConfig,
   onChangeMode: (mode: ThemeMode) => {},
   onChangeMiniDrawer: (miniDrawer: boolean) => {},
-  onChangeMenuOrientation: (menuOrientation: MenuOrientation) => {},
+  onChangeMenuOrientation: (menuOrientation: MenuOrientation) => {}
 };
 
 // ==============================|| CONFIG CONTEXT & PROVIDER ||============================== //
@@ -51,6 +51,7 @@ function ConfigProvider({ children }: ConfigProviderProps) {
     <ConfigContext.Provider
       value={{
         ...config,
+        menuOrientation: 'vertical',
         onChangeMode,
         onChangeMiniDrawer,
         onChangeMenuOrientation

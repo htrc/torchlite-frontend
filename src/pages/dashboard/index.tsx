@@ -1,34 +1,65 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect } from 'react';
+import axios from 'axios';
 import { Box, Typography, useTheme } from '@mui/material';
-import _ from 'lodash';
 
 import Layout from 'layout';
 import Page from 'components/Page';
 import MainCard from 'components/MainCard';
-import SideBar from 'layout/MainLayout/SideBar';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
 import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLineChart';
 import { useDispatch, useSelector } from 'store';
-import { getTimeLineData } from 'store/reducers/dashboard';
-import { ITimelineChart } from 'types/chart';
+import {
+  setSelectedWorkset,
+  setSelectedDashboard,
+  setDashboards,
+  setWorksets,
+  setLoading,
+  getTimeLineDataSuccess
+} from 'store/reducers/dashboard';
+import { getDashboards, getTimeLineData, getWorksets } from 'services';
+import CustomBackdrop from 'components/Backdrop';
 
 const DashboardDefault = () => {
   const theme = useTheme();
-  const { timelineData, selectedWorkset } = useSelector((state) => state.dashboard);
-  const [data, setData] = useState<ITimelineChart[]>([]);
   const dispatch = useDispatch();
+  const { selectedDashboard, loading } = useSelector((state) => state.dashboard);
+
   useEffect(() => {
-    if (!_.isEmpty(selectedWorkset)) {
-      setData(() => [...timelineData].filter((item) => item.group === selectedWorkset.name && item.creator === selectedWorkset.creator));
+    dispatch(setLoading(true));
+    if (selectedDashboard) {
+      getTimeLineData(selectedDashboard).then((data) => {
+        // dispatch(getTimeLineDataSuccess(data));
+        // dispatch(setLoading(false));
+      });
+
+      // mock implementation
+      axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
+        const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard.workset);
+        dispatch(getTimeLineDataSuccess(timeLineData));
+        dispatch(setLoading(false));
+      });
     }
-  }, [selectedWorkset, timelineData]);
+  }, [selectedDashboard]);
 
   useEffect(() => {
-    setData(timelineData);
-  }, [timelineData]);
+    Promise.all([getDashboards(), getWorksets()])
+      .then((values) => {
+        const dashboards: any[] = values[0];
+        const worksets: any[] = values[1];
 
-  useEffect(() => {
-    dispatch(getTimeLineData());
+        dispatch(setDashboards(dashboards));
+        dispatch(setWorksets(worksets));
+
+        const defaultDashboard = dashboards[0];
+        dispatch(setSelectedDashboard(defaultDashboard));
+
+        const selectedWorkset = worksets.filter((item) => item.id === defaultDashboard?.workset)?.[0] ?? null;
+        dispatch(setSelectedWorkset(selectedWorkset));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -36,17 +67,14 @@ const DashboardDefault = () => {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(1, 1fr)',
           gap: 2,
-          gridTemplateAreas: `"title title title title"
-  "sidebar content content content"`
+          gridTemplateAreas: `"title"
+  " content"`
         }}
       >
         <Box sx={{ gridArea: 'title' }}>
           <Typography variant="h5">Dashboard</Typography>
-        </Box>
-        <Box sx={{ gridArea: 'sidebar' }}>
-          <SideBar />
         </Box>
         <Box sx={{ gridArea: 'content' }}>
           <DashboardHeader />
@@ -71,18 +99,26 @@ const DashboardDefault = () => {
             >
               <MainCard
                 content={false}
-                sx={{ mt: 1.5, padding: theme.spacing(4), display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  mt: 1.5,
+                  padding: theme.spacing(4),
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  position: 'relative'
+                }}
               >
                 <Typography variant="h3" sx={{ color: '#1e98d7' }}>
                   Publication Date Timeline
                 </Typography>
-                <PublicationTimeLineChart data={data} />
+                <PublicationTimeLineChart />
               </MainCard>
             </Box>
             <Box sx={{ gridArea: 'pieChart' }}></Box>
           </Box>
         </Box>
       </Box>
+      <CustomBackdrop loading={loading} />
     </Page>
   );
 };

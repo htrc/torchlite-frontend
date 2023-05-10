@@ -15,6 +15,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 
 // typs
 import { LAYOUT_CONST } from 'types/config';
+import { DRAWER_WIDTH } from 'config';
 
 // ==============================|| MAIN LAYOUT - HEADER ||============================== //
 
@@ -63,7 +64,7 @@ const Header = ({ open, handleDrawerToggle }: Props) => {
     sx: {
       borderBottom: `1px solid ${theme.palette.divider}`,
       zIndex: 1200,
-      width: isHorizontal ? '100%' : open ? 'calc(100% - 260px)' : { xs: '100%', lg: 'calc(100% - 60px)' }
+      width: isHorizontal ? '100%' : open ? `calc(100% - ${DRAWER_WIDTH}px)` : { xs: '100%', lg: 'calc(100% - 60px)' }
     }
   };
 

@@ -12,12 +12,13 @@ import { APP_DEFAULT_PATH } from 'config';
 interface Props {
   sx?: SxProps;
   to?: string;
+  isIcon?: boolean;
 }
 
-const LogoSection = ({sx, to }: Props) => (
+const LogoSection = ({ sx, to, isIcon }: Props) => (
   <NextLink href={!to ? APP_DEFAULT_PATH : to} passHref>
     <ButtonBase disableRipple sx={sx}>
-      {'TORCHLITE'}
+      {isIcon ? 'T' : 'TORCHLITE'}
     </ButtonBase>
   </NextLink>
 );

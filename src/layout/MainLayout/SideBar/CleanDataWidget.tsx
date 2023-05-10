@@ -93,39 +93,45 @@ const CleanDataWidget = () => {
         return null;
       case 'Lemmatize':
         return (
-          <TextField
-            id="outlined-multiline-static"
-            color="secondary"
-            fullWidth
-            multiline
-            rows={5}
-            placeholder="Specify parameters"
-            value={type.value}
-          />
+          <Box>
+            <TextField
+              id="outlined-multiline-static"
+              color="secondary"
+              fullWidth
+              multiline
+              rows={5}
+              placeholder="Specify parameters"
+              value={type.value}
+            />
+          </Box>
         );
       case 'Stem':
         return (
-          <TextField
-            id="outlined-multiline-static"
-            color="secondary"
-            fullWidth
-            multiline
-            rows={5}
-            placeholder="Specify parameters"
-            value={type.value}
-          />
+          <Box>
+            <TextField
+              id="outlined-multiline-static"
+              color="secondary"
+              fullWidth
+              multiline
+              rows={5}
+              placeholder="Specify parameters"
+              value={type.value}
+            />
+          </Box>
         );
       case 'Search and Replace':
         return (
-          <TextField
-            id="outlined-multiline-static"
-            color="secondary"
-            fullWidth
-            multiline
-            rows={5}
-            placeholder="Specify parameters"
-            value={type.value}
-          />
+          <Box>
+            <TextField
+              id="outlined-multiline-static"
+              color="secondary"
+              fullWidth
+              multiline
+              rows={5}
+              placeholder="Specify parameters"
+              value={type.value}
+            />
+          </Box>
         );
       case 'Page Features':
         return (
@@ -159,12 +165,13 @@ const CleanDataWidget = () => {
         );
       case 'Token Count Limits':
         return (
-          <Box sx={{ '& .MuiTextField-root': { pb: 1 } }}>
+          <Box sx={{ '& .MuiTextField-root': { pb: 1 }, display: 'flex', flexDirection: 'column' }}>
             <TextField color="secondary" placeholder="Minimum number limit" fullWidth />
             <TextField color="secondary" placeholder="Maximum number limit" fullWidth />
           </Box>
         );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Stack direction="column" sx={{ minHeight: '500px', padding: '16px' }} justifyContent="space-between">
@@ -187,22 +194,20 @@ const CleanDataWidget = () => {
       <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
         <CustomButton
           variant="contained"
-          color="secondary"
           sx={{
             width: theme.spacing(17.5),
             height: theme.spacing(5),
             padding: theme.spacing(0.25),
-            borderRadius: theme.spacing(2),
+            borderRadius: '15px',
             backgroundColor: '#1e98d7',
-            boxSizing: 'border-box',
             fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
-            fontSize: '13px',
+            fontSize: theme.spacing(1.625),
             color: theme.palette.common.white,
             textAlign: 'center',
-            lineHeight: 'normal'
+            textTransform: 'none'
           }}
         >
-          {'Confirm my selections'}
+          Confirm my selection
         </CustomButton>
       </Box>
     </Stack>

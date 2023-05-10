@@ -3,10 +3,11 @@ interface ISlider {
   value: number[];
   minValue: number;
   maxValue: number;
+  step: number;
   handleSliderChange: (event: any) => void;
 }
 
-const CustomSlider = ({ value, minValue, maxValue, handleSliderChange }: ISlider) => {
+const CustomSlider = ({ value, minValue, maxValue, step, handleSliderChange }: ISlider) => {
   const theme = useTheme();
   return (
     <Stack sx={{ width: '100%', mt: 3 }} alignItems="start">
@@ -25,6 +26,7 @@ const CustomSlider = ({ value, minValue, maxValue, handleSliderChange }: ISlider
         value={value}
         min={minValue}
         max={maxValue}
+        step={step}
         onChange={handleSliderChange}
         valueLabelDisplay="auto"
         sx={{

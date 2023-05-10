@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import { ChipProps } from '@mui/material';
 
 import { GenericCardProps } from './root';
-import { ITimelineChart } from './chart';
 
 // ==============================|| MENU TYPES  ||============================== //
 
@@ -37,15 +36,3 @@ export type MenuProps = {
   error: null;
 };
 
-export type DashboardProps = {
-  worksets: IWorkset[];
-  timelineData: ITimelineChart[];
-  selectedWorkset: Partial<IWorkset>;
-  error: object | string | null;
-};
-
-export interface IWorkset {
-  name: string;
-  creator: string;
-  description: string;
-}

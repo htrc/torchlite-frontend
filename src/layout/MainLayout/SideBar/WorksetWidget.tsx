@@ -13,87 +13,105 @@ import {
   TableHead,
   TableRow,
   Paper,
-  useTheme
+  useTheme,
+  Box
 } from '@mui/material';
-import { IWorkset } from 'types/menu';
+import { IWorkset } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import { getTimeLineData, getWorksets } from 'store/reducers/dashboard';
-import useUser from 'hooks/useUser';
+import { hasError, setLoading, setSelectedDashboard, setTooltipId } from 'store/reducers/dashboard';
 import { setSelectedWorkset } from 'store/reducers/dashboard';
+import CustomTableRow from 'components/CustomTableRow';
+import { confirmWorkset } from 'services';
+import CustomBackdrop from 'components/Backdrop';
 
-interface Idata extends IWorkset {
-  selected: boolean;
-}
 const WorksetWidget = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const user = useUser();
+
+  const { worksets, selectedWorkset, selectedDashboard, loading } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('all');
-  const [worksetData, setWorksetData] = useState<Idata[]>([]);
-  const [selected, setSelected] = useState<Partial<IWorkset>>({});
-  const { worksets } = useSelector((state) => state.dashboard);
+  const [selected, setSelected] = useState<IWorkset | null>(null);
+  const [worksetData, setWorksetData] = useState<IWorkset[]>(worksets);
+
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     setType(value);
-    setSelected({});
   };
 
-  const handleSelectWorkSet = (prop: IWorkset, index: number) => {
+  const handleSelectWorkSet = (prop: IWorkset) => {
     setSelected(prop);
-    setWorksetData((prev) => prev.map((item, i) => (i === index ? { ...item, selected: true } : { ...item, selected: false })));
+    if (selectedDashboard) {
+      dispatch(setLoading(true));
+      confirmWorkset(selectedDashboard?.id, prop.id)
+        .then((response) => {
+          dispatch(setSelectedDashboard(response[0]));
+        })
+        .catch((error) => dispatch(hasError(error)))
+        .finally(() => {
+          dispatch(setLoading(false));
+        });
+      dispatch(setSelectedWorkset(prop));
+    }
   };
 
   useEffect(() => {
-    dispatch(getWorksets(type));
-    dispatch(getTimeLineData(type));
+    if (type === 'all' || type === 'A') {
+      setWorksetData(worksets);
+    } else {
+      setWorksetData([]);
+    }
+  }, [type, worksets]);
+
+  useEffect(() => {
+    if (selectedWorkset) {
+      setSelected(selectedWorkset);
+    }
+
+    setWorksetData(worksets);
+    dispatch(setTooltipId(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
+  }, [worksets, dispatch]);
 
-  useEffect(() => {
-    setWorksetData(() => worksets.map((item) => ({ ...item, selected: false })));
-  }, [worksets]);
-
-  useEffect(() => {
-    dispatch(setSelectedWorkset(selected));
-  }, [dispatch, selected]);
   return (
-    <Stack sx={{ margin: theme.spacing(1) }} spacing={1}>
-      <FormControl sx={{ minWidth: 120 }}>
-        <Select value={type} color="secondary" onChange={handleChange}>
-          <MenuItem value={'all'}>All Worksets</MenuItem>
-          <MenuItem value={'recommend'}>Recommended Worksets</MenuItem>
-          {user && <MenuItem value={user.name}>My Worksets</MenuItem>}
-        </Select>
-      </FormControl>
-      <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Creator</TableCell>
-              <TableCell align="right">Description</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {worksetData.map((item, index) => (
-              <TableRow
-                key={`${item.name}_${index}`}
-                selected={item.selected}
-                onClick={() => handleSelectWorkSet(item, index)}
-                sx={{ '&:hover': { cursor: 'pointer' } }}
-              >
-                <TableCell scope="data">{item.name}</TableCell>
-                <TableCell align="right">{item.creator}</TableCell>
-                <TableCell align="right">{item.description}</TableCell>
+    <>
+      <Stack sx={{ margin: theme.spacing(1) }} spacing={2}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <Select value={type} color="secondary" onChange={handleChange}>
+            <MenuItem value={'all'}>All Worksets</MenuItem>
+            <MenuItem value={'A'}>Recommended Worksets</MenuItem>
+            <MenuItem value={'B'}>My Worksets</MenuItem>
+          </Select>
+        </FormControl>
+        <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align="right"># of Volumes</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Typography variant="h5" color="primary" sx={{ padding: theme.spacing(1.5) }}>
-        Selected Workset Name: {selected?.name}
-      </Typography>
-    </Stack>
+            </TableHead>
+            <TableBody>
+              {worksetData.map((item, index) => (
+                <CustomTableRow
+                  key={`${item.name}_${index}`}
+                  item={item}
+                  selected={item.id === selected?.id}
+                  handleSelectWorkSet={handleSelectWorkSet}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+          <Typography variant="h5" color="primary" sx={{ padding: theme.spacing(1.5) }}>
+            Selected Workset Name:
+            <Typography>{selectedWorkset?.name}</Typography>
+          </Typography>
+        </Box>
+      </Stack>
+      <CustomBackdrop loading={loading} />
+    </>
   );
 };
 
