@@ -38,7 +38,7 @@ interface Props {
 
 export default function App({ Component, pageProps }: AppProps & Props) {
   const getLayout = Component.getLayout ?? ((page: any) => page);
-
+  console.log(process.env.NEXT_PUBLIC_BASE_API_URI);
   return (
     <ReduxProvider store={store}>
       <ConfigProvider>
