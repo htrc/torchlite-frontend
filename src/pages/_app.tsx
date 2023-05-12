@@ -38,8 +38,13 @@ interface Props {
 
 export default function App({ Component, pageProps }: AppProps & Props) {
   const getLayout = Component.getLayout ?? ((page: any) => page);
-  console.log('process.env.NEXT_PUBLIC_BASE_API_URI:', process.env.NEXT_PUBLIC_BASE_API_URI);
-  console.log('process.env.JWT_TIMEOUT', process.env.JWT_TIMEOUT);
+  console.log('NEXT_PUBLIC_BASE_API_URI:', process.env.NEXT_PUBLIC_BASE_API_URI);
+  console.log('JWT_TIMEOUT', process.env.JWT_TIMEOUT);
+  console.log('NEXT_PUBLIC_JWT_TIMEOUT', process.env.NEXT_PUBLIC_JWT_TIMEOUT);
+  console.log('NEXTAUTH_URL', process.env.NEXTAUTH_URL);
+  console.log('NEXT_PUBLIC_NEXTAUTH_URL', process.env.NEXT_PUBLIC_NEXTAUTH_URL);
+  console.log('NEXTAUTH_SECRET_KEY', process.env.NEXTAUTH_SECRET_KEY);
+  console.log('NEXT_PUBLIC_NEXTAUTH_SECRET_KEY', process.env.NEXT_PUBLIC_NEXTAUTH_SECRET_KEY);
   return (
     <ReduxProvider store={store}>
       <ConfigProvider>
