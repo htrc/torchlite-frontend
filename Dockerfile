@@ -1,11 +1,23 @@
-FROM node:16.12-slim
+FROM node:16-alpine
 
 WORKDIR /app
 
-# This docker file will copy code from app directory
-# including the node_modules and .next folder.
-COPY . .
+#ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
+
+COPY public ./
+
+COPY --chown=nextjs:nodejs build/.next/standalone ./
+COPY --chown=nextjs:nodejs build/.next/static ./.next/static
+
+USER nextjs
 
 EXPOSE 3000
-# This run the server at default port 3000
-CMD ["npm", "run", "start"]
+
+ENV PORT 3000
+
+CMD ["node", "server.js"]
