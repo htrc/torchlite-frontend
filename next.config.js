@@ -14,7 +14,9 @@ module.exports = withTM({
   env: {
     REACT_APP_VERSION: process.env.REACT_APP_VERSION,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXT_PUBLIC_BASE_API_URI: process.env.NEXT_PUBLIC_BASE_API_URI,
+    JWT_TIMEOUT: process.env.JWT_TIMEOUT
   },
   typescript: {
     // !! WARN !!
