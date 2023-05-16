@@ -8,12 +8,12 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN apk add --no-cache dumb-init bash gawk
 
-COPY public env.sh ./
-
-RUN install -o node -g node -m 644 /dev/null public/__env.js
-
+COPY public ./public
+COPY env.sh ./
 COPY --chown=node:node build/.next/standalone ./
 COPY --chown=node:node build/.next/static ./.next/static
+
+RUN install -o node -g node -m 644 /dev/null public/__env.js
 
 USER node
 

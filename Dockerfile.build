@@ -45,12 +45,12 @@ ENV NEXT_TELEMETRY_DISABLED 1
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/env.sh ./
 
-RUN install -o node -g node -m 644 /dev/null public/__env.js
-
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+RUN install -o node -g node -m 644 /dev/null public/__env.js
 
 USER node
 

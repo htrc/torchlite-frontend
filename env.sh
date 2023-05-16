@@ -12,8 +12,6 @@ ENVSH_OUTPUT="${ENVSH_OUTPUT:-"./public/__env.js"}"
 
 [ -f "$ENVSH_ENV" ] && INPUT="$ENVSH_ENV" || INPUT=/dev/null
 
-echo "Injecting the following public environment variables into ${ENVSH_OUTPUT}:"
-
 # Add assignment
 echo "$ENVSH_PREPEND" >"$ENVSH_OUTPUT"
 
@@ -69,7 +67,7 @@ END {
       print v, val;
    }
 }
-' "$INPUT" | tee -a "$ENVSH_OUTPUT"
+' "$INPUT" >>"$ENVSH_OUTPUT"
 
 echo "$ENVSH_APPEND" >>"$ENVSH_OUTPUT"
 
