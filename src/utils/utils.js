@@ -2,7 +2,7 @@
 // https://github.com/andrewmclagan/react-env/blob/master/packages/node/src/index.js
 
 function isBrowser() {
-  return Boolean(typeof window !== "undefined" && window.__env);
+  return Boolean(typeof window !== "undefined" && (window.__env || window.__appenv));
 }
 
 export function env(key = '') {
@@ -10,9 +10,12 @@ export function env(key = '') {
     throw new Error('No env key provided');
   }
 
-  if (isBrowser() && window.__env) {
-    return window.__env[key] === "''" ? '' : window.__env[key];
+  if (isBrowser()) {
+    if (key in window.__appenv)
+      return window.__appenv[key];
+
+    return window.__env[key];
   }
 
-  return process.env[key] === "''" ? '' : process.env[key];
+  return process.env[key];
 }

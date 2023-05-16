@@ -50,7 +50,7 @@ COPY --from=builder /app/env.sh ./
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
-RUN install -o node -g node -m 644 /dev/null public/__env.js
+RUN install -o node -g node -m 644 /dev/null public/__appenv.js
 
 USER node
 

@@ -26,7 +26,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
-/public/__env.js
+/public/__appenv.js
 
 # vercel
 .vercel

@@ -16,7 +16,7 @@ export default function Document() {
           rel="stylesheet"
         />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="/__env.js" />
+        <script src="/__appenv.js" />
       </Head>
       <body>
         <Main />

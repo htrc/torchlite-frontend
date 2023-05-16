@@ -5,10 +5,10 @@ ENVSH_ENV="${ENVSH_ENV:-"./.env"}"
 ENVSH_PREFIX="${ENVSH_PREFIX:-"NEXT_PUBLIC_"}"
 ENVSH_PREFIX_STRIP="${ENVSH_PREFIX_STRIP:-true}"
 
-# Can be `window.__env = {` or `const ENV = {` or whatever you want
-ENVSH_PREPEND="${ENVSH_PREPEND:-"window.__env = {"}"
+# Can be `window.__appenv = {` or `const APPENV = {` or whatever you want
+ENVSH_PREPEND="${ENVSH_PREPEND:-"window.__appenv = {"}"
 ENVSH_APPEND="${ENVSH_APPEND:-"}"}"
-ENVSH_OUTPUT="${ENVSH_OUTPUT:-"./public/__env.js"}"
+ENVSH_OUTPUT="${ENVSH_OUTPUT:-"./public/__appenv.js"}"
 
 [ -f "$ENVSH_ENV" ] && INPUT="$ENVSH_ENV" || INPUT=/dev/null
 

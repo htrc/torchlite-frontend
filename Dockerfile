@@ -13,7 +13,7 @@ COPY env.sh ./
 COPY --chown=node:node build/.next/standalone ./
 COPY --chown=node:node build/.next/static ./.next/static
 
-RUN install -o node -g node -m 644 /dev/null public/__env.js
+RUN install -o node -g node -m 644 /dev/null public/__appenv.js
 
 USER node
 
