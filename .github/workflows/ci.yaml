@@ -34,6 +34,8 @@ jobs:
           cmd: install --frozen-lockfile
       - name: Build
         uses: borales/actions-yarn@v4
+        env:
+          CI: true
         with:
           cmd: build
       - name: Package build output artifacts
