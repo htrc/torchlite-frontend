@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "env.sh next dev -p 8081",
-    "build": "next build",
+    "dev": "./env.sh next dev -p 8081",
+    "build": "./env.sh next build",
     "start": "next start"
   },
   "dependencies": {
