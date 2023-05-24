@@ -1,87 +1,96 @@
 import * as d3 from 'd3';
-import styles from './publicationTimeLineChart.module.css';
-import { AxisBottom } from './AxisBottom';
-import { useEffect, useState, useMemo, useRef } from 'react';
-import { Box } from '@mui/material';
-import { ITimelineChart } from 'types/chart';
+import {useEffect, useState, useMemo, useRef} from 'react';
+import {Box, Typography, useTheme} from '@mui/material';
+import {ITimelineChart} from 'types/chart';
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
-import { useSelector } from 'store';
+import {useSelector} from 'store';
+import MainCard from "../../MainCard";
 
-const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
+const MARGIN = {top: 20, right: 20, bottom: 20, left: 25};
+const BUCKET_PADDING = 1;
 
 export const PublicationTimeLineChart = () => {
-  const { timelineData } = useSelector((state) => state.dashboard);
+  const theme = useTheme();
+  const axesRef = useRef(null);
+  const {timelineData} = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
-  const modifiedData = useMemo(() => {
+
+  //group by pubDate timelineData
+  const modifiedDataHistogram = useMemo(() => {
     return timelineData.reduce((prev: any, curr: ITimelineChart) => {
-      const decadeRange = [Math.floor(curr.pubDate / 10) * 10 + 0, Math.floor(curr.pubDate / 10) * 10 + 9];
-      if (prev[decadeRange[0]]) return { ...prev, [decadeRange[0]]: prev[decadeRange[0]] + 1 };
-      else return { ...prev, [decadeRange[0]]: 1 };
+      const pubDate = curr.pubDate;
+      if (prev[pubDate]) return {...prev, [pubDate]: prev[pubDate] + 1};
+      else return {...prev, [pubDate]: 1};
     }, {});
   }, [timelineData]);
 
   const [dateRange, setDateRange] = useState<number[]>([]);
 
-  const chartData = useMemo(() => {
-    return Object.keys(modifiedData)
+  const chartDataHistogram = useMemo(() => {
+    return Object.keys(modifiedDataHistogram)
       .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => ({ date: item, value: modifiedData[item] }));
-  }, [modifiedData, dateRange]);
+      .map((item) => ({date: item, value: modifiedDataHistogram[item]}));
+  }, [modifiedDataHistogram, dateRange]);
+
+  const xAxisLabels = useMemo(() => {
+    return Object.keys(modifiedDataHistogram)
+      .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
+      .map((item) => (Number(item)));
+  }, [modifiedDataHistogram, dateRange]);
+  console.log(xAxisLabels)
 
   const minDate = useMemo(() => {
-    return Object.keys(modifiedData).length ? Math.min(...Object.keys(modifiedData).map((item: any) => Number(item))) : "";
-  }, [modifiedData]);
+    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : "";
+  }, [modifiedDataHistogram]);
 
   const maxDate = useMemo(() => {
-    return Object.keys(modifiedData).length ? Math.max(...Object.keys(modifiedData).map((item: any) => Number(item))) : "";
-  }, [modifiedData]);
+    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : "";
+  }, [modifiedDataHistogram]);
 
   useEffect(() => {
     setDateRange([minDate, maxDate]);
   }, [minDate, maxDate]);
 
+  //Histogram properties
   let width = dimensions?.width || 500;
   let height = width / 2;
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
-  const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
-
-  const yScale = d3
+  //x-axis scale for Histogram
+  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
+  //y-axis scale for Histogram
+  const yScaleHistogram = d3
     .scaleLinear()
-    .domain([0, Math.max(...Object.values(modifiedData).map((item: any) => Number(item)))])
+    .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
     .range([boundsHeight, 0]);
-  const xScale = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
-  const allGroups = chartData.map((d) => String(d.date));
-  const colorScale = d3.scaleOrdinal<string>().domain(allGroups).range(['#6689c6']);
-  const allShapes = chartData.map((d, i) => {
-    const className = hoveredGroup && d.date !== hoveredGroup ? styles.scatterplotCircle + ' ' + styles.dimmed : styles.scatterplotCircle;
 
-    var div = d3.select('#tooltip');
+  useEffect(() => {
+    const svgElement = d3.select(axesRef.current);
+    svgElement.selectAll("*").remove();
+
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    svgElement
+      .append("g")
+      .attr("transform", "translate(0," + boundsHeight + ")")
+      .call(xAxisGenerator);
+
+    const yAxisGenerator = d3.axisLeft(yScaleHistogram);
+    svgElement.append("g").call(yAxisGenerator);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight]);
+
+  const allRects = chartDataHistogram.map((bucket, i) => {
+    console.log(boundsWidth/(dateRange[1] - dateRange[0]) - BUCKET_PADDING)
     return (
-      <circle
+      <rect
         key={i}
-        r={5}
-        cx={xScale(Number(d.date))}
-        cy={yScale(d.value)}
-        className={className}
-        stroke={colorScale(d.date)}
-        fill={colorScale(d.date)}
-        onMouseOver={(e) => {
-          setHoveredGroup(d.date);
-          div.style('opacity', 0.9);
-          div
-            .html(`<strong>${d.value}</strong>`)
-            .style('left', e.pageX + 10 + 'px')
-            .style('top', e.pageY - 12 + 'px')
-            .style('position', 'absolute');
-        }}
-        onMouseLeave={(e) => {
-          setHoveredGroup(null);
-          div.style('opacity', 0);
-        }}
+        fill="#6689c6"
+        x={xScaleHistogram(bucket.date) + BUCKET_PADDING / 2}
+        width={boundsWidth/(dateRange[1] - dateRange[0]) - BUCKET_PADDING}
+        y={yScaleHistogram(bucket.value)}
+        height={boundsHeight - yScaleHistogram(bucket.value)}
       />
     );
   });
@@ -90,16 +99,39 @@ export const PublicationTimeLineChart = () => {
     setDateRange(event.target.value);
   };
   return (
-    <Box sx={{ width: '100%' }} ref={chartWrapper}>
-      <svg width={width} height={height}>
-        <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
-          <g transform={`translate(0, ${boundsHeight})`}>
-            <AxisBottom xScale={xScale} numberOfTicks={dateRange[1] - dateRange[0]} pixelsPerTick={40} />
+    <MainCard
+      content={false}
+      sx={{
+        mt: 1.5,
+        padding: theme.spacing(4),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative'
+      }}
+    >
+      <Typography variant="h3" sx={{ color: '#1e98d7' }}>
+        Publication Date Timeline
+      </Typography>
+      <Box sx={{width: '100%'}} ref={chartWrapper}>
+        <svg width={width} height={height}>
+          <g
+            width={boundsWidth}
+            height={boundsHeight}
+            transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
+          >
+            {allRects}
           </g>
-          {allShapes}
-        </g>
-      </svg>
-      <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
-    </Box>
+          <g
+            width={boundsWidth}
+            height={boundsHeight}
+            ref={axesRef}
+            transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
+          />
+        </svg>
+        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10}
+                      handleSliderChange={handleSliderChange}/>
+      </Box>
+    </MainCard>
   );
 };

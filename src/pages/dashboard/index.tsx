@@ -1,10 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 import Layout from 'layout';
 import Page from 'components/Page';
-import MainCard from 'components/MainCard';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
 import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLineChart';
 import { useDispatch, useSelector } from 'store';
@@ -18,9 +17,9 @@ import {
 } from 'store/reducers/dashboard';
 import { getDashboards, getTimeLineData, getWorksets } from 'services';
 import CustomBackdrop from 'components/Backdrop';
+import MappingContributorData from "components/widgets/MappingContributorData";
 
 const DashboardDefault = () => {
-  const theme = useTheme();
   const dispatch = useDispatch();
   const { selectedDashboard, loading } = useSelector((state) => state.dashboard);
 
@@ -91,28 +90,15 @@ const DashboardDefault = () => {
               sx={{
                 gridArea: 'equalEarth'
               }}
-            ></Box>
+            >
+              <MappingContributorData/>
+            </Box>
             <Box
               sx={{
                 gridArea: 'timeLineChart'
               }}
             >
-              <MainCard
-                content={false}
-                sx={{
-                  mt: 1.5,
-                  padding: theme.spacing(4),
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  position: 'relative'
-                }}
-              >
-                <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-                  Publication Date Timeline
-                </Typography>
-                <PublicationTimeLineChart />
-              </MainCard>
+              <PublicationTimeLineChart />
             </Box>
             <Box sx={{ gridArea: 'pieChart' }}></Box>
           </Box>
