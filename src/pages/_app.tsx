@@ -40,7 +40,7 @@ interface Props {
 
 export default function App({ Component, pageProps }: AppProps & Props) {
   const getLayout = Component.getLayout ?? ((page: any) => page);
-  console.log('BASE_API_URI: ', env('BASE_API_URI'));
+  console.log('here? BASE_API_URI: ', env('BASE_API_URI'));
   return (
     <ReduxProvider store={store}>
       <ConfigProvider>
