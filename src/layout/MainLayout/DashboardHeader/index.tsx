@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent, useTheme} from '@mui/material';
+import { useState } from 'react';
+import { Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent, useTheme } from '@mui/material';
 import CustomButton from 'components/Button';
 
 //import chart data for check htid
@@ -30,7 +30,7 @@ const DashboardHeader = () => {
   const [widget2, setWidget2] = useState<string>(widgetList2[0]);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
-    const {name, value} = event.target;
+    const { name, value } = event.target;
     if (name === 'widget_1') setWidget1(value);
     else if (name === 'widget_2') setWidget2(value);
   };
@@ -92,7 +92,7 @@ const DashboardHeader = () => {
     <Stack
       sx={{
         padding: theme.spacing(2),
-        '& .MuiButton-root::after': {boxShadow: 'none'}
+        '& .MuiButton-root::after': { boxShadow: 'none' }
       }}
       direction="row"
       alignItems="center"
@@ -118,7 +118,7 @@ const DashboardHeader = () => {
         Download Data
       </CustomButton>
       <Box>
-        <FormControl sx={{m: 1, mr: '25px'}}>
+        <FormControl sx={{ m: 1, mr: '25px' }}>
           <Select
             value={widget1}
             name={'widget_1'}
@@ -141,7 +141,7 @@ const DashboardHeader = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl sx={{m: 1, mr: '1.3125rem'}}>
+        <FormControl sx={{ m: 1, mr: '1.3125rem' }}>
           <Select
             value={widget2}
             name={'widget_2'}

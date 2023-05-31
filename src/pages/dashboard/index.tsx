@@ -6,6 +6,7 @@ import Layout from 'layout';
 import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
 import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLineChart';
+import MappingContributorData from "components/widgets/MappingContributorData";
 import { useDispatch, useSelector } from 'store';
 import {
   setSelectedWorkset,
@@ -17,7 +18,7 @@ import {
 } from 'store/reducers/dashboard';
 import { getDashboards, getTimeLineData, getWorksets } from 'services';
 import CustomBackdrop from 'components/Backdrop';
-import MappingContributorData from "components/widgets/MappingContributorData";
+
 
 const DashboardDefault = () => {
   const dispatch = useDispatch();
@@ -33,8 +34,8 @@ const DashboardDefault = () => {
 
       // mock implementation
       axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
-        const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard.workset);
-        dispatch(getTimeLineDataSuccess(timeLineData));
+        //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard.workset);
+        dispatch(getTimeLineDataSuccess(data.data));
         dispatch(setLoading(false));
       });
     }
