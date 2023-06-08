@@ -2,33 +2,20 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {
   Box,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   FormGroup,
   Stack,
-  InputLabel,
-  MenuItem,
-  SelectChangeEvent,
   useTheme, Typography
 } from '@mui/material';
 import CustomButton from 'components/Button';
 import Select from 'react-select';
-import AsyncSelect from 'react-select/async';
 import makeAnimated from 'react-select/animated';
 
 //mock data
 import {
-  Genres,
-  Availability,
-  Category,
-  Contributor,
-  PlaceOfPublication,
-  PublicationTitle,
-  Publisher,
-  ResourceType,
   FilterKeys
 } from 'data/datafilters';
+import genreData from 'data/genreData';
 import {IFilterKey} from 'types/dashboard';
 import {useDispatch, useSelector} from 'store';
 import {getTimeLineDataSuccess, setLoading} from 'store/reducers/dashboard';
@@ -41,23 +28,12 @@ const DataFilterWidget = () => {
   const [filterGroup, setFilterGroup] = useState({});
   const [selectedGroup, setSelectedGroup] = useState({});
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    setFilter((prev) => prev.map((type) => (type.label === event.target.value ? {...type, checked} : type)));
-  };
-
   useEffect(() => {
     handleClearFilter()
   }, [selectedWorkset]);
   useEffect(() => {
     (() => axios.get('/api/dashboard/filterKeys').then((data) => setFilter(data.data)))();
   }, []);
-  const handleKeyChange = (event: SelectChangeEvent<string>) => {
-    setFilter((prev) => prev.map((type) => (type.label === event.target.name ? {
-      ...type,
-      value: event.target.value
-    } : type)));
-  };
-
 
   const handleApplyFilter = () => {
     dispatch(setLoading(true));
@@ -100,10 +76,25 @@ const DataFilterWidget = () => {
     });
   };
 
+  const getNameMatchingShortname = (name) => {
+    for (const key in genreData) {
+      if (genreData.hasOwnProperty(key)) {
+        const genre = genreData[key];
+        if (genre.name === name) {
+          return genre.shortname;
+        }
+      }
+    }
+    return null; // If no matching object is found
+  };
+
   const getFilterByData = (timeLineData) => {
     const pubTitles = [...new Set(timeLineData.map(obj => obj.metadata.title))].filter(title => title !== undefined).map(title => ({ value: title, label: title, key: 'title' }));
     const pubDates = [...new Set(timeLineData.map(obj => obj.metadata.pubDate))].filter(pubDate => pubDate !== undefined).map(pubDate => ({ value: pubDate, label: pubDate, key: 'pubDate' }));
-    const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
+    //const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
+    const genres = [...new Set(timeLineData.flatMap(obj => obj.metadata.genre))]
+      .filter(genre => genre !== undefined)
+      .map(genre => ({ value: genre, label: genre, key: 'genre' }));
     const resTypes = [...new Set(timeLineData.flatMap(obj => obj.metadata.type))]
       .filter(type => type !== undefined)
       .map(type => ({ value: type, label: type, key: 'type' }));
@@ -114,6 +105,16 @@ const DataFilterWidget = () => {
     const pubPlaces = [...new Set(timeLineData.map(obj => obj.metadata.pubPlace?.name))].filter(pubPlace => pubPlace !== undefined).map(name => ({ value: name, label: name, key: 'pubPlace' }));
     const languages = [...new Set(timeLineData.map(obj => obj.metadata.language))].filter(language => language !== undefined).map(language => ({ value: language, label: language, key: 'language' }));
     const sourceInstitutions = [...new Set(timeLineData.map(obj => obj.metadata.sourceInstitution?.name))].filter(sourceInstitution => sourceInstitution !== undefined).map(name => ({ value: name, label: name, key: 'sourceInstitution' }));
+    if(genres.length) {
+      for(let i = 0; i < genres.length; i++){
+        let value = genres[i].value;
+        let label = getNameMatchingShortname(value);
+        if(label == null) {
+          label = genres[i].label;
+        }
+        genres[i].label = label;
+      }
+    }
     const filterGroupData = {
       'pubTitles': pubTitles,
       'pubDates': pubDates,
@@ -141,68 +142,7 @@ const DataFilterWidget = () => {
         ...prevState,
         [value]: selected
       };
-      console.log(selectedG);
-      // if(filter){
-      //   axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
-      //     //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
-      //     const timeLineData = data.data;
-      //     const filtered = timeLineData.filter((item: any) => {
-      //       for (let key in selectedG) {
-      //         //if(key != value) {
-      //         if(selectedG[key].length){
-      //           if (!selectedG[key].some((i) => {
-      //             if(Array.isArray(item.metadata[i.key])){
-      //               return item.metadata[i.key].includes(i.value)
-      //             }
-      //             else if(typeof item.metadata[i.key] === "object" && item.metadata[i.key] !== null){
-      //               return i.value == item.metadata[i.key].name
-      //             }
-      //             else {
-      //               return i.value == item.metadata[i.key]
-      //             }
-      //           })) {
-      //             return false;
-      //           }
-      //         }
-      //
-      //         //}
-      //       }
-      //       return true;
-      //     });
-      //     getFilterByData(filtered);
-      //   });
-      // }
-
-      // else{
-      //   axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
-      //     //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
-      //     const timeLineData = data.data;
-      //     const filtered = timeLineData.filter((item: any) => {
-      //       for (let key in selectedG) {
-      //         //if(key != value) {
-      //         if (!selectedG[key].some((i) => {
-      //           if(Array.isArray(item.metadata[i.key])){
-      //             return item.metadata[i.key].includes(i.value)
-      //           }
-      //           else if(typeof item.metadata[i.key] === "object" && item.metadata[i.key] !== null){
-      //             return i.value == item.metadata[i.key].name
-      //           }
-      //           else {
-      //             return i.value == item.metadata[i.key]
-      //           }
-      //         })) {
-      //           return false;
-      //         }
-      //         //}
-      //       }
-      //       return true;
-      //     });
-      //     getFilterByData(filtered);
-      //   });
-      // }
       return selectedG});
-
-
   };
 
   const handleBlur = () => {
