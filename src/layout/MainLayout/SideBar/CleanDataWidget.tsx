@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import {
   Box,
   Checkbox,
@@ -6,26 +6,39 @@ import {
   FormControlLabel,
   FormGroup,
   Stack,
-  TextField,
-  Select,
-  MenuItem,
   RadioGroup,
   Radio,
   useTheme
 } from '@mui/material';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+const animatedComponents = makeAnimated();
 import CustomButton from 'components/Button';
+import axios from "axios";
 interface IMockState {
   label: string;
   checked: boolean;
   value: any;
 }
-
+const filterSpeech = [
+  {label: "CC: Coordinating conjunction", value: "CC"},
+  {label: "CD: Cardinal number", value: "CD"},
+  {label: "DT: Determiner", value: "DT"},
+  {label: "EX: Existential ‘there’", value: "EX"},
+  {label: "FW: Foreign word", value: "FW"},
+  {label: "IN: Preposition or subordinating conjunction", value: "IN"},
+  {label: "JJ: Adjective", value: "JJ"},
+  {label: "JJR: Adjective, comparative", value: "JJR"},
+  {label: "JJS: Adjective, superlative", value: "JJS"},
+  {label: "LS: List item marker", value: "LS"},
+  {label: "MD: Modal", value: "MD"},
+  {label: "NN: Noun, singular or mass", value: "NN"},
+  {label: "NNS: Noun, plural", value: "NNS"},
+  {label: "NNPS: Proper noun, singular", value: "NNPS"},
+];
 const dataTypes = [
-  { label: 'Apply Stopword', checked: false, value: null },
-  { label: 'Make Lowercase', checked: false, value: null },
-  { label: 'Lemmatize', checked: false, value: '' },
-  { label: 'Stem', checked: false, value: '' },
-  { label: 'Search and Replace', checked: false, value: '' },
+  { label: 'Apply Stopwords', checked: false, value: null },
+  { label: 'Ignore case', checked: false, value: null },
   {
     label: 'Page Features',
     checked: false,
@@ -35,46 +48,76 @@ const dataTypes = [
       { subLabel: 'Remove body', checked: false }
     ]
   },
-  { label: 'POS Tags', checked: false, value: '' },
-  { label: 'Token Count Limits', checked: false, value: [0, 10] }
+  { label: 'Filter by parts-of-speech', checked: false, value: '' }
 ];
 
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
+  const fileInputRef = useRef(null);
+  const [fileName, setFileName] = useState(null);
+  const [selectedValue, setSelectedValue] = useState('default');
+
+  const handleButtonClick = () => {
+    setSelectedValue('upload');
+    fileInputRef.current.click();
+  };
+  const handleDownload = () => {
+    const fname = 'example.txt';
+    const fileContent = 'This is an example file content.';
+
+    const element = document.createElement('a');
+    const file = new Blob([fileContent], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = fname;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFileName(selectedFile.name);
+  };
+  const handleRadioChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
   };
-
+  useEffect(() => {
+    console.log(fileName)
+  }, [fileName]);
   const childItem = useCallback((type: any) => {
     switch (type.label) {
-      case 'Apply Stopword':
+      case 'Apply Stopwords':
         return (
-          <RadioGroup aria-label="size" defaultValue="success" name="radio-buttons-group" sx={{ ml: 3 }}>
+          <RadioGroup aria-label="size" name="radio-buttons-group" sx={{ ml: 3 }} defaultValue="default">
             <Stack direction="row" alignItems="center">
-              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Default" />
-              <CustomButton
-                variant="contained"
-                sx={{
-                  width: '73px',
-                  height: '15px',
-                  padding: '2px',
-                  borderRadius: '5px',
-                  backgroundColor: '#1e98d7',
-                  color: theme.palette.common.white,
+              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Use default" />
+              <a
+                style={{
+                  color: '#1e98d7',
                   textAlign: 'center',
-                  lineHeight: 'normal'
+                  lineHeight: 'normal',
+                  cursor: 'pointer'
                 }}
+                onClick={handleDownload}
               >
-                See list
-              </CustomButton>
+                Download default list
+              </a>
             </Stack>
             <Stack>
-              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload my own" />
+              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />
+              {fileName}
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
               <CustomButton
                 variant="contained"
                 sx={{
-                  width: '75px',
                   height: '21px',
                   padding: '2px',
                   borderRadius: '10px',
@@ -83,56 +126,15 @@ const CleanDataWidget = () => {
                   textAlign: 'center',
                   lineHeight: 'normal'
                 }}
+                onClick={handleButtonClick}
               >
-                Upload
+                Upload list
               </CustomButton>
             </Stack>
           </RadioGroup>
         );
-      case 'Make Lowercase':
+      case 'Ignore case':
         return null;
-      case 'Lemmatize':
-        return (
-          <Box>
-            <TextField
-              id="outlined-multiline-static"
-              color="secondary"
-              fullWidth
-              multiline
-              rows={5}
-              placeholder="Specify parameters"
-              value={type.value}
-            />
-          </Box>
-        );
-      case 'Stem':
-        return (
-          <Box>
-            <TextField
-              id="outlined-multiline-static"
-              color="secondary"
-              fullWidth
-              multiline
-              rows={5}
-              placeholder="Specify parameters"
-              value={type.value}
-            />
-          </Box>
-        );
-      case 'Search and Replace':
-        return (
-          <Box>
-            <TextField
-              id="outlined-multiline-static"
-              color="secondary"
-              fullWidth
-              multiline
-              rows={5}
-              placeholder="Specify parameters"
-              value={type.value}
-            />
-          </Box>
-        );
       case 'Page Features':
         return (
           <Stack sx={{ ml: 3 }}>
@@ -148,27 +150,20 @@ const CleanDataWidget = () => {
             ))}
           </Stack>
         );
-      case 'POS Tags':
+      case 'Filter by parts-of-speech':
         return (
           <Stack spacing={1}>
             <FormControl sx={{}} fullWidth>
-              <Select color="secondary">
-                <MenuItem value="Filter by: ">
-                  <em>Filter by: </em>
-                </MenuItem>
-                <MenuItem value={'Ten'}>Ten</MenuItem>
-                <MenuItem value={'Twenty'}>Twenty</MenuItem>
-                <MenuItem value={'Thirty'}>Thirty</MenuItem>
-              </Select>
+              <Select
+                closeMenuOnSelect={false}
+                components={animatedComponents}
+                isMulti
+                options={filterSpeech}
+                className="basic-multi-select"
+                classNamePrefix="select"
+              />
             </FormControl>
           </Stack>
-        );
-      case 'Token Count Limits':
-        return (
-          <Box sx={{ '& .MuiTextField-root': { pb: 1 }, display: 'flex', flexDirection: 'column' }}>
-            <TextField color="secondary" placeholder="Minimum number limit" fullWidth />
-            <TextField color="secondary" placeholder="Maximum number limit" fullWidth />
-          </Box>
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
