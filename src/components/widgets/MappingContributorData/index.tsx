@@ -6,6 +6,7 @@ import MainCard from '../../MainCard';
 import useResizeObserver from '../../../hooks/useResizeObserver';
 import styles from './publicationTimeLineChart.module.css';
 import * as d3 from 'd3';
+import {useSelector} from "../../../store";
 
 // const MARGIN = {top: 20, right: 20, bottom: 20, left: 20};
 

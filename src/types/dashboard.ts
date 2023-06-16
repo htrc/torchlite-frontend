@@ -1,8 +1,9 @@
-import { ITimelineChart } from './chart';
+import { ITimelineChart, IMapData } from './chart';
 
 export type IDashboardProps = {
   dashboards: IDashboard[];
   worksets: IWorkset[];
+  mapData: IMapData[];
   timelineData: ITimelineChart[];
   selectedWorkset: IWorkset | null;
   selectedDashboard: IDashboard | null;
