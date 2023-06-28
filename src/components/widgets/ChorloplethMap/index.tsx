@@ -1,26 +1,30 @@
+// @ts-nocheck
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
+// @ts-ignore
 import * as topojson from 'topojson-client';
-import { useSelector } from '../../../store';
+import { useDispatch, useSelector } from 'store';
 import MainCard from '../../MainCard';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import useResizeObserver from '../../../hooks/useResizeObserver';
 import CustomSlider from '../../CustomSlider';
 import { IMapData } from '../../../types/chart';
+
 export const ChorloplethMap = () => {
   const theme = useTheme();
   const inputRef = useRef(null);
   const dimensions = useResizeObserver(inputRef);
   let width = dimensions?.width || 500;
   let height = width / 2;
-  const [hasRendered, setRender] = useState(false);
-  const { mapData } = useSelector((state) => state.dashboard);
+  const { mapData, loadingMap } = useSelector((state) => state.dashboard);
   const [dateRange, setDateRange] = useState<number[]>([]);
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
+  const [maxPopulation, setMaxPopulation] = useState(0);
 
+  // console.log(mapData)
   //group by dob mapData
   const modifiedDataHistogram = useMemo(() => {
     return mapData.reduce((prev: any, curr: IMapData) => {
@@ -29,9 +33,39 @@ export const ChorloplethMap = () => {
       else return { ...prev, [dob]: 1 };
     }, {});
   }, [mapData]);
+
+  const handleMarkerClick = (event, d) => {
+    const div = d3.select('#tooltip');
+    div.style('opacity', 0.9);
+    div
+      .html(`<strong>City: ${d.name}<br/> Population: ${d.population}</strong>`)
+      .style('left', event.pageX + 10 + 'px')
+      .style('top', event.pageY - 12 + 'px')
+      .style('position', 'absolute');
+  };
+
   const mapDataHistogram = useMemo(() => {
     return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
   }, [mapData, dateRange]);
+
+  const cities = useMemo(() => {
+    const cityMap = mapDataHistogram.reduce((map, item) => {
+      const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
+      const city = map.get(item.city) || { name: item.city, coordinates: [parseFloat(coords[0]), parseFloat(coords[1])], population: 0 };
+      city.population++;
+      return map.set(item.city, city);
+    }, new Map());
+    const cities = Array.from(cityMap.values());
+    return cities;
+  }, [mapDataHistogram]);
+
+  useEffect(() => {
+    if (cities.length > 0) {
+      const maxPop = Math.max(...cities.map((city) => city.population));
+      setMaxPopulation(maxPop);
+    }
+  }, [cities]);
+
   const minDate = useMemo(() => {
     return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
   }, [modifiedDataHistogram]);
@@ -60,17 +94,19 @@ export const ChorloplethMap = () => {
   }, []);
 
   useEffect(() => {
-    if(mapDataHistogram.length){
+    if (mapDataHistogram.length) {
       let counts = {};
       for (let item of mapDataHistogram) {
         const { countryiso } = item;
         if (countryiso in counts) {
+          // @ts-ignore
           counts[countryiso]++;
         } else {
+          // @ts-ignore
           counts[countryiso] = 1;
         }
       }
-      if(Object.keys(world).length !== 0){
+      if (Object.keys(world).length !== 0) {
         let map_data = reformatCountData(counts, world);
         setDrawData(map_data);
       }
@@ -93,6 +129,7 @@ export const ChorloplethMap = () => {
   const handleSliderChange = (event: any) => {
     setDateRange(event.target.value);
   };
+  // @ts-ignore
   const reformatCountData = (data, worldData) => {
     var formatted_data = [];
     for (var entry in data) {
@@ -147,129 +184,140 @@ export const ChorloplethMap = () => {
     const color = scale(domain, range);
     if (color.unknown && unknown !== undefined) color.unknown(unknown);
     //draw color bar
-    const ticks = width/64;
+    const ticks = width / 64;
     const tickSize = 6;
     let tickFormat, tickValues;
-    const svgColor = container.append("svg")
-      .attr("width", width/2)
-      .attr("height", 50)
-      .attr("viewBox", [0, 0, width/2, 50])
-      .style("overflow", "visible")
-      .style("display", "block");
+    const svgColor = container
+      .append('svg')
+      .attr('width', width / 2)
+      .attr('height', 50)
+      .attr('viewBox', [0, 0, width / 2, 50])
+      .style('overflow', 'visible')
+      .style('display', 'block');
 
-    let tickAdjust = g => g.selectAll(".tick line").attr("y1", 18 + 22 - 50);
+    let tickAdjust = (g) => g.selectAll('.tick line').attr('y1', 18 + 22 - 50);
     let x;
 
     // Continuous
     if (color.interpolate) {
       const n = Math.min(color.domain().length, color.range().length);
 
-      x = color.copy().rangeRound(d3.quantize(d3.interpolate(0, width/2 - marginRight), n));
+      x = color.copy().rangeRound(d3.quantize(d3.interpolate(0, width / 2 - marginRight), n));
 
-      svgColor.append("image")
-        .attr("x", 0)
-        .attr("y", 18)
-        .attr("width", width/2)
-        .attr("height", 50 - 18 - 22)
-        .attr("preserveAspectRatio", "none")
-        .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
+      svgColor
+        .append('image')
+        .attr('x', 0)
+        .attr('y', 18)
+        .attr('width', width / 2)
+        .attr('height', 50 - 18 - 22)
+        .attr('preserveAspectRatio', 'none')
+        .attr('xlink:href', ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
     }
 
     // Sequential
     else if (color.interpolator) {
-      x = Object.assign(color.copy()
-          .interpolator(d3.interpolateRound(0, width/2)),
-        {range() { return [0, width/2]; }});
+      x = Object.assign(color.copy().interpolator(d3.interpolateRound(0, width / 2)), {
+        range() {
+          return [0, width / 2];
+        }
+      });
 
-      svgColor.append("image")
-        .attr("x", 0)
-        .attr("y", 18)
-        .attr("width", width/2)
-        .attr("height", 10)
-        .attr("preserveAspectRatio", "none")
-        .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+      svgColor
+        .append('image')
+        .attr('x', 0)
+        .attr('y', 18)
+        .attr('width', width / 2)
+        .attr('height', 10)
+        .attr('preserveAspectRatio', 'none')
+        .attr('xlink:href', ramp(color.interpolator()).toDataURL());
 
       // scaleSequentialQuantile doesn’t implement ticks or tickFormat.
       if (!x.ticks) {
         if (tickValues === undefined) {
           const n = Math.round(ticks + 1);
-          tickValues = d3.range(n).map(i => d3.quantile(color.domain(), i / (n - 1)));
+          tickValues = d3.range(n).map((i) => d3.quantile(color.domain(), i / (n - 1)));
         }
-        if (typeof tickFormat !== "function") {
-          tickFormat = d3.format(tickFormat === undefined ? ",f" : tickFormat);
+        if (typeof tickFormat !== 'function') {
+          tickFormat = d3.format(tickFormat === undefined ? ',f' : tickFormat);
         }
       }
     }
 
     // Threshold
     else if (color.invertExtent) {
-      const thresholds
-        = color.thresholds ? color.thresholds() // scaleQuantize
-        : color.quantiles ? color.quantiles() // scaleQuantile
-          : color.domain(); // scaleThreshold
+      const thresholds = color.thresholds
+        ? color.thresholds() // scaleQuantize
+        : color.quantiles
+        ? color.quantiles() // scaleQuantile
+        : color.domain(); // scaleThreshold
 
-      const thresholdFormat
-        = tickFormat === undefined ? d => d
-        : typeof tickFormat === "string" ? d3.format(tickFormat)
-          : tickFormat;
+      const thresholdFormat = tickFormat === undefined ? (d) => d : typeof tickFormat === 'string' ? d3.format(tickFormat) : tickFormat;
 
-      x = d3.scaleLinear()
+      x = d3
+        .scaleLinear()
         .domain([-1, color.range().length - 1])
-        .rangeRound([marginLeft, width/2]);
+        .rangeRound([marginLeft, width / 2]);
 
-      svgColor.append("g")
-        .selectAll("rect")
+      svgColor
+        .append('g')
+        .selectAll('rect')
         .data(color.range())
-        .join("rect")
-        .attr("x", (d, i) => x(i - 1))
-        .attr("y", 0)
-        .attr("width", (d, i) => x(i) - x(i - 1))
-        .attr("height", 10)
-        .attr("fill", d => d);
+        .join('rect')
+        .attr('x', (d, i) => x(i - 1))
+        .attr('y', 0)
+        .attr('width', (d, i) => x(i) - x(i - 1))
+        .attr('height', 10)
+        .attr('fill', (d) => d);
 
       tickValues = d3.range(thresholds.length);
-      tickFormat = i => thresholdFormat(thresholds[i], i);
+      tickFormat = (i) => thresholdFormat(thresholds[i], i);
     }
 
     // Ordinal
     else {
-      x = d3.scaleBand()
+      x = d3
+        .scaleBand()
         .domain(color.domain())
-        .rangeRound([0, width/2]);
+        .rangeRound([0, width / 2]);
 
-      svgColor.append("g")
-        .selectAll("rect")
+      svgColor
+        .append('g')
+        .selectAll('rect')
         .data(color.domain())
-        .join("rect")
-        .attr("x", x)
-        .attr("y", 18)
-        .attr("width", Math.max(0, x.bandwidth() - 1))
-        .attr("height", 10)
-        .attr("fill", color);
+        .join('rect')
+        .attr('x', x)
+        .attr('y', 18)
+        .attr('width', Math.max(0, x.bandwidth() - 1))
+        .attr('height', 10)
+        .attr('fill', color);
 
       tickAdjust = () => {};
     }
 
-    svgColor.append("g")
-      .attr("transform", `translate(0,${28})`)
-      .call(d3.axisBottom(x)
-        .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
-        .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
-        .tickSize(tickSize)
-        .tickValues(tickValues))
+    svgColor
+      .append('g')
+      .attr('transform', `translate(0,${28})`)
+      .call(
+        d3
+          .axisBottom(x)
+          .ticks(ticks, typeof tickFormat === 'string' ? tickFormat : undefined)
+          .tickFormat(typeof tickFormat === 'function' ? tickFormat : undefined)
+          .tickSize(tickSize)
+          .tickValues(tickValues)
+      )
       .call(tickAdjust)
-      .call(g => g.select(".domain").remove())
-      .call(g => g.append("text")
-        .attr("x", 0)
-        .attr("y", 18 + 22 - 50 - 6)
-        .attr("fill", "currentColor")
-        .attr("text-anchor", "start")
-        .attr("font-weight", "bold")
-        .attr("class", "title")
-        .text("Contributors by country of origin in workset"));
-
-
-
+      .call((g) => g.select('.domain').remove())
+      .call((g) =>
+        g
+          .append('text')
+          .attr('x', 0)
+          .attr('y', 18 + 22 - 50 - 6)
+          .attr('fill', 'currentColor')
+          .attr('text-anchor', 'start')
+          .attr('font-weight', 'bold')
+          .attr('class', 'title')
+          .text('Contributors by country of origin in workset')
+      );
 
     // Compute titles.
     if (title === undefined) {
@@ -304,7 +352,7 @@ export const ChorloplethMap = () => {
       .attr('viewBox', [0, 0, width, height])
       .attr('style', 'width: 100%; height: auto; height: intrinsic;');
 
-    const zoom = d3.zoom().scaleExtent([1, 8]).on('zoom', zoomed);
+    const zoom = d3.zoom().scaleExtent([0.5, 8]).on('zoom', zoomed);
 
     const g = svg.append('g');
 
@@ -329,18 +377,49 @@ export const ChorloplethMap = () => {
 
     if (outline != null) g.append('path').attr('fill', 'none').attr('stroke', 'currentColor').attr('d', path(outline));
 
+    // Append markers
+    const markersG = svg
+      .append('g')
+      // .attr('transform', 'translate(0, 0) scale(0.5)')
+      .selectAll('.marker')
+      .data(cities)
+      .enter()
+      .append('circle')
+      .attr('class', 'marker')
+      .attr('cx', (d) => projection(d.coordinates)[0])
+      .attr('cy', (d) => projection(d.coordinates)[1])
+      .attr('r', (d) => (8 / maxPopulation) * d.population)
+      // .attr('r', (d) => (maxPopulation > 8 ? (8 / maxPopulation) * d.population : d.population * 1.5))
+      .each(function (d) {
+        d.initialRadius = d3.select(this).attr('r');
+      })
+      .attr('fill', '#E91E63')
+      .attr('stroke', '#FFFFFF')
+      .on('mouseover', (event, d) => handleMarkerClick(event, d))
+      .on('mouseout', () => {
+        const div = d3.select('#tooltip');
+        div.style('opacity', 0);
+      });
+
     svg.call(zoom);
 
     function zoomed(event) {
       const { transform } = event;
       g.attr('transform', transform);
       g.attr('stroke-width', 1 / transform.k);
+
+      markersG.attr('transform', transform);
+      markersG.attr('stroke-width', 1 / transform.k);
+      markersG.attr('r', (d) => d.initialRadius / transform.k);
+
+      // markersG.selectAll("circle")
+      //       .attr("r", d => d.initialRadius / transform.k);
     }
     function ramp(color, n = 256) {
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = n;
       canvas.height = 1;
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext('2d');
       for (let i = 0; i < n; ++i) {
         context.fillStyle = color(i / (n - 1));
         context.fillRect(i, 0, 1, 1);
@@ -365,8 +444,9 @@ export const ChorloplethMap = () => {
       <Typography variant="h3" sx={{ color: '#1e98d7' }}>
         Mapping Contributor Data
       </Typography>
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
+        {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}
         <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </MainCard>

@@ -10,6 +10,7 @@ export type IDashboardProps = {
   tooltipId: string;
   error: object | string | null;
   loading: boolean;
+  loadingMap: boolean;
 };
 
 export interface IWorkset {

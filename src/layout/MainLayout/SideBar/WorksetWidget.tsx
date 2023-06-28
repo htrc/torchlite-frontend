@@ -18,18 +18,11 @@ import {
 } from '@mui/material';
 import { IWorkset } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import {
-  getMapDataSuccess,
-  hasError,
-  setLoading,
-  setSelectedDashboard,
-  setTooltipId
-} from 'store/reducers/dashboard';
+import { getMapDataSuccess, hasError, setLoading, setSelectedDashboard, setTooltipId, setLoadingMap } from 'store/reducers/dashboard';
 import { setSelectedWorkset } from 'store/reducers/dashboard';
 import CustomTableRow from 'components/CustomTableRow';
 import { confirmWorkset } from 'services';
 import CustomBackdrop from 'components/Backdrop';
-import axios from "axios";
 
 const WorksetWidget = () => {
   const theme = useTheme();
@@ -44,8 +37,8 @@ const WorksetWidget = () => {
     const { value } = event.target;
     setType(value);
   };
+  // @ts-ignore
   const getCountryCounts = async (workset) => {
-    var counts = {};
     var viafid_set = new Set();
     for (var vol in workset['data']) {
       if ('contributor' in workset['data'][vol]['metadata']) {
@@ -64,10 +57,9 @@ const WorksetWidget = () => {
     for (var i = 0; i < viafids.length; i += chunk_size) {
       chunked_viafids.push(viafids.slice(i, i + chunk_size));
     }
-    console.log(chunked_viafids)
-    let iso_codes_arr = [];
-    var iso_count_package = await Promise.all(
-      chunked_viafids.map(async function (viafid_chunk) {
+    let iso_codes_arr: any[] = [];
+    await Promise.all(
+      chunked_viafids.map(async function (viafid_chunk: any) {
         const endpointUrl = 'https://query.wikidata.org/sparql';
         var values = ``;
         for (var n = 0; n < viafid_chunk.length; n += 1) {
@@ -77,112 +69,88 @@ const WorksetWidget = () => {
             values += ` <${viafid_chunk[n]}>`;
           }
         }
-        const sparqlQuery = `SELECT ?item ?countryiso ?viaf ?dob
-WHERE {
-VALUES ?item { ${values} }
-?person wdtn:P214 ?item .
-?person p:P19 ?pob_entry .
-?pob_entry ps:P19 ?pob .
-?pob_entry a wikibase:BestRank
-  OPTIONAL { ?pob p:P17/ps:P17/wdt:P299 ?countryiso .}
-  OPTIONAL { ?pob p:P625/ps:P625 ?coordinates .}
-  OPTIONAL { ?person p:P569 ?dob_entry .
-             ?dob_entry ps:P569 ?dob .
-             ?dob_entry a wikibase:BestRank . }
-}`;
-        let ran = getRandomInt(Math.floor(viafids.length / 50));
-        await new Promise((r) => setTimeout(r, 100 * viafids.length * 0.2));
+        const sparqlQuery = `SELECT ?item ?countryiso ?coordinates ?dob ?cityLabel ?cityCoords
+                              WHERE {
+                              VALUES ?item { ${values} }
+                              ?person wdtn:P214 ?item .
+                              ?person p:P19 ?pob_entry .
+                              ?pob_entry ps:P19 ?pob .
+                              ?pob_entry a wikibase:BestRank .
+                                OPTIONAL { ?pob p:P17/ps:P17/wdt:P299 ?countryiso .}
+                                OPTIONAL { ?pob p:P625/ps:P625 ?coordinates .}
+                                OPTIONAL { ?person p:P569 ?dob_entry . 
+                                          ?dob_entry ps:P569 ?dob .
+                                          ?dob_entry a wikibase:BestRank . }
+                                OPTIONAL { ?pob wdt:P131 ?city .
+                                          ?city wdt:P625 ?cityCoords .
+                                          SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". } }
+                            }`;
+        //let ran = getRandomInt(Math.floor(viafids.length / 50));
+        await new Promise((r) => setTimeout(r, 10 * viafids.length * 0.2));
         var iso_codes = await query(sparqlQuery, endpointUrl).then(function (res) {
           for (var row in res['results']['bindings']) {
-            var iso_codes_per_tmp = {};
+            var iso_codes_per_tmp: any = {};
             iso_codes_per_tmp['item'] = res['results']['bindings'][row]['item']['value'];
             iso_codes_per_tmp['countryiso'] = res['results']['bindings'][row]['countryiso']['value'];
             iso_codes_per_tmp['dob'] = res['results']['bindings'][row]['dob']['value'];
-            iso_codes_arr.push(iso_codes_per_tmp)
+            iso_codes_per_tmp['city'] = res['results']['bindings'][row]['cityLabel']['value'];
+            iso_codes_per_tmp['cityCoords'] = res['results']['bindings'][row]['cityCoords']['value'];
+            iso_codes_arr.push(iso_codes_per_tmp);
           }
-          // var iso_codes_per_viaf = {};
-          // for (var row in res['results']['bindings']) {
-          //   var viaf = res['results']['bindings'][row]['item']['value'];
-          //   var iso_code = res['results']['bindings'][row]['countryiso']['value'];
-          //   if (viaf in iso_codes_per_viaf) {
-          //     iso_codes_per_viaf[viaf].add(iso_code);
-          //   }
-          //   else {
-          //     iso_codes_per_viaf[viaf] = new Set([iso_code]);
-          //   }
-          // }
-          // return Object.values(iso_codes_per_viaf);
         });
+        console.log(iso_codes);
         return iso_codes;
       })
-    ).then(result => {
-      console.log(result)
-    }).catch(error => {
-      console.log(error)
-    });
-
-    // for (var chunk in iso_count_package) {
-    //   for (var instance in iso_count_package[chunk]) {
-    //     iso_count_package[chunk][instance].forEach(function (iso) {
-    //       if (iso in counts) {
-    //         counts[iso] += 1;
-    //       } else {
-    //         counts[iso] = 1;
-    //       }
-    //     });
-    //   }
-    // }
+    )
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // @ts-ignore
     return iso_codes_arr;
   };
-
+  // @ts-ignore
   const query = (sparqlQuery, endpoint) => {
     const fullUrl = endpoint + '?query=' + encodeURIComponent(sparqlQuery);
     const headers = { Accept: 'application/sparql-results+json' };
 
     return fetch(fullUrl, { headers }).then((body) => body.json());
   };
-  const getRandomInt = (max) => {
-    return Math.floor(Math.random() * max);
-  };
+  // const getRandomInt = (max) => {
+  //   return Math.floor(Math.random() * max);
+  // };
   const handleSelectWorkSet = (prop: IWorkset) => {
     setSelected(prop);
     if (selectedDashboard) {
       dispatch(setLoading(true));
       confirmWorkset(selectedDashboard?.id, prop.id)
         .then((response) => {
-          console.log(response[0])
           dispatch(setSelectedDashboard(response[0]));
         })
         .catch((error) => dispatch(hasError(error)))
         .finally(() => {
           dispatch(setLoading(false));
         });
-      console.log(prop.id)
-      fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${prop.id}/metadata?fields=metadata.contributor.id`).then(
-        (response) => {
-          if (response.status !== 200) {
-            console.log(`There was a problem: ${response.status}`);
-            return;
-          }
-          response.json().then((viddata) => {
-            console.log(viddata)
-            let counts = getCountryCounts(viddata);
-            counts
-              .then(result => {
-                console.log(result)
-                dispatch(getMapDataSuccess(result));
-              })
-              .catch(error => {
-                console.log("Error when get vip data: " + error)
-              })
-          });
+      dispatch(setLoadingMap(true));
+      fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${prop.id}/metadata?fields=metadata.contributor.id`).then((response) => {
+        if (response.status !== 200) {
+          console.log(`There was a problem: ${response.status}`);
+          return;
         }
-      );
-      // axios.get('/api/dashboard/mapData').then((data) => {
-      //   //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
-      //   const mapData = data.data;
-      //   dispatch(getMapDataSuccess(mapData));
-      // });
+        response.json().then((viddata) => {
+          let counts = getCountryCounts(viddata);
+          counts
+            .then((result) => {
+              dispatch(getMapDataSuccess(result));
+              dispatch(setLoadingMap(false));
+            })
+            .catch((error) => {
+              console.log('Error when get vip data: ' + error);
+            });
+        });
+      });
       dispatch(setSelectedWorkset(prop));
     }
   };

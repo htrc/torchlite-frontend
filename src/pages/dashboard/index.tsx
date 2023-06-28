@@ -1,6 +1,5 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect } from 'react';
 import axios from 'axios';
-import * as d3 from 'd3';
 import { Box, Typography } from '@mui/material';
 
 import Layout from 'layout';
@@ -8,7 +7,6 @@ import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
 import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLineChart';
 import { ChorloplethMap } from 'components/widgets/ChorloplethMap';
-import MappingContributorData from 'components/widgets/MappingContributorData';
 import { useDispatch, useSelector } from 'store';
 import {
   setSelectedWorkset,
@@ -40,7 +38,6 @@ const DashboardDefault = () => {
         dispatch(getTimeLineDataSuccess(data.data));
         dispatch(setLoading(false));
       });
-      console.log(selectedDashboard?.workset)
       fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${selectedDashboard?.workset}/metadata?fields=metadata.contributor.id`).then(
         (response) => {
           if (response.status !== 200) {
@@ -50,20 +47,15 @@ const DashboardDefault = () => {
           response.json().then((viddata) => {
             let counts = getCountryCounts(viddata);
             counts
-              .then(result => {
-                console.log(result)
+              .then((result) => {
                 dispatch(getMapDataSuccess(result));
               })
-              .catch(error => {
-                console.log("Error when get vip data: " + error)
-              })
+              .catch((error) => {
+                console.log('Error when get vip data: ' + error);
+              });
           });
         }
       );
-      // axios.get('/api/dashboard/mapData').then((data) => {
-      //   dispatch(getMapDataSuccess(data.data));
-      //   dispatch(setLoading(false));
-      // });
     }
   }, [selectedDashboard]);
 
@@ -87,9 +79,8 @@ const DashboardDefault = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  // @ts-ignore
   const getCountryCounts = async (workset) => {
-    var counts = {};
     var viafid_set = new Set();
     for (var vol in workset['data']) {
       if ('contributor' in workset['data'][vol]['metadata']) {
@@ -108,77 +99,67 @@ const DashboardDefault = () => {
     for (var i = 0; i < viafids.length; i += chunk_size) {
       chunked_viafids.push(viafids.slice(i, i + chunk_size));
     }
+    // @ts-ignore
     let iso_codes_arr = [];
-    var iso_count_package = await Promise.all(
+    await Promise.all(
       chunked_viafids.map(async function (viafid_chunk) {
         const endpointUrl = 'https://query.wikidata.org/sparql';
         var values = ``;
         for (var n = 0; n < viafid_chunk.length; n += 1) {
           try {
+            // @ts-ignore
             values += ` <${viafid_chunk[n].replace('www.', '')}>`;
           } catch (error) {
             values += ` <${viafid_chunk[n]}>`;
           }
         }
-        const sparqlQuery = `SELECT ?item ?countryiso ?viaf ?dob
-WHERE {
-VALUES ?item { ${values} }
-?person wdtn:P214 ?item .
-?person p:P19 ?pob_entry .
-?pob_entry ps:P19 ?pob .
-?pob_entry a wikibase:BestRank
-  OPTIONAL { ?pob p:P17/ps:P17/wdt:P299 ?countryiso .}
-  OPTIONAL { ?pob p:P625/ps:P625 ?coordinates .}
-  OPTIONAL { ?person p:P569 ?dob_entry .
-             ?dob_entry ps:P569 ?dob .
-             ?dob_entry a wikibase:BestRank . }
-}`;
+        const sparqlQuery = `SELECT ?item ?countryiso ?coordinates ?dob ?cityLabel ?cityCoords
+                              WHERE {
+                              VALUES ?item { ${values} }
+                              ?person wdtn:P214 ?item .
+                              ?person p:P19 ?pob_entry .
+                              ?pob_entry ps:P19 ?pob .
+                              ?pob_entry a wikibase:BestRank .
+                                OPTIONAL { ?pob p:P17/ps:P17/wdt:P299 ?countryiso .}
+                                OPTIONAL { ?pob p:P625/ps:P625 ?coordinates .}
+                                OPTIONAL { ?person p:P569 ?dob_entry . 
+                                          ?dob_entry ps:P569 ?dob .
+                                          ?dob_entry a wikibase:BestRank . }
+                                OPTIONAL { ?pob wdt:P131 ?city .
+                                          ?city wdt:P625 ?cityCoords .
+                                          SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". } }
+                            }`;
         await new Promise((r) => setTimeout(r, 100 * getRandomInt(Math.floor(viafids.length / 50))));
         var iso_codes = await query(sparqlQuery, endpointUrl).then(function (res) {
           for (var row in res['results']['bindings']) {
             var iso_codes_per_tmp = {};
+            // @ts-ignore
             iso_codes_per_tmp['item'] = res['results']['bindings'][row]['item']['value'];
+            // @ts-ignore
             iso_codes_per_tmp['countryiso'] = res['results']['bindings'][row]['countryiso']['value'];
+            // @ts-ignore
             iso_codes_per_tmp['dob'] = res['results']['bindings'][row]['dob']['value'];
-            iso_codes_arr.push(iso_codes_per_tmp)
+            iso_codes_per_tmp['city'] = res['results']['bindings'][row]['cityLabel']['value'];
+            iso_codes_per_tmp['cityCoords'] = res['results']['bindings'][row]['cityCoords']['value'];
+            iso_codes_arr.push(iso_codes_per_tmp);
           }
-          // var iso_codes_per_viaf = {};
-          // for (var row in res['results']['bindings']) {
-          //   var viaf = res['results']['bindings'][row]['item']['value'];
-          //   var iso_code = res['results']['bindings'][row]['countryiso']['value'];
-          //   if (viaf in iso_codes_per_viaf) {
-          //     iso_codes_per_viaf[viaf].add(iso_code);
-          //   }
-          //   else {
-          //     iso_codes_per_viaf[viaf] = new Set([iso_code]);
-          //   }
-          // }
-          // return Object.values(iso_codes_per_viaf);
         });
         return iso_codes;
       })
     );
 
-    // for (var chunk in iso_count_package) {
-    //   for (var instance in iso_count_package[chunk]) {
-    //     iso_count_package[chunk][instance].forEach(function (iso) {
-    //       if (iso in counts) {
-    //         counts[iso] += 1;
-    //       } else {
-    //         counts[iso] = 1;
-    //       }
-    //     });
-    //   }
-    // }
+    // @ts-ignore
     return iso_codes_arr;
   };
 
+  // @ts-ignore
   const query = (sparqlQuery, endpoint) => {
     const fullUrl = endpoint + '?query=' + encodeURIComponent(sparqlQuery);
     const headers = { Accept: 'application/sparql-results+json' };
 
     return fetch(fullUrl, { headers }).then((body) => body.json());
   };
+  // @ts-ignore
   const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
   };
@@ -201,27 +182,30 @@ VALUES ?item { ${values} }
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: '1fr 1fr',
+              gridTemplateRows: '1fr 1fr',
               gap: 2,
-              gridTemplateAreas: `"equalEarth timeLineChart"
-  "pieChart ."`
+              gridTemplateAreas: `
+                "map timeline"
+                "pie ."
+              `
             }}
           >
             <Box
               sx={{
-                gridArea: 'equalEarth'
+                gridArea: 'map'
               }}
             >
               <ChorloplethMap />
             </Box>
             <Box
               sx={{
-                gridArea: 'timeLineChart'
+                gridArea: 'timeline'
               }}
             >
               <PublicationTimeLineChart />
             </Box>
-            <Box sx={{ gridArea: 'pieChart' }}></Box>
+            <Box sx={{ gridArea: 'pie' }}></Box>
           </Box>
         </Box>
       </Box>

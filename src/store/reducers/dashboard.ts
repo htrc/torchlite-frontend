@@ -12,7 +12,8 @@ const initialState: IDashboardProps = {
   selectedDashboard: null,
   tooltipId: '',
   error: null,
-  loading: false
+  loading: false,
+  loadingMap: false,
 };
 
 // ==============================|| SLICE - MENU ||============================== //
@@ -47,6 +48,9 @@ const dashboard = createSlice({
     setLoading(state, action) {
       state.loading = action.payload;
     },
+    setLoadingMap(state, action) {
+      state.loading = action.payload;
+    },
   }
 });
 export const {
@@ -55,6 +59,7 @@ export const {
   getTimeLineDataSuccess,
   setDashboards,
   setLoading,
+  setLoadingMap,
   setSelectedWorkset,
   setTooltipId,
   setSelectedDashboard,
