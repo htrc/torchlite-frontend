@@ -56,10 +56,10 @@ export default function App({ Component, pageProps }: AppProps & Props) {
                       id="tooltip"
                       style={{
                         position: 'absolute',
-                        textAlign: 'center',
-                        width: '30px',
-                        height: '18px',
-                        padding: '2px',
+                        textAlign: 'left',
+                        width: 'auto',
+                        height: 'auto',
+                        padding: '5px 10px',
                         font: '12px sans-serif',
                         background: 'lightsteelblue',
                         border: '0px',
