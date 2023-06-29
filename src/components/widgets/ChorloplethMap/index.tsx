@@ -50,6 +50,9 @@ export const ChorloplethMap = () => {
 
   const cities = useMemo(() => {
     const cityMap = mapDataHistogram.reduce((map, item) => {
+      if (item.city.trim() === '' || item.cityCoords.trim() === '') {
+        return map;
+      }
       const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
       const city = map.get(item.city) || { name: item.city, coordinates: [parseFloat(coords[0]), parseFloat(coords[1])], population: 0 };
       city.population++;
