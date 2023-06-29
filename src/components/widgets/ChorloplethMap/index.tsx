@@ -38,7 +38,7 @@ export const ChorloplethMap = () => {
     const div = d3.select('#tooltip');
     div.style('opacity', 0.9);
     div
-      .html(`<strong>City: ${d.name}<br/> Count: ${d.population}</strong>`)
+      .html(`<strong>Location: ${d.name}<br/> Contributors: ${d.population}</strong>`)
       .style('left', event.pageX + 10 + 'px')
       .style('top', event.pageY - 12 + 'px')
       .style('position', 'absolute');
