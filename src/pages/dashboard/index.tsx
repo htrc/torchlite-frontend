@@ -113,7 +113,7 @@ const DashboardDefault = () => {
             values += ` <${viafid_chunk[n]}>`;
           }
         }
-        const sparqlQuery = `SELECT ?item ?countryiso ?coordinates ?dob ?cityLabel ?cityCoords
+        const sparqlQuery = `SELECT ?item ?countryiso ?cityCoords ?cityLabel ?dob
                               WHERE {
                               VALUES ?item { ${values} }
                               ?person wdtn:P214 ?item .
@@ -121,13 +121,12 @@ const DashboardDefault = () => {
                               ?pob_entry ps:P19 ?pob .
                               ?pob_entry a wikibase:BestRank .
                                 OPTIONAL { ?pob p:P17/ps:P17/wdt:P299 ?countryiso .}
-                                OPTIONAL { ?pob p:P625/ps:P625 ?coordinates .}
+                                OPTIONAL { ?pob wdt:P625 ?cityCoords ;
+                                                rdfs:label ?cityLabel . 
+                                            FILTER(lang(?cityLabel) = 'en') .}
                                 OPTIONAL { ?person p:P569 ?dob_entry . 
                                           ?dob_entry ps:P569 ?dob .
                                           ?dob_entry a wikibase:BestRank . }
-                                OPTIONAL { ?pob wdt:P131 ?city .
-                                          ?city wdt:P625 ?cityCoords .
-                                          SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". } }
                             }`;
         await new Promise((r) => setTimeout(r, 100 * getRandomInt(Math.floor(viafids.length / 50))));
         var iso_codes = await query(sparqlQuery, endpointUrl).then(function (res) {
