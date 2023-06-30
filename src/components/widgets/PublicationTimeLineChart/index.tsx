@@ -1,19 +1,19 @@
 import * as d3 from 'd3';
-import {useEffect, useState, useMemo, useRef} from 'react';
-import {Box, Typography, useTheme} from '@mui/material';
-import {ITimelineChart} from 'types/chart';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { Box, Typography, useTheme } from '@mui/material';
+import { ITimelineChart } from 'types/chart';
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
-import {useSelector} from 'store';
-import MainCard from "../../MainCard";
+import { useSelector } from 'store';
+import MainCard from '../../MainCard';
 
-const MARGIN = {top: 20, right: 20, bottom: 20, left: 25};
+const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
 export const PublicationTimeLineChart = () => {
   const theme = useTheme();
   const axesRef = useRef(null);
-  const {timelineData} = useSelector((state) => state.dashboard);
+  const { timelineData } = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
 
@@ -21,8 +21,8 @@ export const PublicationTimeLineChart = () => {
   const modifiedDataHistogram = useMemo(() => {
     return timelineData.reduce((prev: any, curr: ITimelineChart) => {
       const pubDate = curr.metadata.pubDate;
-      if (prev[pubDate]) return {...prev, [pubDate]: prev[pubDate] + 1};
-      else return {...prev, [pubDate]: 1};
+      if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
+      else return { ...prev, [pubDate]: 1 };
     }, {});
   }, [timelineData]);
 
@@ -31,13 +31,13 @@ export const PublicationTimeLineChart = () => {
   const chartDataHistogram = useMemo(() => {
     return Object.keys(modifiedDataHistogram)
       .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => ({date: item, value: modifiedDataHistogram[item]}));
+      .map((item) => ({ date: item, value: modifiedDataHistogram[item] }));
   }, [modifiedDataHistogram, dateRange]);
 
   const xAxisLabels = useMemo(() => {
     return Object.keys(modifiedDataHistogram)
       .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => (Number(item)));
+      .map((item) => Number(item));
   }, [modifiedDataHistogram, dateRange]);
 
   const minDate = useMemo(() => {
@@ -68,16 +68,16 @@ export const PublicationTimeLineChart = () => {
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
-    svgElement.selectAll("*").remove();
+    svgElement.selectAll('*').remove();
 
     const xAxisGenerator = d3.axisBottom(xScaleHistogram);
     svgElement
-      .append("g")
-      .attr("transform", "translate(0," + boundsHeight + ")")
+      .append('g')
+      .attr('transform', 'translate(0,' + boundsHeight + ')')
       .call(xAxisGenerator);
 
     const yAxisGenerator = d3.axisLeft(yScaleHistogram);
-    svgElement.append("g").call(yAxisGenerator);
+    svgElement.append('g').call(yAxisGenerator);
   }, [xScaleHistogram, yScaleHistogram, boundsHeight]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
@@ -85,8 +85,8 @@ export const PublicationTimeLineChart = () => {
       <rect
         key={i}
         fill="#6689c6"
-        x={xScaleHistogram(bucket.date) + BUCKET_PADDING / 2}
-        width={dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth/(dateRange[1] - dateRange[0]) - BUCKET_PADDING}
+        x={xScaleHistogram(Number(bucket.date)) + BUCKET_PADDING / 2}
+        width={dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING}
         y={yScaleHistogram(bucket.value)}
         height={boundsHeight - yScaleHistogram(bucket.value)}
       />
@@ -111,24 +111,14 @@ export const PublicationTimeLineChart = () => {
       <Typography variant="h3" sx={{ color: '#1e98d7' }}>
         Publication Date Timeline
       </Typography>
-      <Box sx={{width: '100%'}} ref={chartWrapper}>
+      <Box sx={{ width: '100%' }} ref={chartWrapper}>
         <svg width={width} height={height}>
-          <g
-            width={boundsWidth}
-            height={boundsHeight}
-            transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
-          >
+          <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
             {allRects}
           </g>
-          <g
-            width={boundsWidth}
-            height={boundsHeight}
-            ref={axesRef}
-            transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
-          />
+          <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10}
-                      handleSliderChange={handleSliderChange}/>
+        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </MainCard>
   );
