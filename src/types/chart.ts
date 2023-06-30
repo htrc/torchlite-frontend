@@ -1,6 +1,7 @@
 export interface ITimelineChart {
   htid: string;
   pubDate: number;
+  metadata: any;
 }
 
 export interface IMapData {
