@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Grid } from '@mui/material';
 
 import Layout from 'layout';
 import Page from 'components/Page';
@@ -59,48 +59,20 @@ const DashboardDefault = () => {
 
   return (
     <Page title="TORCHLITE Dashboard">
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(1, 1fr)',
-          gap: 2,
-          gridTemplateAreas: `"title"
-  " content"`
-        }}
-      >
-        <Box sx={{ gridArea: 'title' }}>
+      <Box>
+        <Box>
           <Typography variant="h5">TORCHLITE Dashboard</Typography>
         </Box>
-        <Box sx={{ gridArea: 'content' }}>
+        <Box>
           <DashboardHeader />
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gridTemplateRows: '1fr 1fr',
-              gap: 2,
-              gridTemplateAreas: `
-                "map timeline"
-                "pie ."
-              `
-            }}
-          >
-            <Box
-              sx={{
-                gridArea: 'map'
-              }}
-            >
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
               <ChorloplethMap />
-            </Box>
-            <Box
-              sx={{
-                gridArea: 'timeline'
-              }}
-            >
+            </Grid>
+            <Grid item xs={12} md={6}>
               <PublicationTimeLineChart />
-            </Box>
-            <Box sx={{ gridArea: 'pie' }}></Box>
-          </Box>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
       <CustomBackdrop loading={loading} />
