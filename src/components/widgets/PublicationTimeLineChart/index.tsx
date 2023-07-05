@@ -111,7 +111,7 @@ export const PublicationTimeLineChart = () => {
       <Typography variant="h3" sx={{ color: '#1e98d7' }}>
         Publication Date Timeline
       </Typography>
-      <Box sx={{ width: '100%' }} ref={chartWrapper}>
+      <Box sx={{ width: '100%', marginTop: '50px' }} ref={chartWrapper}>
         <svg width={width} height={height}>
           <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>
             {allRects}

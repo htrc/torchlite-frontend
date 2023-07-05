@@ -1,44 +1,35 @@
-import React, {useState, useCallback, useRef, useEffect} from 'react';
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Stack,
-  RadioGroup,
-  Radio,
-  useTheme
-} from '@mui/material';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-const animatedComponents = makeAnimated();
 import CustomButton from 'components/Button';
-import axios from "axios";
+import { colourStyles } from 'styles/react-select';
+import { BootstrapTooltip } from 'components/BootstrapTooltip';
 interface IMockState {
   label: string;
   checked: boolean;
   value: any;
+  description: string;
 }
 const filterSpeech = [
-  {label: "CC: Coordinating conjunction", value: "CC"},
-  {label: "CD: Cardinal number", value: "CD"},
-  {label: "DT: Determiner", value: "DT"},
-  {label: "EX: Existential ‘there’", value: "EX"},
-  {label: "FW: Foreign word", value: "FW"},
-  {label: "IN: Preposition or subordinating conjunction", value: "IN"},
-  {label: "JJ: Adjective", value: "JJ"},
-  {label: "JJR: Adjective, comparative", value: "JJR"},
-  {label: "JJS: Adjective, superlative", value: "JJS"},
-  {label: "LS: List item marker", value: "LS"},
-  {label: "MD: Modal", value: "MD"},
-  {label: "NN: Noun, singular or mass", value: "NN"},
-  {label: "NNS: Noun, plural", value: "NNS"},
-  {label: "NNPS: Proper noun, singular", value: "NNPS"},
+  { label: 'CC: Coordinating conjunction', value: 'CC' },
+  { label: 'CD: Cardinal number', value: 'CD' },
+  { label: 'DT: Determiner', value: 'DT' },
+  { label: 'EX: Existential ‘there’', value: 'EX' },
+  { label: 'FW: Foreign word', value: 'FW' },
+  { label: 'IN: Preposition or subordinating conjunction', value: 'IN' },
+  { label: 'JJ: Adjective', value: 'JJ' },
+  { label: 'JJR: Adjective, comparative', value: 'JJR' },
+  { label: 'JJS: Adjective, superlative', value: 'JJS' },
+  { label: 'LS: List item marker', value: 'LS' },
+  { label: 'MD: Modal', value: 'MD' },
+  { label: 'NN: Noun, singular or mass', value: 'NN' },
+  { label: 'NNS: Noun, plural', value: 'NNS' },
+  { label: 'NNPS: Proper noun, singular', value: 'NNPS' }
 ];
 const dataTypes = [
-  { label: 'Apply Stopwords', checked: false, value: null },
-  { label: 'Ignore case', checked: false, value: null },
+  { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
+  { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
   {
     label: 'Page Features',
     checked: false,
@@ -46,11 +37,12 @@ const dataTypes = [
       { subLabel: 'Remove headers', checked: false },
       { subLabel: 'Remove footers', checked: false },
       { subLabel: 'Remove body', checked: false }
-    ]
+    ],
+    description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: '' }
+  { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
 ];
-
+const animatedComponents = makeAnimated();
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
@@ -60,7 +52,9 @@ const CleanDataWidget = () => {
 
   const handleButtonClick = () => {
     setSelectedValue('upload');
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
   const handleDownload = () => {
     const fname = 'example.txt';
@@ -74,18 +68,18 @@ const CleanDataWidget = () => {
     element.click();
     document.body.removeChild(element);
   };
-  const handleFileChange = (event) => {
+  const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
   };
-  const handleRadioChange = (event) => {
+  const handleRadioChange = (event: any) => {
     setSelectedValue(event.target.value);
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
   };
   useEffect(() => {
-    console.log(fileName)
+    console.log(fileName);
   }, [fileName]);
   const childItem = useCallback((type: any) => {
     switch (type.label) {
@@ -109,12 +103,7 @@ const CleanDataWidget = () => {
             <Stack>
               <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />
               {fileName}
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-              />
+              <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
               <CustomButton
                 variant="contained"
                 sx={{
@@ -161,6 +150,7 @@ const CleanDataWidget = () => {
                 options={filterSpeech}
                 className="basic-multi-select"
                 classNamePrefix="select"
+                {...(theme.palette.mode === 'dark' ? { styles: colourStyles } : {})}
               />
             </FormControl>
           </Stack>
@@ -173,7 +163,7 @@ const CleanDataWidget = () => {
       <FormControl component="fieldset">
         <FormGroup aria-label="position">
           {typeGroup.map((item: IMockState) => (
-            <Box key={item.label}>
+            <Box key={item.label} sx={{ position: 'relative' }}>
               <FormControlLabel
                 value={item.label}
                 control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
@@ -181,6 +171,22 @@ const CleanDataWidget = () => {
                 labelPlacement="end"
                 sx={{ mr: 1 }}
               />
+              <BootstrapTooltip title={item.description}>
+                <Box
+                  component="img"
+                  sx={{
+                    height: 15,
+                    width: 15,
+                    maxHeight: { xs: 15, md: 15 },
+                    maxWidth: { xs: 15, md: 15 },
+                    // position: 'absolute',
+                    top: '10px',
+                    right: '10px'
+                  }}
+                  alt={item.label}
+                  src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
+                />
+              </BootstrapTooltip>
               {item.checked && childItem(item)}
             </Box>
           ))}
