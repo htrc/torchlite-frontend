@@ -58,7 +58,7 @@ const DashboardDefault = () => {
   }, [selectedWorkset]);
 
   return (
-    <Page title="Dashboard">
+    <Page title="TORCHLITE Dashboard">
       <Box
         sx={{
           display: 'grid',
@@ -69,7 +69,7 @@ const DashboardDefault = () => {
         }}
       >
         <Box sx={{ gridArea: 'title' }}>
-          <Typography variant="h5">Dashboard</Typography>
+          <Typography variant="h5">TORCHLITE Dashboard</Typography>
         </Box>
         <Box sx={{ gridArea: 'content' }}>
           <DashboardHeader />
