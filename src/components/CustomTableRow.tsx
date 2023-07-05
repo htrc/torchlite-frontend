@@ -1,7 +1,6 @@
-import { styled } from '@mui/material/styles';
-import { Box, TableCell, TableRow, Tooltip } from '@mui/material';
-import { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import { Box, TableCell, TableRow, useTheme } from '@mui/material';
 import { IWorkset } from 'types/dashboard';
+import { BootstrapTooltip } from './BootstrapTooltip';
 
 interface ICustomTableRow {
   item: IWorkset;
@@ -9,18 +8,8 @@ interface ICustomTableRow {
   handleSelectWorkSet: (item: IWorkset) => any;
 }
 
-const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} arrow classes={{ popper: className }} />)(
-  ({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-      color: theme.palette.common.black
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.common.black
-    }
-  })
-);
-
 const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow) => {
+  const theme = useTheme();
   return (
     <TableRow
       selected={selected}
@@ -45,7 +34,7 @@ const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow
               right: '10px'
             }}
             alt={item.description}
-            src="/images/info.png"
+            src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
           />
         </BootstrapTooltip>
       </TableCell>

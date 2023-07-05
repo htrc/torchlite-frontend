@@ -1,4 +1,4 @@
-const genreData = {
+const genreData: any = {
   '1': {
     dbcode: '1',
     name: 'unknown',
