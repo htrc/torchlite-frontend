@@ -65,6 +65,7 @@ export const PublicationTimeLineChart = () => {
     .scaleLinear()
     .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
     .range([boundsHeight, 0]);
+  const maxDataValue = Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)));
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
@@ -76,9 +77,9 @@ export const PublicationTimeLineChart = () => {
       .attr('transform', 'translate(0,' + boundsHeight + ')')
       .call(xAxisGenerator);
 
-    const yAxisGenerator = d3.axisLeft(yScaleHistogram);
+    const yAxisGenerator = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
     svgElement.append('g').call(yAxisGenerator);
-  }, [xScaleHistogram, yScaleHistogram, boundsHeight]);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
     return (
