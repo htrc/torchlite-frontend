@@ -21,7 +21,7 @@ export const PublicationTimeLineChart = () => {
   const modifiedDataHistogram = useMemo(() => {
     return timelineData.reduce((prev: any, curr: ITimelineChart) => {
       const pubDate = curr.metadata.pubDate;
-      if (pubDate === null) {
+      if (!Number.isInteger(pubDate)) {
         return prev;
       } else if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
       else return { ...prev, [pubDate]: 1 };
