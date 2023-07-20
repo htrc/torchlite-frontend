@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import publicationDateTimeLineChart from 'data/publicationDateTimeLine';
 import publicationDateTimeLineMetaData from 'data/publicationDateTimeLineMetaData';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

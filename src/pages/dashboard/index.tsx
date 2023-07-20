@@ -17,7 +17,7 @@ import {
   getTimeLineDataSuccess,
   getMapDataSuccess
 } from 'store/reducers/dashboard';
-import { getDashboards, getMapWidgetData, getTimeLineData, getWorksets } from 'services';
+import { getDashboards, getCountryCounts, getWorksets, getVolumnsMetadata } from 'services';
 import CustomBackdrop from 'components/Backdrop';
 
 const DashboardDefault = () => {
@@ -47,13 +47,14 @@ const DashboardDefault = () => {
 
   useEffect(() => {
     // Get Publication Timeline widget data
-    getTimeLineData().then((data) => {
-      dispatch(getTimeLineDataSuccess(data.data));
-    });
-
-    getMapWidgetData(selectedWorkset?.id).then((data) => {
-      dispatch(getMapDataSuccess(data));
-    });
+    if (selectedWorkset?.id) {
+      getVolumnsMetadata(selectedWorkset?.id).then((data) => {
+        dispatch(getTimeLineDataSuccess(data));
+        getCountryCounts(data).then((res) => {
+          dispatch(getMapDataSuccess(res));
+        });
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWorkset]);
 

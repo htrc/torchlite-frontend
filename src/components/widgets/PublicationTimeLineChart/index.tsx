@@ -21,7 +21,9 @@ export const PublicationTimeLineChart = () => {
   const modifiedDataHistogram = useMemo(() => {
     return timelineData.reduce((prev: any, curr: ITimelineChart) => {
       const pubDate = curr.metadata.pubDate;
-      if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
+      if (pubDate === null) {
+        return prev;
+      } else if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
       else return { ...prev, [pubDate]: 1 };
     }, {});
   }, [timelineData]);
@@ -87,7 +89,7 @@ export const PublicationTimeLineChart = () => {
         key={i}
         fill="#6689c6"
         x={xScaleHistogram(Number(bucket.date)) + BUCKET_PADDING / 2}
-        width={dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING}
+        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
         y={yScaleHistogram(bucket.value)}
         height={boundsHeight - yScaleHistogram(bucket.value)}
       />
