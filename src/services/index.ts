@@ -18,6 +18,23 @@ export function getTimeLineData() {
   // return axios.get(`/dashboards/${dashboard.id}/widget/${'default_widget'}/data`);
 }
 
+export function getVolumnsMetadata(selectedWorksetId: any) {
+  return new Promise((resolve, reject) => {
+    fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${selectedWorksetId}/metadata`).then((response) => {
+      if (response.status !== 200) {
+        console.log(`There was a problem: ${response.status}`);
+        reject(response);
+      }
+      response.json().then((res) => {
+        if (res.code === 200) {
+          resolve(res.data);
+        }
+        reject(res);
+      });
+    });
+  });
+}
+
 export async function getMapWidgetData(selectedWorksetId: any) {
   return new Promise((resolve, reject) => {
     fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${selectedWorksetId}/metadata?fields=metadata.contributor.id`).then(
@@ -27,7 +44,7 @@ export async function getMapWidgetData(selectedWorksetId: any) {
           reject(response);
         }
         response.json().then((viddata) => {
-          let counts = getCountryCounts(viddata);
+          let counts = getCountryCounts(viddata['data']);
           counts
             .then((result) => {
               resolve(result);
@@ -42,10 +59,10 @@ export async function getMapWidgetData(selectedWorksetId: any) {
   });
 }
 
-const getCountryCounts = async (workset: any) => {
+export const getCountryCounts = async (volumns: any) => {
   const viafid_set = new Set();
-  for (const vol in workset['data']) {
-    const { metadata } = workset['data'][vol];
+  for (const vol in volumns) {
+    const { metadata } = volumns[vol];
     if (metadata.contributor) {
       if (Array.isArray(metadata.contributor)) {
         for (const contributor of metadata.contributor) {
