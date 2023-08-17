@@ -10,14 +10,15 @@ import { FilterKeys } from 'data/datafilters';
 import genreData from 'data/genreData';
 import { IFilterKey } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import { getTimeLineDataSuccess, setLoading } from 'store/reducers/dashboard';
+import { getMapDataSuccess, getTimeLineDataSuccess, setLoading } from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
+import { getCountryCounts } from '../../../services';
 
 const animatedComponents = makeAnimated();
 const DataFilterWidget = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { selectedWorkset } = useSelector((state) => state.dashboard);
+  const { selectedWorkset, unfilteredData } = useSelector((state) => state.dashboard);
   const [filter, setFilter] = useState<IFilterKey[]>([]);
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>({});
@@ -33,43 +34,43 @@ const DataFilterWidget = () => {
 
   const handleApplyFilter = () => {
     dispatch(setLoading(true));
-    axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
-      //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
-      const timeLineData = data.data;
-      const filtered = timeLineData.filter((item: any) => {
-        for (let key in selectedGroup) {
-          if (selectedGroup[key].length) {
-            if (
-              !selectedGroup[key].some((i: any) => {
-                if (Array.isArray(item.metadata[i.key])) {
-                  return item.metadata[i.key].includes(i.value);
-                } else if (typeof item.metadata[i.key] === 'object' && item.metadata[i.key] !== null) {
-                  return i.value == item.metadata[i.key].name;
-                } else {
-                  return i.value == item.metadata[i.key];
-                }
-              })
-            ) {
-              return false;
-            }
+    const timeLineData = unfilteredData;
+    const filtered = timeLineData.filter((item: any) => {
+      for (let key in selectedGroup) {
+        if (selectedGroup[key].length) {
+          if (
+            !selectedGroup[key].some((i: any) => {
+              if (Array.isArray(item.metadata[i.key])) {
+                return item.metadata[i.key].includes(i.value);
+              } else if (typeof item.metadata[i.key] === 'object' && item.metadata[i.key] !== null) {
+                return i.value == item.metadata[i.key].name;
+              } else {
+                return i.value == item.metadata[i.key];
+              }
+            })
+          ) {
+            return false;
           }
         }
-        return true;
-      });
-      dispatch(getTimeLineDataSuccess(filtered));
-      dispatch(setLoading(false));
+      }
+      return true;
     });
+    getCountryCounts(filtered).then((res) => {
+      dispatch(getMapDataSuccess(res));
+    });
+    dispatch(getTimeLineDataSuccess(filtered));
+    dispatch(setLoading(false));
   };
 
   const handleClearFilter = () => {
     setFilter(FilterKeys);
-    axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
-      //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
-      const timeLineData = data.data;
-      getFilterByData(timeLineData);
-      dispatch(getTimeLineDataSuccess(data.data));
-      setSelectedGroup({});
+    dispatch(setLoading(true));
+    getCountryCounts(unfilteredData).then((res) => {
+      dispatch(getMapDataSuccess(res));
     });
+    dispatch(getTimeLineDataSuccess(unfilteredData));
+    setSelectedGroup({});
+    dispatch(setLoading(false));
   };
 
   const getNameMatchingShortname = (name: any) => {

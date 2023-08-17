@@ -15,7 +15,7 @@ import {
   setWorksets,
   setLoading,
   getTimeLineDataSuccess,
-  getMapDataSuccess
+  getMapDataSuccess, getUnfilteredDataSuccess
 } from 'store/reducers/dashboard';
 import { getDashboards, getCountryCounts, getWorksets, getVolumnsMetadata } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -50,6 +50,7 @@ const DashboardDefault = () => {
     if (selectedWorkset?.id) {
       getVolumnsMetadata(selectedWorkset?.id).then((data) => {
         dispatch(getTimeLineDataSuccess(data));
+        dispatch(getUnfilteredDataSuccess(data));
         getCountryCounts(data).then((res) => {
           dispatch(getMapDataSuccess(res));
         });

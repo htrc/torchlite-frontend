@@ -6,7 +6,9 @@ import { IDashboardProps } from 'types/dashboard';
 const initialState: IDashboardProps = {
   dashboards: [],
   worksets: [],
+  filtering: {},
   mapData: [],
+  unfilteredData: [],
   timelineData: [],
   selectedWorkset: null,
   selectedDashboard: null,
@@ -33,6 +35,9 @@ const dashboard = createSlice({
     getMapDataSuccess(state, action) {
       state.mapData = action.payload;
     },
+    getUnfilteredDataSuccess(state, action) {
+      state.unfilteredData = action.payload;
+    },
     getTimeLineDataSuccess(state, action) {
       state.timelineData = action.payload;
     },
@@ -56,6 +61,7 @@ const dashboard = createSlice({
 export const {
   hasError,
   getMapDataSuccess,
+  getUnfilteredDataSuccess,
   getTimeLineDataSuccess,
   setDashboards,
   setLoading,
