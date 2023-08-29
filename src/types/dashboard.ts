@@ -2,8 +2,10 @@ import { ITimelineChart, IMapData } from './chart';
 
 export type IDashboardProps = {
   dashboards: IDashboard[];
+  filtering: object;
   worksets: IWorkset[];
   mapData: IMapData[];
+  unfilteredData: ITimelineChart[];
   timelineData: ITimelineChart[];
   selectedWorkset: IWorkset | null;
   selectedDashboard: IDashboard | null;

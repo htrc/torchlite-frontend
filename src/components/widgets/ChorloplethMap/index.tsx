@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 // @ts-ignore
 import * as topojson from 'topojson-client';
 import { useDispatch, useSelector } from 'store';
+import { useRouter } from 'next/router';
 import MainCard from '../../MainCard';
 import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import useResizeObserver from '../../../hooks/useResizeObserver';
@@ -34,6 +35,7 @@ export const ChorloplethMap = () => {
     }, {});
   }, [mapData]);
 
+  // console.log(modifiedDataHistogram);
   const handleMarkerClick = (event, d) => {
     const div = d3.select('#tooltip');
     div.style('opacity', 0.9);
@@ -432,6 +434,12 @@ export const ChorloplethMap = () => {
     //return Object.assign(svg.node(), { scales: { color } });
   };
 
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/map-widget'); // Navigate to the specified page
+  };
+
   return (
     <MainCard
       content={false}
@@ -444,7 +452,7 @@ export const ChorloplethMap = () => {
         position: 'relative'
       }}
     >
-      <Typography variant="h3" sx={{ color: '#1e98d7' }}>
+      <Typography variant="h3" sx={{ color: '#1e98d7' }} onClick={handleClick}>
         Mapping Contributor Data
       </Typography>
       <Box sx={{ width: '100%', position: 'relative' }}>

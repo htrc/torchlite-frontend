@@ -11,3 +11,42 @@
 .cell-right > * {
   margin: 0 0 0 auto;
 }
+
+/* styles.module.css */
+.main-table {
+  border-collapse: collapse;
+  width: 70%;
+}
+
+.main-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  position: relative;
+  text-align: center;
+  color: #02A7F0;
+}
+
+.sub-table {
+  border-collapse: collapse;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 1;
+  width: 100%;
+}
+
+.sub-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  color: #02A7F0;
+}
+
+.sub-table-cell {
+  position: relative;
+}
+
+.sub-table-cell:hover .sub-table {
+  display: block;
+}
+
