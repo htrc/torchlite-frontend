@@ -37,10 +37,6 @@ import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
-// const Auth0 = '/assets/images/icons/auth0.svg';
-// const Cognito = '/assets/images/icons/aws-cognito.svg';
-// const Google = '/assets/images/icons/google.svg';
-
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
 const AuthLogin = ({ providers, csrfToken }: any) => {
@@ -202,65 +198,6 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
           </form>
         )}
       </Formik>
-      {/* <Divider sx={{ mt: 2 }}>
-        <Typography variant="caption"> Login with</Typography>
-      </Divider>
-      {providers && (
-        <Stack
-          direction="row"
-          spacing={matchDownSM ? 1 : 2}
-          justifyContent={matchDownSM ? 'space-around' : 'space-between'}
-          sx={{ mt: 3, '& .MuiButton-startIcon': { mr: matchDownSM ? 0 : 1, ml: matchDownSM ? 0 : -0.5 } }}
-        >
-          {Object.values(providers).map((provider: any) => {
-            if (provider.id === 'login' || provider.id === 'register') {
-              return;
-            }
-            return (
-              <Box key={provider.name} sx={{ width: '100%' }}>
-                {provider.id === 'google' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Google'}
-                  </Button>
-                )}
-                {provider.id === 'auth0' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Auth0'}
-                  </Button>
-                )}
-                {provider.id === 'cognito' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!matchDownSM}
-                    startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!matchDownSM && 'Cognito'}
-                  </Button>
-                )}
-              </Box>
-            );
-          })}
-        </Stack>
-      )} */}
-      {/* {!providers && (
-        <Box sx={{ mt: 3 }}>
-          <FirebaseSocial />
-        </Box>
-      )} */}
     </>
   );
 };

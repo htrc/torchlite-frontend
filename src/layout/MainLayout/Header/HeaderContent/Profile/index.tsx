@@ -33,6 +33,7 @@ import useUser from 'hooks/useUser';
 
 // assets
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { APP_DEFAULT_PATH } from 'config';
 
 // types
 interface TabPanelProps {
@@ -78,11 +79,11 @@ const Profile = () => {
         signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/cognito` });
         break;
       default:
-        signOut({ redirect: false });
+        signOut({ redirect: true });
     }
 
     router.push({
-      pathname: '/login',
+      pathname: APP_DEFAULT_PATH,
       query: {}
     });
   };

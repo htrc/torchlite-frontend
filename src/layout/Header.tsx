@@ -109,22 +109,6 @@ const Header = ({ handleDrawerOpen, layout, ...others }: Props) => {
                   </Link>
                 </NextLink>
               )}
-              <Link className="header-link" color="white" href="https://codedthemes.gitbook.io/mantis/" target="_blank" underline="none">
-                Documentation
-              </Link>
-              <Box sx={{ display: 'inline-block' }}>
-                <AnimateButton>
-                  <Button
-                    component={Link}
-                    href="https://mui.com/store/items/mantis-react-admin-dashboard-template/"
-                    disableElevation
-                    color="primary"
-                    variant="contained"
-                  >
-                    Purchase Now
-                  </Button>
-                </AnimateButton>
-              </Box>
             </Stack>
             <Box
               sx={{
@@ -145,14 +129,6 @@ const Header = ({ handleDrawerOpen, layout, ...others }: Props) => {
                     </Button>
                   </NextLink>
                 )}
-                {layout !== 'component' && (
-                  <NextLink href="/components-overview/buttons" passHref>
-                    <Button variant="outlined" size="small" color="warning" sx={{ mt: 0.5, height: 28 }}>
-                      All Components
-                    </Button>
-                  </NextLink>
-                )}
-
                 <IconButton
                   color="secondary"
                   {...(layout === 'component' ? { onClick: handleDrawerOpen } : { onClick: drawerToggler(true) })}
