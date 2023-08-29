@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 // @ts-ignore
 import * as topojson from 'topojson-client';
 import { useDispatch, useSelector } from 'store';
-import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 import MainCard from '../../MainCard';
 import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import useResizeObserver from '../../../hooks/useResizeObserver';
@@ -434,12 +434,6 @@ export const ChorloplethMap = () => {
     //return Object.assign(svg.node(), { scales: { color } });
   };
 
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push('/map-widget'); // Navigate to the specified page
-  };
-
   return (
     <MainCard
       content={false}
@@ -452,9 +446,11 @@ export const ChorloplethMap = () => {
         position: 'relative'
       }}
     >
-      <Typography variant="h3" sx={{ color: '#1e98d7' }} onClick={handleClick}>
-        Mapping Contributor Data
-      </Typography>
+      <NextLink href="/map-widget">
+        <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+          Mapping Contributor Data
+        </Typography>
+      </NextLink>
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
         {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}

@@ -58,6 +58,10 @@ export default function Layout({ variant = 'main', children }: Props) {
     return <GuestGuard>{children}</GuestGuard>;
   }
 
+  if (variant === 'main') {
+    return <MainLayout>{children}</MainLayout>;
+  }
+
   return (
     <AuthGuard>
       <MainLayout>{children}</MainLayout>

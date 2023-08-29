@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Box, Typography, Grid } from '@mui/material';
 
@@ -21,6 +21,7 @@ import {
 } from 'store/reducers/dashboard';
 import { getDashboards, getCountryCounts, getWorksets, getVolumnsMetadata } from 'services';
 import CustomBackdrop from 'components/Backdrop';
+import MyTable from 'components/widgets/ChorloplethMap/DataTable';
 
 const MapWidget = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,11 @@ const MapWidget = () => {
   const widgetTableData = ['Widget Documentation', 'Results Insights', 'Export as Jupyter Notebook'];
   const mapFilterData = ['Additional Map Filters', 'Filter by Region', 'Filter by '];
 
+  const data = useMemo(() => [
+    { countryISO: 'US', city: 'New York', latitude: '40.730610', longitude: '-73.935242', yearOfBirth: '1990' },
+    // ... more data
+], []);
+
   return (
     <Page title="TORCHLITE Dashboard">
       <Box>
@@ -52,6 +58,7 @@ const MapWidget = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <DataTable data={widgetTableData} type="widget" title="Widget Info Links"/>
+              {/* <MyTable data={data} /> */}
             </Grid>
           </Grid>
         </Box>

@@ -1,6 +1,5 @@
 import { ReactElement, useEffect } from 'react';
-import axios from 'axios';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
 import Layout from 'layout';
 import Page from 'components/Page';
@@ -13,9 +12,9 @@ import {
   setSelectedDashboard,
   setDashboards,
   setWorksets,
-  setLoading,
   getTimeLineDataSuccess,
-  getMapDataSuccess, getUnfilteredDataSuccess
+  getMapDataSuccess,
+  getUnfilteredDataSuccess
 } from 'store/reducers/dashboard';
 import { getDashboards, getCountryCounts, getWorksets, getVolumnsMetadata } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -62,9 +61,6 @@ const DashboardDefault = () => {
   return (
     <Page title="TORCHLITE Dashboard">
       <Box>
-        <Box>
-          <Typography variant="h5">TORCHLITE Dashboard</Typography>
-        </Box>
         <Box>
           <DashboardHeader />
           <Grid container spacing={3}>
