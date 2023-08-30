@@ -5,8 +5,10 @@ export type IDashboardProps = {
   filtering: object;
   worksets: IWorkset[];
   mapData: IMapData[];
+  mapRangedData: IMapData[];
   unfilteredData: ITimelineChart[];
   timelineData: ITimelineChart[];
+  timelineRangedData: ITimelineChart[];
   selectedWorkset: IWorkset | null;
   selectedDashboard: IDashboard | null;
   tooltipId: string;

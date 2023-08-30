@@ -1,4 +1,6 @@
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { v4 as uuidv4 } from 'uuid';
 
 // scroll bar
 import 'simplebar/src/simplebar.css';
@@ -40,6 +42,16 @@ interface Props {
 
 export default function App({ Component, pageProps }: AppProps & Props) {
   const getLayout = Component.getLayout ?? ((page: any) => page);
+  useEffect(() => {
+    // Check if the cookie is already set
+    const uniqueID = Cookies.get('uniqueID');
+
+    // If not set, then set it
+    if (!uniqueID) {
+      const newUniqueID = uuidv4();
+      Cookies.set('uniqueID', newUniqueID, { expires: 30 });
+    }
+  }, []);
   console.log('BASE_API_URI: ', env('BASE_API_URI'));
   return (
     <ReduxProvider store={store}>

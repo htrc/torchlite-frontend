@@ -1,46 +1,38 @@
 import * as d3 from 'd3';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { ITimelineChart } from 'types/chart';
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
-import { useSelector } from 'store';
-import MainCard from '../../MainCard';
+import { useDispatch, useSelector } from 'store';
+import NextLink from 'next/link';
+import MainCard from 'components/MainCard';
+import { setTimelineRangedData } from 'store/reducers/dashboard';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
 export const PublicationTimeLineChart = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const axesRef = useRef(null);
-  const { timelineData } = useSelector((state) => state.dashboard);
+  const { timelineData: modifiedDataHistogram, timelineRangedData: storedTimelineRangedData } = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
-
-  //group by pubDate timelineData
-  const modifiedDataHistogram = useMemo(() => {
-    return timelineData.reduce((prev: any, curr: ITimelineChart) => {
-      const pubDate = curr.metadata.pubDate;
-      if (!Number.isInteger(pubDate)) {
-        return prev;
-      } else if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
-      else return { ...prev, [pubDate]: 1 };
-    }, {});
-  }, [timelineData]);
 
   const [dateRange, setDateRange] = useState<number[]>([]);
 
   const chartDataHistogram = useMemo(() => {
     return Object.keys(modifiedDataHistogram)
       .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => ({ date: item, value: modifiedDataHistogram[item] }));
+      .map((item: any) => ({ date: item, value: modifiedDataHistogram[item] }));
   }, [modifiedDataHistogram, dateRange]);
 
-  const xAxisLabels = useMemo(() => {
-    return Object.keys(modifiedDataHistogram)
-      .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item) => Number(item));
-  }, [modifiedDataHistogram, dateRange]);
+  useEffect(() => {
+    // Check if the data has actually changed
+    if (JSON.stringify(storedTimelineRangedData) !== JSON.stringify(chartDataHistogram)) {
+      dispatch(setTimelineRangedData(chartDataHistogram));
+    }
+  }, [chartDataHistogram, storedTimelineRangedData, dispatch]);
 
   const minDate = useMemo(() => {
     return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
@@ -63,7 +55,7 @@ export const PublicationTimeLineChart = () => {
   //x-axis scale for Histogram
   const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
   //y-axis scale for Histogram
-  const yScaleHistogram = d3
+  const yScaleHistogram: any = d3
     .scaleLinear()
     .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
     .range([boundsHeight, 0]);
@@ -79,7 +71,8 @@ export const PublicationTimeLineChart = () => {
       .attr('transform', 'translate(0,' + boundsHeight + ')')
       .call(xAxisGenerator);
 
-    const yAxisGenerator = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
+    // @ts-ignore
+    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
     svgElement.append('g').call(yAxisGenerator);
   }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
 
@@ -111,9 +104,11 @@ export const PublicationTimeLineChart = () => {
         position: 'relative'
       }}
     >
-      <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-        Publication Date Timeline
-      </Typography>
+      <NextLink href="/widget-details/timeline">
+        <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+          Publication Date Timeline
+        </Typography>
+      </NextLink>
       <Box sx={{ width: '100%', marginTop: '50px' }} ref={chartWrapper}>
         <svg width={width} height={height}>
           <g width={boundsWidth} height={boundsHeight} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`}>

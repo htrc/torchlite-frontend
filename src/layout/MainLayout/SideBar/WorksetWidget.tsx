@@ -18,11 +18,12 @@ import {
 } from '@mui/material';
 import { IWorkset } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import { hasError, setLoading, setSelectedDashboard, setTooltipId } from 'store/reducers/dashboard';
+import { getMapDataSuccess, getTimeLineDataSuccess, getUnfilteredDataSuccess, hasError, setLoading, setSelectedDashboard, setTooltipId } from 'store/reducers/dashboard';
 import { setSelectedWorkset } from 'store/reducers/dashboard';
 import CustomTableRow from 'components/CustomTableRow';
-import { confirmWorkset } from 'services';
+import { confirmWorkset, getCountryCounts, getVolumnsMetadata } from 'services';
 import CustomBackdrop from 'components/Backdrop';
+import { convertToTimelineChartData } from 'utils/helpers';
 
 const WorksetWidget = () => {
   const theme = useTheme();
@@ -53,6 +54,20 @@ const WorksetWidget = () => {
       dispatch(setSelectedWorkset(prop));
     }
   };
+
+  useEffect(() => {
+    // Get Publication Timeline widget data
+    if (selectedWorkset?.id) {
+      getVolumnsMetadata(selectedWorkset?.id).then((data) => {
+        dispatch(getTimeLineDataSuccess(convertToTimelineChartData(data)));
+        dispatch(getUnfilteredDataSuccess(data));
+        getCountryCounts(data).then((res) => {
+          dispatch(getMapDataSuccess(res));
+        });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedWorkset]);
 
   useEffect(() => {
     if (type === 'all' || type === 'A') {

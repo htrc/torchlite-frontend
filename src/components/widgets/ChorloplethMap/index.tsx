@@ -5,19 +5,21 @@ import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { useDispatch, useSelector } from 'store';
 import NextLink from 'next/link';
-import MainCard from '../../MainCard';
+import MainCard from 'components/MainCard';
+import CustomSlider from 'components/CustomSlider';
 import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
-import useResizeObserver from '../../../hooks/useResizeObserver';
-import CustomSlider from '../../CustomSlider';
-import { IMapData } from '../../../types/chart';
+import useResizeObserver from 'hooks/useResizeObserver';
+import { IMapData } from 'types/chart';
+import { setMapRangedData } from 'store/reducers/dashboard';
 
 export const ChorloplethMap = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const inputRef = useRef(null);
   const dimensions = useResizeObserver(inputRef);
   let width = dimensions?.width || 500;
   let height = width / 2;
-  const { mapData, loadingMap } = useSelector((state) => state.dashboard);
+  const { mapData, loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
   const [dateRange, setDateRange] = useState<number[]>([]);
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
@@ -25,7 +27,7 @@ export const ChorloplethMap = () => {
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
 
-  // console.log(mapData)
+  // console.log(mapData);
   //group by dob mapData
   const modifiedDataHistogram = useMemo(() => {
     return mapData.reduce((prev: any, curr: IMapData) => {
@@ -49,6 +51,13 @@ export const ChorloplethMap = () => {
   const mapDataHistogram = useMemo(() => {
     return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
   }, [mapData, dateRange]);
+
+  useEffect(() => {
+    // Check if the data has actually changed
+    if (JSON.stringify(storedMapRangedData) !== JSON.stringify(mapDataHistogram)) {
+      dispatch(setMapRangedData(mapDataHistogram));
+    }
+  }, [mapDataHistogram, storedMapRangedData, dispatch]);
 
   const cities = useMemo(() => {
     const cityMap = mapDataHistogram.reduce((map, item) => {
@@ -446,7 +455,7 @@ export const ChorloplethMap = () => {
         position: 'relative'
       }}
     >
-      <NextLink href="/map-widget">
+      <NextLink href="/widget-details/mapping">
         <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
           Mapping Contributor Data
         </Typography>
