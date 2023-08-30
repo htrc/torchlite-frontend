@@ -4,13 +4,12 @@ import { Box, Grid } from '@mui/material';
 
 import Layout from 'layout';
 import Page from 'components/Page';
-import DashboardHeader from 'layout/MainLayout/DashboardHeader';
 import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLineChart';
-// import DataTable from 'components/widgets/ChorloplethMap/DataTable';
-import ContributorTable from 'components/widgets/ChorloplethMap/ContributorTable';
-import { useDispatch, useSelector } from 'store';
-import MyTable from 'components/widgets/ChorloplethMap/DataTable';
+import { useSelector } from 'store';
 import DataTable from 'components/DataTable';
+import { timelineColumns, timelineCSVHeaders } from 'data/react-table';
+import DetailsPageHeader from 'layout/MainLayout/DetailsPageHeader';
+import NestedList from 'sections/widget-details/NestedList';
 
 const TimelineWidgetDetails = () => {
   const storedTimelineRangedData = useSelector((state) => state.dashboard.timelineRangedData, shallowEqual);
@@ -18,41 +17,33 @@ const TimelineWidgetDetails = () => {
   const widgetTableData = ['Widget Documentation', 'Results Insights', 'Export as Jupyter Notebook'];
   const mapFilterData = ['Additional Map Filters', 'Filter by Region', 'Filter by '];
 
-  const columns = [
-    {
-      Header: 'Publication Date',
-      accessor: 'date',
-      className: 'cell-center'
-    },
-    {
-      Header: 'Count',
-      accessor: 'value',
-      className: 'cell-center'
-    }
-  ];
-
   return (
     <Page title="TORCHLITE Dashboard">
       <Box>
         <Box>
-          <DashboardHeader />
+          <DetailsPageHeader />
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <Box sx={{ padding: '2rem' }}>
-                <PublicationTimeLineChart />
-              </Box>
+              <PublicationTimeLineChart hideDownload={false} />
             </Grid>
             <Grid item xs={12} md={3}>
+              <NestedList />
               {/* <DataTable data={widgetTableData} type="widget" title="Widget Info Links"/> */}
               {/* <MyTable data={data} /> */}
             </Grid>
           </Grid>
         </Box>
-        <Box>
+        <Box sx={{ marginTop: '2rem' }}>
           <Grid container spacing={3}>
             <Grid item md={1}></Grid>
             <Grid item xs={12} md={7}>
-              <DataTable data={storedTimelineRangedData} columns={columns} title={'Timeline Data'} sort />
+              <DataTable
+                data={storedTimelineRangedData}
+                columns={timelineColumns}
+                title={'Timeline Data'}
+                csvHeaders={timelineCSVHeaders}
+                sort
+              />
             </Grid>
           </Grid>
         </Box>

@@ -340,6 +340,7 @@ interface CSVExportProps {
 
 export const CSVExport = ({ data, filename, headers }: CSVExportProps) => {
   return (
+    // @ts-ignore
     <CSVLink data={data} filename={filename} headers={headers}>
       <Tooltip title="CSV Export">
         <DownloadOutlined style={{ fontSize: '24px', color: 'gray', marginTop: 4, marginRight: 4, marginLeft: 4 }} />

@@ -7,12 +7,18 @@ import { useDispatch, useSelector } from 'store';
 import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import CustomSlider from 'components/CustomSlider';
-import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography, useTheme, Stack, Menu, MenuItem } from '@mui/material';
 import useResizeObserver from 'hooks/useResizeObserver';
 import { IMapData } from 'types/chart';
 import { setMapRangedData } from 'store/reducers/dashboard';
+import IconButton from 'components/@extended/IconButton';
+import { DownloadOutlined } from '@ant-design/icons';
+import { CSVLink } from 'react-csv';
+import { transformMapDataForDataTable } from 'utils/helpers';
+import { mapCSVHeaders } from 'data/react-table';
+import { saveAs } from 'file-saver';
 
-export const ChorloplethMap = () => {
+export const ChorloplethMap = ({ hideDownload = true }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
@@ -26,6 +32,17 @@ export const ChorloplethMap = () => {
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
+
+  const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement> | undefined) => {
+    setAnchorEl(event?.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   // console.log(mapData);
   //group by dob mapData
@@ -51,6 +68,8 @@ export const ChorloplethMap = () => {
   const mapDataHistogram = useMemo(() => {
     return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
   }, [mapData, dateRange]);
+
+  const datatableData = transformMapDataForDataTable(mapDataHistogram);
 
   useEffect(() => {
     // Check if the data has actually changed
@@ -443,11 +462,59 @@ export const ChorloplethMap = () => {
     //return Object.assign(svg.node(), { scales: { color } });
   };
 
+  const downloadData = (format: string) => {
+    const container = document.getElementById('graph-container');
+    const svgElements = Array.from(container.querySelectorAll('svg'));
+
+    const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    let yOffset = 0;
+    const rightMargin = 10;
+
+    svgElements.forEach((svgElement, index) => {
+      const clonedSvg = svgElement.cloneNode(true);
+
+      if (index === 1) {
+        yOffset += svgElements[0].getBoundingClientRect().height;
+      }
+      clonedSvg.setAttribute('x', 10);
+      clonedSvg.setAttribute('y', yOffset);
+      newSvg.appendChild(clonedSvg);
+    });
+
+    // Adjust the width and height of the new SVG
+    newSvg.setAttribute('width', container.offsetWidth + rightMargin);
+    newSvg.setAttribute('height', yOffset + svgElements[1].getBoundingClientRect().height);
+    if (format === 'svg') {
+      const svgData = new XMLSerializer().serializeToString(newSvg);
+      const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      saveAs(blob, 'map.svg');
+    } else if (format === 'png') {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const DOMURL = window.URL || window.webkitURL || window;
+      const svgData = new XMLSerializer().serializeToString(newSvg);
+
+      const img = new Image();
+
+      img.onload = function () {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const pngData = canvas.toDataURL('image/png');
+        saveAs(pngData, 'map.png');
+      };
+
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = DOMURL.createObjectURL(svgBlob);
+      img.src = url;
+    }
+    handleClose();
+  };
+
   return (
     <MainCard
       content={false}
       sx={{
-        mt: 1.5,
         padding: theme.spacing(4),
         display: 'flex',
         flexDirection: 'column',
@@ -460,6 +527,50 @@ export const ChorloplethMap = () => {
           Mapping Contributor Data
         </Typography>
       </NextLink>
+      {!hideDownload && (
+        <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
+          <IconButton
+            sx={{
+              border: `1px solid ${theme.palette.grey[400]}`,
+              '&:hover': { backgroundColor: 'transparent' }
+            }}
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+          >
+            <DownloadOutlined style={{ color: theme.palette.grey[900] }} />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button'
+            }}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+          >
+            <MenuItem onClick={() => downloadData('png')}>PNG image</MenuItem>
+            <MenuItem onClick={() => downloadData('svg')}>SVG image</MenuItem>
+            <CSVLink
+              data={datatableData}
+              filename={`Contributor_Data${new Date().toISOString().split('T')[0]}.csv`}
+              headers={mapCSVHeaders}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
+            </CSVLink>
+          </Menu>
+        </Stack>
+      )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
         {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}
