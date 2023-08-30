@@ -10,13 +10,11 @@ import DataTable from 'components/DataTable';
 import { transformMapDataForDataTable } from 'utils/helpers';
 import { mapColumns, mapCSVHeaders } from 'data/react-table';
 import DetailsPageHeader from 'layout/MainLayout/DetailsPageHeader';
+import NestedList from 'sections/widget-details/NestedList';
 
 const MapWidget = () => {
   const storedMapRangedData = useSelector((state) => state.dashboard.mapRangedData, shallowEqual);
   const data = transformMapDataForDataTable(storedMapRangedData);
-
-  const widgetTableData = ['Widget Documentation', 'Results Insights', 'Export as Jupyter Notebook'];
-  const mapFilterData = ['Additional Map Filters', 'Filter by Region', 'Filter by '];
 
   return (
     <Page title="TORCHLITE Dashboard">
@@ -28,8 +26,7 @@ const MapWidget = () => {
               <ChorloplethMap hideDownload={false} />
             </Grid>
             <Grid item xs={12} md={3}>
-              {/* <DataTable data={widgetTableData} type="widget" title="Widget Info Links"/> */}
-              {/* <MyTable data={data} /> */}
+              <NestedList />
             </Grid>
           </Grid>
         </Box>

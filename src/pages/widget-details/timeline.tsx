@@ -14,9 +14,6 @@ import NestedList from 'sections/widget-details/NestedList';
 const TimelineWidgetDetails = () => {
   const storedTimelineRangedData = useSelector((state) => state.dashboard.timelineRangedData, shallowEqual);
 
-  const widgetTableData = ['Widget Documentation', 'Results Insights', 'Export as Jupyter Notebook'];
-  const mapFilterData = ['Additional Map Filters', 'Filter by Region', 'Filter by '];
-
   return (
     <Page title="TORCHLITE Dashboard">
       <Box>
@@ -28,8 +25,6 @@ const TimelineWidgetDetails = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <NestedList />
-              {/* <DataTable data={widgetTableData} type="widget" title="Widget Info Links"/> */}
-              {/* <MyTable data={data} /> */}
             </Grid>
           </Grid>
         </Box>
