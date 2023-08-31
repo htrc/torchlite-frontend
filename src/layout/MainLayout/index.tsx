@@ -20,6 +20,8 @@ import { openDrawer } from 'store/reducers/menu';
 import { RootStateProps } from 'types/root';
 import { LAYOUT_CONST } from 'types/config';
 import { DRAWER_WIDTH } from 'config';
+import { getDashboards, getWorksets } from 'services';
+import { setDashboards, setSelectedDashboard, setSelectedWorkset, setWorksets } from 'store/reducers/dashboard';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -46,6 +48,27 @@ const MainLayout = ({ children }: Props) => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
+
+  useEffect(() => {
+    Promise.all([getDashboards(), getWorksets()])
+      .then((values) => {
+        const dashboards: any[] = values[0];
+        const worksets: any[] = values[1];
+
+        dispatch(setDashboards(dashboards));
+        dispatch(setWorksets(worksets));
+
+        const defaultDashboard = dashboards[0];
+        dispatch(setSelectedDashboard(defaultDashboard));
+
+        const selectedWorkset = worksets.filter((item) => item.id === defaultDashboard?.workset)?.[0] ?? null;
+        dispatch(setSelectedWorkset(selectedWorkset));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // set media wise responsive drawer
   useEffect(() => {

@@ -7,6 +7,7 @@ export interface ITimelineChart {
 export interface IMapData {
   item: string;
   countryiso: string;
-  coordinates: string;
+  cityCoords: string;
   dob: string;
+  city: string;
 }

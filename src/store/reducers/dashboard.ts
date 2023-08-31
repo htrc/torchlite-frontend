@@ -8,14 +8,16 @@ const initialState: IDashboardProps = {
   worksets: [],
   filtering: {},
   mapData: [],
+  mapRangedData: [],
   unfilteredData: [],
   timelineData: [],
+  timelineRangedData: [],
   selectedWorkset: null,
   selectedDashboard: null,
   tooltipId: '',
   error: null,
   loading: false,
-  loadingMap: false,
+  loadingMap: false
 };
 
 // ==============================|| SLICE - MENU ||============================== //
@@ -56,6 +58,12 @@ const dashboard = createSlice({
     setLoadingMap(state, action) {
       state.loading = action.payload;
     },
+    setTimelineRangedData(state, action) {
+      state.timelineRangedData = action.payload;
+    },
+    setMapRangedData(state, action) {
+      state.mapRangedData = action.payload;
+    }
   }
 });
 export const {
@@ -70,5 +78,7 @@ export const {
   setTooltipId,
   setSelectedDashboard,
   setWorksets,
+  setTimelineRangedData,
+  setMapRangedData
 } = dashboard.actions;
 export default dashboard.reducer;

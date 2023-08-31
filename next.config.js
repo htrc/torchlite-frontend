@@ -6,7 +6,7 @@
 const withTM = require('next-transpile-modules')(['@babel/preset-react']);
 
 module.exports = withTM({
-  reactStrictMode: true,
+  reactStrictMode: false,
   output: 'standalone',
   images: {
     domains: ['flagcdn.com']

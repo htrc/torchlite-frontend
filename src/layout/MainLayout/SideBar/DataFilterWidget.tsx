@@ -12,7 +12,8 @@ import { IFilterKey } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
 import { getMapDataSuccess, getTimeLineDataSuccess, setLoading } from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
-import { getCountryCounts } from '../../../services';
+import { getCountryCounts } from 'services';
+import { convertToTimelineChartData } from 'utils/helpers';
 
 const animatedComponents = makeAnimated();
 const DataFilterWidget = () => {
@@ -58,7 +59,7 @@ const DataFilterWidget = () => {
     getCountryCounts(filtered).then((res) => {
       dispatch(getMapDataSuccess(res));
     });
-    dispatch(getTimeLineDataSuccess(filtered));
+    dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
     dispatch(setLoading(false));
   };
 
@@ -68,7 +69,7 @@ const DataFilterWidget = () => {
     getCountryCounts(unfilteredData).then((res) => {
       dispatch(getMapDataSuccess(res));
     });
-    dispatch(getTimeLineDataSuccess(unfilteredData));
+    dispatch(getTimeLineDataSuccess(convertToTimelineChartData(unfilteredData)));
     setSelectedGroup({});
     dispatch(setLoading(false));
   };
@@ -147,22 +148,15 @@ const DataFilterWidget = () => {
   };
 
   const handleSelectChange = (selected: any, value: any) => {
-    console.log('handleSelectChange');
-    let filter = false;
     setSelectedGroup((prevState: any) => {
-      const keys = Object.keys(prevState);
-      const lastKey = keys.pop();
-      if (lastKey != undefined && lastKey != value) filter = true;
-      let selectedG = {
+      return {
         ...prevState,
         [value]: selected
       };
-      return selectedG;
     });
   };
 
   const handleBlur = () => {
-    console.log('handleBlur');
     axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
       //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
       const timeLineData = data.data;
@@ -194,7 +188,6 @@ const DataFilterWidget = () => {
   };
 
   const handleFocus = (value: any) => {
-    console.log('handleFocus: ' + value);
     axios.get('/api/dashboard/publicationDateTimeLine').then((data) => {
       //const timeLineData = data.data.filter((item: any) => item.worksetId === selectedDashboard?.workset);
       const timeLineData = data.data;
