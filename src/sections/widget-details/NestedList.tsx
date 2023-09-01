@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
 // material-ui
-import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Collapse, List, ListItem, ListItemButton, ListItemText, Link } from '@mui/material';
 
 // project import
 import MainCard from 'components/MainCard';
 
 // assets
-import { DownOutlined, LayoutOutlined, RadiusUprightOutlined, SettingOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { widgetInfoLinks } from 'data/widgetInfoLinks';
 
 // ==============================|| LIST - NESTED ||============================== //
 
-const NestedList = () => {
+const NestedList = ({ widgetType }: { widgetType: string }) => {
   const [open, setOpen] = useState('');
 
   const handleClick = (page: string) => {
@@ -30,16 +31,28 @@ const NestedList = () => {
         <Collapse in={open === 'sample'} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ bgcolor: 'secondary.100' }}>
             <ListItemButton sx={{ pl: 5 }}>
-              <ListItemText primary="GitHub" />
+              <ListItemText>
+                <Link href={widgetInfoLinks[widgetType]?.github} target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </Link>
+              </ListItemText>
             </ListItemButton>
             <ListItemButton sx={{ pl: 5 }}>
-              <ListItemText primary="External Libraries" />
+              <ListItemText>
+                <Link href={widgetInfoLinks[widgetType]?.lib} target="_blank" rel="noopener noreferrer">
+                  External Libraries
+                </Link>
+              </ListItemText>
             </ListItemButton>
           </List>
         </Collapse>
         <ListItem disablePadding>
           <ListItemButton>
-            <ListItemText primary="Results Insights" />
+            <ListItemText>
+              <Link href={widgetInfoLinks[widgetType]?.insights} target="_blank" rel="noopener noreferrer">
+                Results Insights
+              </Link>
+            </ListItemText>
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>

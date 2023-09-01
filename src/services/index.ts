@@ -15,24 +15,14 @@ export function getWorksets() {
 
 export function getTimeLineData() {
   return defaultAxios.get('/api/dashboard/publicationDateTimeLine');
-  // return axios.get(`/dashboards/${dashboard.id}/widget/${'default_widget'}/data`);
 }
 
-export function getVolumnsMetadata(selectedWorksetId: any) {
-  return new Promise((resolve, reject) => {
-    fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${selectedWorksetId}/metadata`).then((response) => {
-      if (response.status !== 200) {
-        console.log(`There was a problem: ${response.status}`);
-        reject(response);
-      }
-      response.json().then((res) => {
-        if (res.code === 200) {
-          resolve(res.data);
-        }
-        reject(res);
-      });
-    });
-  });
+export function getWorksetMetadata(worksetId: any) {
+  return defaultAxios.get(`/api/dashboard/get-workset-metadata/${worksetId}`);
+}
+
+export function setFeaturedState(data: any) {
+  return defaultAxios.post('/api/dashboard/set-featured-state', { data });
 }
 
 export async function getMapWidgetData(selectedWorksetId: any) {

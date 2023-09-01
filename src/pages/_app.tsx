@@ -1,6 +1,4 @@
-import { ReactElement, ReactNode, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { v4 as uuidv4 } from 'uuid';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 
 // scroll bar
 import 'simplebar/src/simplebar.css';
@@ -27,6 +25,7 @@ import { ConfigProvider } from 'contexts/ConfigContext';
 import { store } from 'store';
 import ThemeCustomization from 'themes';
 import Notistack from 'components/third-party/Notistack';
+import CustomBackdrop from 'components/Backdrop';
 
 import { env } from 'utils/utils';
 
@@ -41,17 +40,35 @@ interface Props {
 }
 
 export default function App({ Component, pageProps }: AppProps & Props) {
+  const [isLoading, setIsLoading] = useState(true);
   const getLayout = Component.getLayout ?? ((page: any) => page);
   useEffect(() => {
-    // Check if the cookie is already set
-    const uniqueID = Cookies.get('uniqueID');
+    const init = async () => {
+      try {
+        const response = await fetch('/api/set-session-id');
+        const result = await response.json();
+        console.log(result);
 
-    // If not set, then set it
-    if (!uniqueID) {
-      const newUniqueID = uuidv4();
-      Cookies.set('uniqueID', newUniqueID, { expires: 30 });
-    }
+        const res = await fetch('/api/dashboard/get-featured-state');
+        const apiRes = await res.json();
+
+        console.log(apiRes);
+        if (apiRes.status === 'success' && apiRes.data) {
+          localStorage.setItem('featured_state', apiRes.data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    init();
   }, []);
+
+  if (isLoading) {
+    return <CustomBackdrop loading={isLoading} />;
+  }
   console.log('BASE_API_URI: ', env('BASE_API_URI'));
   return (
     <ReduxProvider store={store}>

@@ -44,3 +44,8 @@ export const convertToTimelineChartData = (worksetMetaData: any) => {
     else return { ...prev, [pubDate]: 1 };
   }, {});
 };
+
+export const getCookieValue = (name: string, cookieString: string) => {
+  const matches = cookieString.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return matches ? matches.pop() : null;
+};

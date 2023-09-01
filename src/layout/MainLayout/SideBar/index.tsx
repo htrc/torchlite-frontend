@@ -1,10 +1,18 @@
+import { useSelector } from 'store';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, useTheme } from '@mui/material';
 import CleanDataWidget from './CleanDataWidget';
 import DataFilterWidget from './DataFilterWidget';
 import WorksetWidget from './WorksetWidget';
+import { useState, useEffect } from 'react';
 
 const SideBar = () => {
   const theme = useTheme();
+  const { selectedWorksetId } = useSelector((state) => state.dashboard);
+  const [isAccordionExpanded, setAccordionExpanded] = useState(!!selectedWorksetId);
+  useEffect(() => {
+    setAccordionExpanded(!!selectedWorksetId);
+  }, [selectedWorksetId]);
+
   return (
     <Box
       sx={{
@@ -26,7 +34,7 @@ const SideBar = () => {
         }
       }}
     >
-      <Accordion>
+      <Accordion expanded={isAccordionExpanded} onChange={(event, newExpanded) => setAccordionExpanded(newExpanded)}>
         <AccordionSummary aria-controls="workset-content" id="workset-header">
           <Typography variant="h5">Select Workset</Typography>
         </AccordionSummary>

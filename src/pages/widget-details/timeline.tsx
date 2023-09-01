@@ -24,7 +24,7 @@ const TimelineWidgetDetails = () => {
               <PublicationTimeLineChart hideDownload={false} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <NestedList />
+              <NestedList widgetType="timeline" />
             </Grid>
           </Grid>
         </Box>

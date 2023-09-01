@@ -1,7 +1,7 @@
-import React, { forwardRef, useEffect, useRef, useState, ReactNode, Ref } from 'react';
+import React, { forwardRef, useRef, useState, Ref } from 'react';
 
 // material-ui
-import { styled, useTheme, Theme } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
   Checkbox,
@@ -25,10 +25,10 @@ import {
 // third-party
 import { CSVLink } from 'react-csv';
 import { Headers } from 'react-csv/components/CommonPropTypes';
-import { Column, ColumnInstance, HeaderGroup, Row, SortingRule } from 'react-table';
+import { ColumnInstance, HeaderGroup, Row, SortingRule } from 'react-table';
 
 // assets
-import { CaretUpOutlined, CaretDownOutlined, DragOutlined, CheckOutlined, DownloadOutlined } from '@ant-design/icons';
+import { CaretUpOutlined, CaretDownOutlined, CheckOutlined, DownloadOutlined } from '@ant-design/icons';
 
 // ==============================|| SORT HEADER ||============================== //
 

@@ -9,7 +9,7 @@ export type IDashboardProps = {
   unfilteredData: ITimelineChart[];
   timelineData: ITimelineChart[];
   timelineRangedData: ITimelineChart[];
-  selectedWorkset: IWorkset | null;
+  selectedWorksetId: string | null;
   selectedDashboard: IDashboard | null;
   tooltipId: string;
   error: object | string | null;
