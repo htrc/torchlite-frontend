@@ -13,6 +13,7 @@ import Layout from 'layout';
 import Page from 'components/Page';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthLogin from 'sections/auth/auth-forms/AuthLogin';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 export default function SignIn({ providers, csrfToken }: any) {
   return (
@@ -20,6 +21,14 @@ export default function SignIn({ providers, csrfToken }: any) {
       <AuthWrapper>
         <Grid container spacing={3}>
           <Grid item xs={12}>
+            <NextLink href="/dashboard">
+              <Link>
+                <Stack direction="row" alignItems="center" sx={{ marginBottom: '1rem', cursor: 'pointer' }}>
+                  <ArrowLeftOutlined style={{ paddingRight: '4px' }} />
+                  <Typography variant="h5">Back to Dashboard</Typography>
+                </Stack>
+              </Link>
+            </NextLink>
             <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
               <Typography variant="h3">Login</Typography>
               <NextLink href="/register" passHref>

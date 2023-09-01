@@ -19,7 +19,7 @@ const animatedComponents = makeAnimated();
 const DataFilterWidget = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { selectedWorkset, unfilteredData } = useSelector((state) => state.dashboard);
+  const { selectedWorksetId, unfilteredData } = useSelector((state) => state.dashboard);
   const [filter, setFilter] = useState<IFilterKey[]>([]);
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>({});
@@ -27,7 +27,7 @@ const DataFilterWidget = () => {
   useEffect(() => {
     handleClearFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWorkset]);
+  }, [selectedWorksetId]);
 
   useEffect(() => {
     (() => axios.get('/api/dashboard/filterKeys').then((data) => setFilter(data.data)))();

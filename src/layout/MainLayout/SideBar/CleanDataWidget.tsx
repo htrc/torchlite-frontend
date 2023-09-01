@@ -192,25 +192,45 @@ const CleanDataWidget = () => {
           ))}
         </FormGroup>
       </FormControl>
-      <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
-        <CustomButton
-          variant="contained"
-          sx={{
-            width: theme.spacing(17.5),
-            height: theme.spacing(5),
-            padding: theme.spacing(0.25),
-            borderRadius: '15px',
-            backgroundColor: '#1e98d7',
-            fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
-            fontSize: theme.spacing(1.625),
-            color: theme.palette.common.white,
-            textAlign: 'center',
-            textTransform: 'none'
-          }}
-        >
-          Confirm my selection
-        </CustomButton>
-      </Box>
+      <Stack direction="row" justifyContent="space-between">
+        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+          <CustomButton
+            variant="contained"
+            sx={{
+              width: theme.spacing(17.5),
+              height: theme.spacing(5),
+              padding: theme.spacing(0.25),
+              borderRadius: '15px',
+              backgroundColor: '#1e98d7',
+              fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
+              fontSize: theme.spacing(1.625),
+              color: theme.palette.common.white,
+              textAlign: 'center',
+              textTransform: 'none'
+            }}
+          >
+            Apply cleaning
+          </CustomButton>
+        </Box>
+        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+          <CustomButton
+            variant="outlined"
+            sx={{
+              width: theme.spacing(17.5),
+              height: theme.spacing(5),
+              padding: theme.spacing(0.25),
+              borderRadius: '15px',
+              fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
+              fontSize: theme.spacing(1.625),
+              textAlign: 'center',
+              textTransform: 'none'
+            }}
+            onClick={() => {}}
+          >
+            Clear cleaning
+          </CustomButton>
+        </Box>
+      </Stack>
     </Stack>
   );
 };

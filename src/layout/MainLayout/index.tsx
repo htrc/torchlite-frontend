@@ -1,5 +1,6 @@
+import { useRouter } from 'next/router';
 import { useEffect, useState, ReactNode } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -21,7 +22,8 @@ import { RootStateProps } from 'types/root';
 import { LAYOUT_CONST } from 'types/config';
 import { DRAWER_WIDTH } from 'config';
 import { getDashboards, getWorksets } from 'services';
-import { setDashboards, setSelectedDashboard, setSelectedWorkset, setWorksets } from 'store/reducers/dashboard';
+import { setDashboards, setSelectedDashboard, setSelectedWorksetId, setWorksets } from 'store/reducers/dashboard';
+import { useDispatch } from 'store';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -31,6 +33,7 @@ interface Props {
 
 const MainLayout = ({ children }: Props) => {
   const theme = useTheme();
+  const router = useRouter();
   const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -50,6 +53,11 @@ const MainLayout = ({ children }: Props) => {
   };
 
   useEffect(() => {
+    // Parse URL params
+    const { worksetId, filter } = router.query;
+    console.log(worksetId, filter);
+
+    const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
     Promise.all([getDashboards(), getWorksets()])
       .then((values) => {
         const dashboards: any[] = values[0];
@@ -61,8 +69,14 @@ const MainLayout = ({ children }: Props) => {
         const defaultDashboard = dashboards[0];
         dispatch(setSelectedDashboard(defaultDashboard));
 
-        const selectedWorkset = worksets.filter((item) => item.id === defaultDashboard?.workset)?.[0] ?? null;
-        dispatch(setSelectedWorkset(selectedWorkset));
+        const selectedWorksetId = worksetId || featuredState.worksetId || worksets[0].id;
+        dispatch(setSelectedWorksetId(selectedWorksetId));
+        if (!worksetId && selectedWorksetId) {
+          router.push({
+            pathname: router.pathname,
+            query: { ...router.query, worksetId: selectedWorksetId }
+          });
+        }
       })
       .catch((err) => {
         console.log(err);

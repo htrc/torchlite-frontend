@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import {
   FormControl,
@@ -18,18 +19,16 @@ import {
 } from '@mui/material';
 import { IWorkset } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import { getMapDataSuccess, getTimeLineDataSuccess, getUnfilteredDataSuccess, hasError, setLoading, setSelectedDashboard, setTooltipId } from 'store/reducers/dashboard';
-import { setSelectedWorkset } from 'store/reducers/dashboard';
+import { setTooltipId } from 'store/reducers/dashboard';
+import { setSelectedWorksetId } from 'store/reducers/dashboard';
 import CustomTableRow from 'components/CustomTableRow';
-import { confirmWorkset, getCountryCounts, getVolumnsMetadata } from 'services';
-import CustomBackdrop from 'components/Backdrop';
-import { convertToTimelineChartData } from 'utils/helpers';
 
 const WorksetWidget = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const router = useRouter();
 
-  const { worksets, selectedWorkset, selectedDashboard, loading } = useSelector((state) => state.dashboard);
+  const { worksets, selectedWorksetId, selectedDashboard, loading } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('all');
   const [selected, setSelected] = useState<IWorkset | null>(null);
   const [worksetData, setWorksetData] = useState<IWorkset[]>(worksets);
@@ -40,34 +39,25 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: IWorkset) => {
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, worksetId: prop.id }
+    });
     setSelected(prop);
-    if (selectedDashboard) {
-      dispatch(setLoading(true));
-      confirmWorkset(selectedDashboard?.id, prop.id)
-        .then((response) => {
-          dispatch(setSelectedDashboard(response[0]));
-        })
-        .catch((error) => dispatch(hasError(error)))
-        .finally(() => {
-          dispatch(setLoading(false));
-        });
-      dispatch(setSelectedWorkset(prop));
-    }
-  };
+    dispatch(setSelectedWorksetId(prop.id));
 
-  useEffect(() => {
-    // Get Publication Timeline widget data
-    if (selectedWorkset?.id) {
-      getVolumnsMetadata(selectedWorkset?.id).then((data) => {
-        dispatch(getTimeLineDataSuccess(convertToTimelineChartData(data)));
-        dispatch(getUnfilteredDataSuccess(data));
-        getCountryCounts(data).then((res) => {
-          dispatch(getMapDataSuccess(res));
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWorkset]);
+    // if (selectedDashboard) {
+    //   dispatch(setLoading(true));
+    //   confirmWorkset(selectedDashboard?.id, prop.id)
+    //     .then((response) => {
+    //       dispatch(setSelectedDashboard(response[0]));
+    //     })
+    //     .catch((error) => dispatch(hasError(error)))
+    //     .finally(() => {
+    //       dispatch(setLoading(false));
+    //     });
+    // }
+  };
 
   useEffect(() => {
     if (type === 'all' || type === 'A') {
@@ -78,14 +68,17 @@ const WorksetWidget = () => {
   }, [type, worksets]);
 
   useEffect(() => {
-    if (selectedWorkset) {
-      setSelected(selectedWorkset);
+    if (selectedWorksetId) {
+      const filtered = worksets.filter((workset) => workset.id === selectedWorksetId);
+      if (filtered && filtered.length > 0) {
+        setSelected(filtered[0]);
+      }
     }
 
     setWorksetData(worksets);
     dispatch(setTooltipId(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worksets, dispatch]);
+  }, [worksets, selectedWorksetId]);
 
   return (
     <>
@@ -121,11 +114,10 @@ const WorksetWidget = () => {
         <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
           <Typography variant="h5" color="primary" sx={{ padding: theme.spacing(1.5) }}>
             Selected Workset Name:
-            <Typography>{selectedWorkset?.name}</Typography>
+            <Typography>{selected?.name}</Typography>
           </Typography>
         </Box>
       </Stack>
-      <CustomBackdrop loading={loading} />
     </>
   );
 };
