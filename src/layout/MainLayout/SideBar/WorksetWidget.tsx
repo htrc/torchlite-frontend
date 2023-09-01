@@ -39,12 +39,14 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: IWorkset) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, worksetId: prop.id }
-    });
-    setSelected(prop);
-    dispatch(setSelectedWorksetId(prop.id));
+    if (prop.id !== selectedWorksetId) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, worksetId: prop.id }
+      });
+      setSelected(prop);
+      dispatch(setSelectedWorksetId(prop.id));
+    }
 
     // if (selectedDashboard) {
     //   dispatch(setLoading(true));
