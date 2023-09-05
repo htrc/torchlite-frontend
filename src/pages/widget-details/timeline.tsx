@@ -21,7 +21,7 @@ const TimelineWidgetDetails = () => {
           <DetailsPageHeader />
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <PublicationTimeLineChart hideDownload={false} />
+              <PublicationTimeLineChart detailPage={true} />
             </Grid>
             <Grid item xs={12} md={3}>
               <NestedList widgetType="timeline" />

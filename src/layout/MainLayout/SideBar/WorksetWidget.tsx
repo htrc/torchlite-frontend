@@ -28,7 +28,7 @@ const WorksetWidget = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { worksets, selectedWorksetId, selectedDashboard, loading } = useSelector((state) => state.dashboard);
+  const { worksets, selectedWorksetId } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('all');
   const [selected, setSelected] = useState<IWorkset | null>(null);
   const [worksetData, setWorksetData] = useState<IWorkset[]>(worksets);
@@ -39,24 +39,14 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: IWorkset) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, worksetId: prop.id }
-    });
-    setSelected(prop);
-    dispatch(setSelectedWorksetId(prop.id));
-
-    // if (selectedDashboard) {
-    //   dispatch(setLoading(true));
-    //   confirmWorkset(selectedDashboard?.id, prop.id)
-    //     .then((response) => {
-    //       dispatch(setSelectedDashboard(response[0]));
-    //     })
-    //     .catch((error) => dispatch(hasError(error)))
-    //     .finally(() => {
-    //       dispatch(setLoading(false));
-    //     });
-    // }
+    if (prop.id !== selectedWorksetId) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, worksetId: prop.id, filters: undefined }
+      });
+      setSelected(prop);
+      dispatch(setSelectedWorksetId(prop.id));
+    }
   };
 
   useEffect(() => {

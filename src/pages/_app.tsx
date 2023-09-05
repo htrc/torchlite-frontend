@@ -45,17 +45,7 @@ export default function App({ Component, pageProps }: AppProps & Props) {
   useEffect(() => {
     const init = async () => {
       try {
-        const response = await fetch('/api/set-session-id');
-        const result = await response.json();
-        console.log(result);
-
-        const res = await fetch('/api/dashboard/get-featured-state');
-        const apiRes = await res.json();
-
-        console.log(apiRes);
-        if (apiRes.status === 'success' && apiRes.data) {
-          localStorage.setItem('featured_state', apiRes.data);
-        }
+        await fetch('/api/set-session-id');
       } catch (error) {
         console.error(error);
       } finally {

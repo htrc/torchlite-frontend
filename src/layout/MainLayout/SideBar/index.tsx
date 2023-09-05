@@ -4,13 +4,21 @@ import CleanDataWidget from './CleanDataWidget';
 import DataFilterWidget from './DataFilterWidget';
 import WorksetWidget from './WorksetWidget';
 import { useState, useEffect } from 'react';
+import { hasFilters } from 'utils/helpers';
 
 const SideBar = () => {
   const theme = useTheme();
-  const { selectedWorksetId } = useSelector((state) => state.dashboard);
-  const [isAccordionExpanded, setAccordionExpanded] = useState(!!selectedWorksetId);
+  const { selectedWorksetId, appliedFilters } = useSelector((state) => state.dashboard);
+  const [isWorksetExpanded, setWorksetExpanded] = useState(!!selectedWorksetId);
+  const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(appliedFilters));
+
   useEffect(() => {
-    setAccordionExpanded(!!selectedWorksetId);
+    setFilterExpanded(hasFilters(appliedFilters));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setWorksetExpanded(!!selectedWorksetId);
   }, [selectedWorksetId]);
 
   return (
@@ -34,7 +42,7 @@ const SideBar = () => {
         }
       }}
     >
-      <Accordion expanded={isAccordionExpanded} onChange={(event, newExpanded) => setAccordionExpanded(newExpanded)}>
+      <Accordion expanded={isWorksetExpanded} onChange={(event, newExpanded) => setWorksetExpanded(newExpanded)}>
         <AccordionSummary aria-controls="workset-content" id="workset-header">
           <Typography variant="h5">Select Workset</Typography>
         </AccordionSummary>
@@ -42,7 +50,7 @@ const SideBar = () => {
           <WorksetWidget />
         </AccordionDetails>
       </Accordion>
-      <Accordion>
+      <Accordion expanded={isFilterExpanded} onChange={(event, newExpanded) => setFilterExpanded(newExpanded)}>
         <AccordionSummary aria-controls="filter-content" id="filter-header">
           <Typography variant="h5">Apply Data Filters</Typography>
         </AccordionSummary>

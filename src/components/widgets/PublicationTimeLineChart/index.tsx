@@ -17,7 +17,7 @@ import { saveAs } from 'file-saver';
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
-export const PublicationTimeLineChart = ({ hideDownload = true }) => {
+export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
@@ -149,12 +149,19 @@ export const PublicationTimeLineChart = ({ hideDownload = true }) => {
         position: 'relative'
       }}
     >
-      <NextLink href="/widget-details/timeline">
-        <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+      {detailPage ? (
+        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
           Publication Date Timeline
         </Typography>
-      </NextLink>
-      {!hideDownload && (
+      ) : (
+        <NextLink href="/widget-details/timeline">
+          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+            Publication Date Timeline
+          </Typography>
+        </NextLink>
+      )}
+
+      {detailPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{

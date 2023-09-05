@@ -23,7 +23,7 @@ const MapWidget = () => {
           <DetailsPageHeader />
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <ChorloplethMap hideDownload={false} />
+              <ChorloplethMap detailPage={true} />
             </Grid>
             <Grid item xs={12} md={3}>
               <NestedList widgetType="map" />

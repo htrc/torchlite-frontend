@@ -6,7 +6,8 @@ export type IDashboardProps = {
   worksets: IWorkset[];
   mapData: IMapData[];
   mapRangedData: IMapData[];
-  unfilteredData: ITimelineChart[];
+  worksetMetadata: ITimelineChart[];
+  appliedFilters: object | null;
   timelineData: ITimelineChart[];
   timelineRangedData: ITimelineChart[];
   selectedWorksetId: string | null;
