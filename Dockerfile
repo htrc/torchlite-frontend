@@ -12,6 +12,7 @@ COPY public ./public
 COPY env.sh ./
 COPY --chown=node:node build/.next/standalone ./
 COPY --chown=node:node build/.next/static ./.next/static
+COPY --chown=node:node database.sqlite3 ./
 
 RUN install -o node -g node -m 644 /dev/null public/__appenv.js
 
