@@ -18,7 +18,7 @@ import { transformMapDataForDataTable } from 'utils/helpers';
 import { mapCSVHeaders } from 'data/react-table';
 import { saveAs } from 'file-saver';
 
-export const ChorloplethMap = ({ hideDownload = true }) => {
+export const ChorloplethMap = ({ detailPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
@@ -522,12 +522,19 @@ export const ChorloplethMap = ({ hideDownload = true }) => {
         position: 'relative'
       }}
     >
-      <NextLink href="/widget-details/mapping">
-        <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+      {detailPage ? (
+        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
           Mapping Contributor Data
         </Typography>
-      </NextLink>
-      {!hideDownload && (
+      ) : (
+        <NextLink href="/widget-details/mapping">
+          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+            Mapping Contributor Data
+          </Typography>
+        </NextLink>
+      )}
+
+      {detailPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{

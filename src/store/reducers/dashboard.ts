@@ -11,7 +11,8 @@ const initialState: IDashboardProps = {
   filtering: {},
   mapData: [],
   mapRangedData: [],
-  unfilteredData: [],
+  worksetMetadata: [],
+  appliedFilters: {},
   timelineData: [],
   timelineRangedData: [],
   selectedWorksetId: null,
@@ -39,14 +40,17 @@ const slice = createSlice({
     getMapDataSuccess(state, action) {
       state.mapData = action.payload;
     },
-    getUnfilteredDataSuccess(state, action) {
-      state.unfilteredData = action.payload;
+    getWorksetMetadataSuccess(state, action) {
+      state.worksetMetadata = action.payload;
     },
     getTimeLineDataSuccess(state, action) {
       state.timelineData = action.payload;
     },
     setSelectedWorksetIdSuccess(state, action) {
       state.selectedWorksetId = action.payload;
+    },
+    setAppliedFiltersSuccess(state, action) {
+      state.appliedFilters = action.payload;
     },
     setSelectedDashboard(state, action) {
       state.selectedDashboard = action.payload;
@@ -83,12 +87,13 @@ const slice = createSlice({
 export const {
   hasError,
   getMapDataSuccess,
-  getUnfilteredDataSuccess,
+  getWorksetMetadataSuccess,
   getTimeLineDataSuccess,
   setDashboards,
   setLoading,
   setLoadingMap,
   setSelectedWorksetIdSuccess,
+  setAppliedFiltersSuccess,
   setTooltipId,
   setSelectedDashboard,
   setWorksets,
@@ -96,23 +101,43 @@ export const {
   setMapRangedData
 } = slice.actions;
 
+export const setAppliedFilters = createAsyncThunk<void, object, {}>(
+  'dashboard/setAppliedFilters',
+  async (appliedFilters, { dispatch, getState }) => {
+    try {
+      dispatch(setAppliedFiltersSuccess(appliedFilters));
+
+      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
+      featuredState.filters = appliedFilters;
+      await setFeaturedState(JSON.stringify(featuredState));
+
+      localStorage.setItem('featured_state', JSON.stringify(featuredState));
+    } catch (error) {
+      console.error(error);
+      // throw error;
+    }
+  }
+);
+
 export const setSelectedWorksetId = createAsyncThunk<void, string, {}>(
   'dashboard/setSelectedWorksetId',
   async (worksetId, { dispatch, getState }) => {
     try {
       dispatch(setSelectedWorksetIdSuccess(worksetId));
-
-      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
-      featuredState.worksetId = worksetId;
-      await setFeaturedState(JSON.stringify(featuredState));
-
-      localStorage.setItem('featured_state', JSON.stringify(featuredState));
+      dispatch(setAppliedFiltersSuccess({}));
 
       const response = await getWorksetMetadata(worksetId);
       const data = response.data;
 
+      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
+      featuredState.worksetId = worksetId;
+      featuredState.filters = {};
+      await setFeaturedState(JSON.stringify(featuredState));
+
+      localStorage.setItem('featured_state', JSON.stringify(featuredState));
+
       dispatch(getTimeLineDataSuccess(convertToTimelineChartData(data.data)));
-      dispatch(getUnfilteredDataSuccess(data.data));
+      dispatch(getWorksetMetadataSuccess(data.data));
 
       const countryCounts = await getCountryCounts(data.data);
       dispatch(getMapDataSuccess(countryCounts));

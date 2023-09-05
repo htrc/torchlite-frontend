@@ -49,3 +49,13 @@ export const getCookieValue = (name: string, cookieString: string) => {
   const matches = cookieString.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
   return matches ? matches.pop() : null;
 };
+
+export function hasFilters(filterObj: any): boolean {
+  return Object.values(filterObj).some((value: any) => {
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    } else {
+      return value !== null && value !== undefined;
+    }
+  });
+}

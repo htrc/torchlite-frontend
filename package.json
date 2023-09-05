@@ -49,6 +49,7 @@
     "next-auth": "^4.19.2",
     "next-transpile-modules": "^9.0.0",
     "notistack": "^2.0.8",
+    "qs": "^6.11.2",
     "react": "18.2.0",
     "react-csv": "^2.2.2",
     "react-device-detect": "^2.2.2",

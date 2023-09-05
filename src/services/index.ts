@@ -10,19 +10,19 @@ export function getDashboards() {
 }
 
 export function getWorksets() {
-  return axios.get(`/worksets`);
-}
-
-export function getTimeLineData() {
-  return defaultAxios.get('/api/dashboard/publicationDateTimeLine');
+  return defaultAxios.get(`/api/worksets`);
 }
 
 export function getWorksetMetadata(worksetId: any) {
-  return defaultAxios.get(`/api/dashboard/get-workset-metadata/${worksetId}`);
+  return defaultAxios.get(`/api/worksets/${worksetId}/metadata`);
 }
 
 export function setFeaturedState(data: any) {
-  return defaultAxios.post('/api/dashboard/set-featured-state', { data });
+  return defaultAxios.post('/api/featured-state', { data });
+}
+
+export function getFeaturedState() {
+  return defaultAxios.get('/api/featured-state');
 }
 
 export async function getMapWidgetData(selectedWorksetId: any) {
