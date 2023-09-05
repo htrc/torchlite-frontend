@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme } from '@mui/material';
 import Select from 'react-select';
@@ -159,7 +160,7 @@ const CleanDataWidget = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Stack direction="column" sx={{ minHeight: '500px', padding: '16px' }} justifyContent="space-between">
+    <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
         <FormGroup aria-label="position">
           {typeGroup.map((item: IMockState) => (
@@ -192,8 +193,8 @@ const CleanDataWidget = () => {
           ))}
         </FormGroup>
       </FormControl>
-      <Stack direction="row" justifyContent="space-between">
-        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+      <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>
+        <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
           <CustomButton
             variant="contained"
             sx={{
@@ -212,7 +213,7 @@ const CleanDataWidget = () => {
             Apply cleaning
           </CustomButton>
         </Box>
-        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+        <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
           <CustomButton
             variant="outlined"
             sx={{

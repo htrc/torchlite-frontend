@@ -1,6 +1,7 @@
 import { useSelector } from 'store';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, useTheme } from '@mui/material';
 import CleanDataWidget from './CleanDataWidget';
+import DownloadWidget from './DownloadWidget';
 import DataFilterWidget from './DataFilterWidget';
 import WorksetWidget from './WorksetWidget';
 import { useState, useEffect } from 'react';
@@ -64,6 +65,14 @@ const SideBar = () => {
         </AccordionSummary>
         <AccordionDetails>
           <CleanDataWidget />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
+        <AccordionSummary aria-controls="data-content" id="data-header">
+          <Typography variant="h5">Download the Data</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <DownloadWidget />
         </AccordionDetails>
       </Accordion>
     </Box>
