@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
@@ -6,7 +6,8 @@ WORKDIR /app
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN apk add --no-cache dumb-init bash gawk
+#RUN apk add --no-cache dumb-init bash gawk
+RUN apt install dumb-init bash gawk
 
 COPY public ./public
 COPY env.sh ./
