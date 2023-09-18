@@ -7,13 +7,13 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED 1
 
 #RUN apk add --no-cache dumb-init bash gawk
-RUN apt-get update && apt-get -y install dumb-init bash gawk
+RUN apt-get update && apt-get -y install dumb-init bash gawk sqlite
 
 COPY public ./public
 COPY env.sh ./
 COPY --chown=node:node build/.next/standalone ./
 COPY --chown=node:node build/.next/static ./.next/static
-COPY --chown=node:node database.sqlite3 ./
+COPY --chown=node:node db ./db
 
 RUN install -o node -g node -m 644 /dev/null public/__appenv.js
 
