@@ -4,7 +4,7 @@ import { open } from 'sqlite';
 import { getCookieValue } from 'utils/helpers';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const db = await open({ filename: './database.sqlite3', driver: sqlite3.Database });
+  const db = await open({ filename: './db/database.sqlite3', driver: sqlite3.Database });
   const sessionId = getCookieValue('session_id', req.headers.cookie || '');
 
   if (!sessionId) {
