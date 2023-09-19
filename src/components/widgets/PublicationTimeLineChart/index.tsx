@@ -82,7 +82,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat((d) => Math.round(d));
     svgElement
       .append('g')
       .attr('transform', 'translate(0,' + boundsHeight + ')')
