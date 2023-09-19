@@ -21,7 +21,8 @@ const GuestGuard = ({ children }: GuardProps) => {
       const res = await fetch('/api/auth/protected');
       const json = await res.json();
       if (json.protected) {
-        let RedirectPath = router.query.from ? router.query.from : APP_DEFAULT_PATH;
+        // let RedirectPath = router.query.from ? router.query.from : APP_DEFAULT_PATH;
+        let RedirectPath = APP_DEFAULT_PATH;
         router.push({
           pathname: RedirectPath as string,
           query: {}

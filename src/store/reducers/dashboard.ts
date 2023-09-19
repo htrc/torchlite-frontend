@@ -12,6 +12,7 @@ const initialState: IDashboardProps = {
   mapData: [],
   mapRangedData: [],
   worksetMetadata: [],
+  filteredWorksetMetadata: [],
   appliedFilters: {},
   timelineData: [],
   timelineRangedData: [],
@@ -69,6 +70,9 @@ const slice = createSlice({
     },
     setMapRangedData(state, action) {
       state.mapRangedData = action.payload;
+    },
+    setFilteredWorksetMetadata(state, action) {
+      state.filteredWorksetMetadata = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -98,7 +102,8 @@ export const {
   setSelectedDashboard,
   setWorksets,
   setTimelineRangedData,
-  setMapRangedData
+  setMapRangedData,
+  setFilteredWorksetMetadata
 } = slice.actions;
 
 export const setAppliedFilters = createAsyncThunk<void, object, {}>(
@@ -137,6 +142,7 @@ export const setSelectedWorksetId = createAsyncThunk<void, string, {}>(
       localStorage.setItem('featured_state', JSON.stringify(featuredState));
 
       dispatch(getTimeLineDataSuccess(convertToTimelineChartData(data.data)));
+      dispatch(setFilteredWorksetMetadata(data.data));
       dispatch(getWorksetMetadataSuccess(data.data));
 
       const countryCounts = await getCountryCounts(data.data);

@@ -11,7 +11,13 @@ import { filterKeys } from 'data/datafilters';
 import genreData from 'data/genreData';
 import { IFilterKey } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
-import { getMapDataSuccess, getTimeLineDataSuccess, setLoading, setAppliedFilters } from 'store/reducers/dashboard';
+import {
+  getMapDataSuccess,
+  getTimeLineDataSuccess,
+  setLoading,
+  setAppliedFilters,
+  setFilteredWorksetMetadata
+} from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
 import { getCountryCounts } from 'services';
 import { convertToTimelineChartData } from 'utils/helpers';
@@ -82,6 +88,7 @@ const DataFilterWidget = () => {
       dispatch(getMapDataSuccess(res));
     });
     dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
+    dispatch(setFilteredWorksetMetadata(filtered));
     dispatch(setLoading(false));
   };
 
@@ -268,8 +275,8 @@ const DataFilterWidget = () => {
           ))}
         </FormGroup>
       </FormControl>
-      <Stack direction="row" justifyContent="space-between">
-        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+      <Stack direction="row" justifyContent="space-between" mt={3}>
+        <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
           <CustomButton
             variant="contained"
             sx={{
@@ -289,7 +296,7 @@ const DataFilterWidget = () => {
             Apply filters
           </CustomButton>
         </Box>
-        <Box mb={4} sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
+        <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
           <CustomButton
             variant="outlined"
             sx={{
