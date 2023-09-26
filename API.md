@@ -273,7 +273,7 @@ When the login action is invoked, the following steps should be taken:
   window/pop-up allowing the user to pick an institution from the downloaded list, pre-selecting the one corresponding 
   to the `tag` and `entityID` retrieved from the cookie (if the cookie exists); for an example of what the modal 
   window could look like, see https://analytics.hathitrust.org/ (click the `Sign In` button)
-- after the user picks the institution, create/update the `idp_pref` cookie (no expiry) with the (`tag`, `entityID`) 
+- after the user picks the institution, create/update the `idp_pref` cookie (set `maxAge: 60 * 60 * 24 * 365`) with the (`tag`, `entityID`) 
   user selection, then invoke the `signIn` flow via `next-auth` as follows:
   - if `tag == "hathi"` call  
     ```typescript
