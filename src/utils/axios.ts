@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { env } from 'utils/utils';
 
 // const axiosServices = axios.create({ baseURL: env('BASE_API_URI') });
 

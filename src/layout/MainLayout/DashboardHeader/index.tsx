@@ -8,7 +8,7 @@ const DashboardHeader = () => {
   const theme = useTheme();
   const router = useRouter();
   const { data: session } = useSession();
-  const widgetList1 = ['Mapping Contrubutor Data', 'Publication Date Timeline', 'Workset Languages'];
+  const widgetList1 = ['Mapping Contributor Data', 'Publication Date Timeline', 'Workset Languages'];
   const widgetList2 = [
     'Jupyter Notebooks',
     'Extracted Features API Demo',

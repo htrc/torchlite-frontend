@@ -24,7 +24,7 @@ export default function SignIn({ providers, csrfToken }: any) {
             <NextLink href="/dashboard">
               <Link>
                 <Stack direction="row" alignItems="center" sx={{ marginBottom: '1rem', cursor: 'pointer' }}>
-                  <ArrowLeftOutlined style={{ paddingRight: '4px' }} />
+                  <ArrowLeftOutlined style={{ paddingRight: '4px' }} rev={undefined} />
                   <Typography variant="h5">Back to Dashboard</Typography>
                 </Stack>
               </Link>

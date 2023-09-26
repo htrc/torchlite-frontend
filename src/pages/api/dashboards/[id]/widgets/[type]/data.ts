@@ -3,8 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/auth/[...nextauth]';
 import axios from 'utils/axios';
 import { AuthInfo } from 'types/auth';
-import { WorksetSummary } from 'types/torchlite';
-import { getSessionAuthInfo } from '../../../utils/database';
+import { getSessionAuthInfo } from 'utils/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -23,10 +22,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     }
 
-    const worksets = await axios.get<WorksetSummary[]>(`/worksets`, {
+    const dashboardId = req.query.id as string;
+    const widgetType = req.query.type as string;
+    const widgetData = await axios.get(`/dashboards/${dashboardId}/widgets/${widgetType}/data`, {
       headers: headers
     });
-    res.status(200).json(worksets);
+    res.status(200).json(widgetData);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });

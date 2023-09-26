@@ -39,21 +39,11 @@ interface Props {
   pageProps: any;
 }
 
-export default function App({ Component, pageProps }: AppProps & Props) {
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps & Props) {
   const [isLoading, setIsLoading] = useState(true);
   const getLayout = Component.getLayout ?? ((page: any) => page);
   useEffect(() => {
-    const init = async () => {
-      try {
-        await fetch('/api/set-session-id');
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    init();
+    setIsLoading(false);
   }, []);
 
   if (isLoading) {
@@ -66,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps & Props) {
         <ThemeCustomization>
           <Locales>
             <ScrollTop>
-              <SessionProvider session={pageProps.session} refetchInterval={0}>
+              <SessionProvider session={session} refetchInterval={0}>
                 <>
                   <Notistack>
                     <Snackbar />

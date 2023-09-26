@@ -23,7 +23,10 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "types": ["node", "webpack-env"],
-    "typeRoots": ["../node_modules/@types", "../@types", "./types"]
+    "typeRoots": ["../node_modules/@types", "../@types", "./types"],
+    "paths": {
+      "@/auth/*": ["pages/api/auth/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

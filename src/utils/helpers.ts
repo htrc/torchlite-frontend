@@ -1,4 +1,5 @@
 import { IMapData, ITimelineChart } from 'types/chart';
+import { ZodObject } from 'zod';
 
 export type MapDataTableEntry = {
   countryISO: string;
@@ -58,4 +59,14 @@ export function hasFilters(filterObj: any): boolean {
       return value !== null && value !== undefined;
     }
   });
+}
+
+export function pickRandom<T>(arr: T[]): T {
+  if (!arr) throw Error('Cannot pick random element from empty array');
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function isValidBody<T>(body: any, bodySchema: ZodObject<any>): body is T {
+  const { success } = bodySchema.safeParse(body);
+  return success;
 }
