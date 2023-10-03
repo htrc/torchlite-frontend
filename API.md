@@ -237,7 +237,7 @@ The following actions could be taken by the front-end to obtain all the informat
   browser session storage entry should be deleted (if present) once the `DashboardState` is retrieved;
 - each widget component can display all the static parts, and then present a "busy wait" (spinning wheel) while 
   waiting for its data to be retrieved; each widget component can retrieve its own data by calling 
-  [Get Widget Data](#get-widget-data) with, passing the dashboard `id` (from the previously retrieved 
+  [Get Widget Data](#get-widget-data), passing the dashboard `id` (from the previously retrieved 
   [DashboardState](#dashboardstate)) and `type` as path parameters in the request
 
 At this point the dashboard should be fully rendered.
