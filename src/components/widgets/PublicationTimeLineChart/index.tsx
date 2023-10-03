@@ -76,7 +76,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
     svgElement.selectAll('*').remove();
 
     const xAxisGenerator = d3.axisBottom(xScaleHistogram);
-    const dateSpread = dateRange[1] - dateRange[0];
+    const dateSpread = dateRange[1] - dateRange[0] > 0 ? dateRange[1] - dateRange[0] : 1;
     if (dateSpread < 10) {
       xAxisGenerator.ticks(dateSpread).tickFormat((d) => Math.round(d));
     }
@@ -105,7 +105,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
         key={i}
         fill="#6689c6"
         x={xScaleHistogram(bucket.year) + BUCKET_PADDING / 2}
-        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (1 + dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
+        width={Math.abs(1 + dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (1 + dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
         y={yScaleHistogram(bucket.count)}
         height={boundsHeight - yScaleHistogram(bucket.count)}
       />
