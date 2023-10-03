@@ -75,7 +75,15 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat((d) => Math.round(d));
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    const dateSpread = dateRange[1]-dateRange[0];
+    if (dateSpread < 10) {
+      xAxisGenerator.ticks(dateSpread).tickFormat((d) => Math.round(d));
+    }
+    else {
+      xAxisGenerator.tickFormat((d) => Math.round(d));
+    }
+
     svgElement
       .append('g')
       .attr('transform', 'translate(0,' + boundsHeight + ')')
@@ -90,7 +98,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
       yAxisGenerator.ticks().tickFormat(d3.format('~d'));
     }
     svgElement.append('g').call(yAxisGenerator);
-  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue, dateRange]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
     return (
