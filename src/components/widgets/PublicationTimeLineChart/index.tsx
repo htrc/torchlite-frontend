@@ -70,7 +70,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
   //x-axis scale for Histogram
-  const xScaleHistogram = d3.scaleUtc([new Date(String(dateRange[0])),new Date(String(dateRange[1]))],[0, boundsWidth]);
+  const xScaleHistogram = d3.scaleTime([new Date(String(dateRange[0])),new Date(String(dateRange[1]+1))],[0, boundsWidth]);
   //y-axis scale for Histogram
   const yScaleHistogram: any = d3
     .scaleLinear()
@@ -86,17 +86,16 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
     svgElement.selectAll('*').remove();
 
     const xAxisGenerator = d3.axisBottom(xScaleHistogram);
-    const dateSpread = dateRange[1]-dateRange[0];
+    const dateSpread = dateRange[1] - dateRange[0];
     if (dateSpread < 10) {
       xAxisGenerator.ticks(dateSpread).tickFormat(d3.timeFormat('%Y'));
     }
     else {
       xAxisGenerator.tickFormat(d3.timeFormat('%Y'));
     }
-//    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat(d3.timeFormat('%Y'));
     svgElement
       .append('g')
-      .attr('transform', 'translate(0,' + boundsHeight + ')')
+      .attr('transform', `translate(0,${boundsHeight})`)
       .call(xAxisGenerator);
 
     // @ts-ignore
@@ -116,7 +115,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
         key={i}
         fill="#6689c6"
         x={xScaleHistogram(new Date(bucket.date)) + BUCKET_PADDING / 2}
-        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
+        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (1 + dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
         y={yScaleHistogram(bucket.value)}
         height={boundsHeight - yScaleHistogram(bucket.value)}
       />
