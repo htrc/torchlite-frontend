@@ -70,7 +70,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
   //x-axis scale for Histogram
-  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
+  const xScaleHistogram = d3.scaleUtc([new Date(String(dateRange[0])),new Date(String(dateRange[1]))],[0, boundsWidth]);
   //y-axis scale for Histogram
   const yScaleHistogram: any = d3
     .scaleLinear()
@@ -83,7 +83,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat((d) => Math.round(d));
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat(d3.timeFormat('%Y'));
     svgElement
       .append('g')
       .attr('transform', 'translate(0,' + boundsHeight + ')')
@@ -105,7 +105,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
       <rect
         key={i}
         fill="#6689c6"
-        x={xScaleHistogram(Number(bucket.date)) + BUCKET_PADDING / 2}
+        x={xScaleHistogram(new Date(bucket.date)) + BUCKET_PADDING / 2}
         width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
         y={yScaleHistogram(bucket.value)}
         height={boundsHeight - yScaleHistogram(bucket.value)}
@@ -219,7 +219,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
           </g>
           <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust publication years on timeline" value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </MainCard>
   );

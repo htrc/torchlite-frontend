@@ -48,7 +48,8 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   //group by dob mapData
   const modifiedDataHistogram = useMemo(() => {
     return mapData.reduce((prev: any, curr: IMapData) => {
-      const dob = Number(curr.dob.slice(0, 4));
+      const slice_size = curr.dob[0] === '-' ? 5 : 4;
+      const dob = Number(curr.dob.slice(0, slice_size));
       if (prev[dob]) return { ...prev, [dob]: prev[dob] + 1 };
       else return { ...prev, [dob]: 1 };
     }, {});
@@ -66,7 +67,10 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   };
 
   const mapDataHistogram = useMemo(() => {
-    return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
+    return mapData.filter((item) => {
+      const slice_size = item.dob[0] === '-' ? 5 : 4;
+      return(Number(item.dob.slice(0, slice_size)) >= dateRange[0] && Number(item.dob.slice(0, slice_size)) <= dateRange[1])
+    });
   }, [mapData, dateRange]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
@@ -581,7 +585,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
         {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </MainCard>
   );

@@ -112,7 +112,10 @@ export const getCountryCounts = async (volumns: any) => {
             city: city?.value ?? '',
             cityCoords: cityCoords?.value ?? ''
           };
-          iso_codes_arr.push(iso_codes_per_tmp);
+
+          if (!Object.values(iso_codes_per_tmp).includes('')) {
+            iso_codes_arr.push(iso_codes_per_tmp);
+          }
         }
       });
       return iso_codes;

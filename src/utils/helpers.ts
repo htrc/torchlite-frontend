@@ -16,7 +16,12 @@ export function transformMapDataForDataTable(data: IMapData[]): MapDataTableEntr
     const longitude = parseFloat(coords[0]);
 
     // Extracting year of birth
-    const yearOfBirth = new Date(entry.dob).getFullYear();
+    if (entry.dob[0] === '-') {
+      var yearOfBirth = new Date([entry.dob.slice(0,1),'00',entry.dob.slice(1)].join('')).getUTCFullYear();
+    }
+    else {
+      var yearOfBirth = new Date(entry.dob).getUTCFullYear();
+    }
 
     return {
       countryISO: entry.countryiso,
