@@ -1,4 +1,4 @@
-import { ITimelineChart, IMapData } from './chart';
+import { ITimelineChart, IMapData, ILanguageChart } from './chart';
 
 export type IDashboardProps = {
   dashboards: IDashboard[];
@@ -6,6 +6,8 @@ export type IDashboardProps = {
   worksets: IWorkset[];
   mapData: IMapData[];
   mapRangedData: IMapData[];
+  languageData: ILanguageChart[];
+  languageRangedData: ILanguageChart[];
   worksetMetadata: ITimelineChart[];
   filteredWorksetMetadata: ITimelineChart[];
   appliedFilters: object | null;

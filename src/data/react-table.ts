@@ -51,3 +51,21 @@ export const timelineCSVHeaders = [
   { label: 'Publication Date', key: 'date' },
   { label: 'Count', key: 'value' }
 ];
+
+export const languageColumns = [
+  {
+    Header: 'Language',
+    accessor: 'lang',
+    className: 'cell-center'
+  },
+  {
+    Header: 'Count',
+    accessor: 'count',
+    className: 'cell-center'
+  }
+];
+
+export const languageCSVHeaders = [
+  { label: 'Language', key: 'lang' },
+  { label: 'Count', key: 'count' }
+];

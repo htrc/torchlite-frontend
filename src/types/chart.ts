@@ -11,3 +11,7 @@ export interface IMapData {
   dob: string;
   city: string;
 }
+
+export interface ILanguageChart {
+  language: string | string[];
+}

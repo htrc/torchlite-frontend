@@ -11,6 +11,8 @@ const initialState: IDashboardProps = {
   filtering: {},
   mapData: [],
   mapRangedData: [],
+  languageData: [],
+  languageRangedData: [],
   worksetMetadata: [],
   filteredWorksetMetadata: [],
   appliedFilters: {},
@@ -47,6 +49,9 @@ const slice = createSlice({
     getTimeLineDataSuccess(state, action) {
       state.timelineData = action.payload;
     },
+    getLanguageDataSuccess(state, action) {
+      state.languageData = action.payload;
+    },
     setSelectedWorksetIdSuccess(state, action) {
       state.selectedWorksetId = action.payload;
     },
@@ -67,6 +72,9 @@ const slice = createSlice({
     },
     setTimelineRangedData(state, action) {
       state.timelineRangedData = action.payload;
+    },
+    setLanguageRangedData(state, action) {
+      state.languageRangedData = action.payload;
     },
     setMapRangedData(state, action) {
       state.mapRangedData = action.payload;
@@ -93,6 +101,7 @@ export const {
   getMapDataSuccess,
   getWorksetMetadataSuccess,
   getTimeLineDataSuccess,
+  getLanguageDataSuccess,
   setDashboards,
   setLoading,
   setLoadingMap,
@@ -102,6 +111,7 @@ export const {
   setSelectedDashboard,
   setWorksets,
   setTimelineRangedData,
+  setLanguageRangedData,
   setMapRangedData,
   setFilteredWorksetMetadata
 } = slice.actions;
