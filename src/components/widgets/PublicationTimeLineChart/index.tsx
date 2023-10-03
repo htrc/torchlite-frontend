@@ -80,10 +80,20 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const maxDataValue = Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)));
 
   useEffect(() => {
+    console.log(dateRange)
+    console.log(dateRange[1]-dateRange[0])
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat(d3.timeFormat('%Y'));
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    const dateSpread = dateRange[1]-dateRange[0];
+    if (dateSpread < 10) {
+      xAxisGenerator.ticks(dateSpread).tickFormat(d3.timeFormat('%Y'));
+    }
+    else {
+      xAxisGenerator.tickFormat(d3.timeFormat('%Y'));
+    }
+//    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat(d3.timeFormat('%Y'));
     svgElement
       .append('g')
       .attr('transform', 'translate(0,' + boundsHeight + ')')
@@ -98,7 +108,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
       yAxisGenerator.ticks().tickFormat(d3.format('~d'));
     }
     svgElement.append('g').call(yAxisGenerator);
-  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue, dateRange]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
     return (
