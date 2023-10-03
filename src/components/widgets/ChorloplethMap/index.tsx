@@ -550,7 +550,7 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );

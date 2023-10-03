@@ -190,7 +190,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
           </g>
           <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust publication years on timeline" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );
