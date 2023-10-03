@@ -95,18 +95,18 @@ type WorksetInfo = WorksetSummary & {
 ### VolumeMetadata
 ```typescript
 type VolumeMetadata = {
-  htid: string;                     // the HathiTrust volume identifier
-  title: string;                    // the volume title
-  pubDate: number;                  // the publication date
-  genre: string | string[];         // one or more genre categories
-  typeOfResource: string;           // the type of resource
-  category: string | string[];      // one or more categories
-  contributor: string | string[];   // one or more contributors
-  publisher: string | string[];     // one or more publishers
-  accessRights: string;             // the volume access rights
-  pubPlace: string | string[];      // the place of publication
-  language: string | string[];      // one or more languages
-  sourceInstitution: string;        // the source institution code
+  htid: string;                           // the HathiTrust volume identifier
+  title: string;                          // the volume title
+  pubDate: number | null;                 // the publication date
+  genre: string | string[];               // one or more genre categories
+  typeOfResource: string;                 // the type of resource
+  category: string | string[] | null;     // one or more categories
+  contributor: string | string[] | null;  // one or more contributors
+  publisher: string | string[] | null;    // one or more publishers
+  accessRights: string;                   // the volume access rights
+  pubPlace: string | string[] | null;     // the place of publication
+  language: string | string[] | null;     // one or more languages
+  sourceInstitution: string;              // the source institution code
 }
 ```
 
