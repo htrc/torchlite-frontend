@@ -69,7 +69,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
   const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
   //y-axis scale for Histogram
   const maxDataValue = Math.max(...data.map((item) => item.count));
-  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]);
+  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]).nice();
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
@@ -82,7 +82,13 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
       .call(xAxisGenerator);
 
     // @ts-ignore
-    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
+    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram)
+    if (maxDataValue < 10) {
+      yAxisGenerator.ticks(maxDataValue).tickFormat(d3.format('~d'));
+    }
+    else {
+      yAxisGenerator.ticks().tickFormat(d3.format('~d'));
+    }
     svgElement.append('g').call(yAxisGenerator);
   }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
 
