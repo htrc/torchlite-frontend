@@ -75,7 +75,8 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const yScaleHistogram: any = d3
     .scaleLinear()
     .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
-    .range([boundsHeight, 0]);
+    .range([boundsHeight, 0])
+    .nice();
   const maxDataValue = Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)));
 
   useEffect(() => {
@@ -89,7 +90,13 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
       .call(xAxisGenerator);
 
     // @ts-ignore
-    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
+    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram)
+    if (maxDataValue < 10) {
+      yAxisGenerator.ticks(maxDataValue).tickFormat(d3.format('~d'));
+    }
+    else {
+      yAxisGenerator.ticks().tickFormat(d3.format('~d'));
+    }
     svgElement.append('g').call(yAxisGenerator);
   }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
 
