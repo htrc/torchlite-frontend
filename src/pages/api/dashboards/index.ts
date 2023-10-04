@@ -8,6 +8,8 @@ import { getSessionAuthInfo } from 'utils/database';
 import { getCookie, setCookie } from 'cookies-next';
 import { pickRandom } from 'utils/helpers';
 
+const torchliteUid: string = '95164779-1fc9-4592-9c74-7a014407f46d';
+
 async function cloneDashboard(dashboardId: string, headers: any): Promise<DashboardSummary> {
   const { worksetId, filters, widgets } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headers
@@ -38,7 +40,7 @@ async function getFeaturedDashboardClone(headers: any): Promise<[DashboardSummar
     // no featured dashboard cookie set - retrieve the list of featured dashboards
     const featuredDashboards = await axios.get<DashboardSummary[]>(`/dashboards`, {
       headers: headers,
-      params: { owner: 'torchlite' }
+      params: { owner: torchliteUid }
     });
     if (featuredDashboards) {
       // ...and pick a random one
