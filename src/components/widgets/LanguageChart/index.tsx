@@ -129,37 +129,28 @@ export const LanguageChart = ({ detailPage = false }) => {
 
   const arcs = ({ inputRef }, langCs : LangCount[]) => {
     const container = d3.select(inputRef.current);
-    console.log(container.selectAll('svg'))
-    console.log(typeof(container.selectAll('svg')))
-    container.selectAll('svg').remove();
     const colors = d3.scaleOrdinal(d3.schemeCategory10);
     const radius = Math.min(width, height) / 2,
     outerRadius = radius - 10;
 
     const svgColor = container
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
+      .select('svg')
       .attr('viewBox', [0, 0, width, height])
-      .style('overflow', 'visible')
-      .style('display', 'block');
-
-    console.log(svgColor)
-    console.log(typeof(svgColor))
+      .attr('style', 'width: 100%; height: auto; height: intrinsic;')
+      .select('g')
 
     const counts = langCs.map((d) => d.count);
-    console.log(counts.reduce((partialSum, a) => partialSum + a, 0))
+//    console.log(counts.reduce((partialSum, a) => partialSum + a, 0))
 
     const pieGenerator = d3.pie();
     const arcs = pieGenerator(counts);
     const generatedArcs = svgColor.selectAll("path")
       .data(arcs)
     
-    console.log(arcs)
+//    console.log(arcs)
     generatedArcs.enter()
       .append('path')
       .attr('d',function(d) {
-        console.log(d);
         return d3.arc()({
           innerRadius: 0,
           outerRadius: outerRadius,
