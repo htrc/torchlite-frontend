@@ -425,7 +425,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       .attr('class', 'marker')
       .attr('cx', (d) => projection(d.coordinates)[0])
       .attr('cy', (d) => projection(d.coordinates)[1])
-      .attr('r', (d) => (8 / maxPopulation) * d.population)
+      .attr('r', (d) => (10 / maxPopulation) * d.population > 1 ? (10 / maxPopulation) * d.population : 1)
       // .attr('r', (d) => (maxPopulation > 8 ? (8 / maxPopulation) * d.population : d.population * 1.5))
       .each(function (d) {
         d.initialRadius = d3.select(this).attr('r');
