@@ -133,7 +133,7 @@ const DataFilterWidget = () => {
       .filter((type) => type !== undefined)
       .sort()
       .map((type) => ({ value: type, label: type, key: 'type' }));
-    const categories = [...new Set(timeLineData.map((obj: any) => obj.metadata.category))]
+    const categories = [...new Set(timeLineData.flatMap((obj: any) => obj.metadata.category))]
       .filter((category) => category !== undefined)
       .sort()
       .map((category) => ({ value: category, label: category, key: 'category' }));
@@ -153,7 +153,7 @@ const DataFilterWidget = () => {
       .filter((pubPlace) => pubPlace !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'pubPlace' }));
-    const languages = [...new Set(timeLineData.map((obj: any) => obj.metadata.language))]
+    const languages = [...new Set(timeLineData.flatMap((obj: any) => obj.metadata.language))]
       .filter((language) => language !== undefined)
       .sort()
       .map((language) => ({ value: language, label: language, key: 'language' }));
