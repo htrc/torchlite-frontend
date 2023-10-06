@@ -12,9 +12,9 @@ import CustomBackdrop from 'components/Backdrop';
 
 const DashboardDefault = () => {
   const { loading } = useSelector((state) => state.dashboard);
-  const gridItem = (widget : JSX.Element) => <Grid item xs={12} md={6}>{widget}</Grid>
+  const gridItem = (widget : JSX.Element, index : number) => <Grid item xs={12} md={6} key={index}>{widget}</Grid>
   let widgets = [<PublicationTimeLineChart />,<ChorloplethMap />,<LanguageChart />]
-  let widgetGridItems = widgets.map(w => gridItem(w))  
+  let widgetGridItems = widgets.map((w,index) => gridItem(w,index))  
 
   return (
     <Page title="TORCHLITE Dashboard">
