@@ -14,7 +14,7 @@ const DashboardDefault = () => {
   const { loading } = useSelector((state) => state.dashboard);
   const gridItem = (widget : JSX.Element, index : number) => <Grid item xs={12} md={6} key={index}>{widget}</Grid>
   let widgets = [<PublicationTimeLineChart />,<ChorloplethMap />,<LanguageChart />]
-  let widgetGridItems = widgets.map((w,index) => gridItem(w,index))  
+  let widgetGridItems = widgets.map((w,index) => gridItem(w,index))
 
   return (
     <Page title="TORCHLITE Dashboard">
