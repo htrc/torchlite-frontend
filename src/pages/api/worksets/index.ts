@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     }
 
-    const worksets = await axios.get<WorksetSummary[]>(`/worksets`, {
+    const worksets = await axios.get<WorksetSummary[]>(`/worksets/`, {
       headers: headers
     });
     res.status(200).json(worksets);

@@ -55,6 +55,7 @@ export type DashboardSummary = {
   worksetId: string; // the selected workset id
   filters: FilterSettings; // the filter selections for the dashboard
   widgets: Widget[]; // the widgets selected for the dashboard
+  isShared: boolean; // whether the dashboard has been shared or not
 };
 
 export type DashboardState = DashboardSummary & {
@@ -65,6 +66,7 @@ export type DashboardStatePatch = {
   worksetId?: string;
   filters?: FilterSettings;
   widgets?: Widget[];
+  isShared?: boolean;
 };
 
 export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
@@ -89,5 +91,6 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
       type: z.string()
     })
     .array()
-    .optional()
+    .optional(),
+  isShared: z.boolean().optional()
 });

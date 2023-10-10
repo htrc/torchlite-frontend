@@ -179,15 +179,18 @@ type DashboardState = {
   worksetInfo: WorksetInfo;       // details about the selected workset
   filters: FilterSettings;        // the filter selections for the dashboard
   widgets: Widget[];              // the widgets selected for the dashboard
+  isShared: boolean;              // whether the dashboard has been shared or not
 }
 ```
 
 ### DashboardStatePatch
+
 ```typescript
 type DashboardStatePatch = {
   worksetId?: string;
   filters?: FilterSettings;
   widgets?: Widget[];
+  isShared?: boolean;
 }
 ```
 

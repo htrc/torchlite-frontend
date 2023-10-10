@@ -38,7 +38,7 @@ async function getFeaturedDashboardClone(headers: any): Promise<[DashboardSummar
     dashboardSummary = await cloneDashboard(featuredDashboardId, headers);
   } else {
     // no featured dashboard cookie set - retrieve the list of featured dashboards
-    const featuredDashboards = await axios.get<DashboardSummary[]>(`/dashboards`, {
+    const featuredDashboards = await axios.get<DashboardSummary[]>(`/dashboards/`, {
       headers: headers,
       params: { owner: torchliteUid }
     });
@@ -72,7 +72,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
 
       // get the user's dashboards
-      const dashboards = await axios.get<DashboardSummary[]>(`/dashboards`, {
+      const dashboards = await axios.get<DashboardSummary[]>(`/dashboards/`, {
         headers: headers
       });
 
