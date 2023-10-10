@@ -42,17 +42,16 @@ const DashboardHeader = () => {
       justifyContent="space-between"
     >
       <Grid item 
-        direction="row"
         alignItems="center"
         justifyContent="flex-start"
       >
-        <Typography variant="h6" color="primary" sx={{ 
+        <Typography variant="h6" color="secondary" sx={{ 
             padding: theme.spacing(1.5)
           }} 
           justifyContent="flex-start"
         >
           Selected Workset Name:
-          <Typography sx={{ fontSize: "1rem", fontWeight: 600 }}>{workset_name}</Typography>
+          <Typography color="primary" sx={{ fontSize: "1rem", fontWeight: 600 }}>{workset_name}</Typography>
         </Typography>
       </Grid>
       <Grid item 
@@ -60,7 +59,6 @@ const DashboardHeader = () => {
           padding: theme.spacing(2),
           '& .MuiButton-root::after': { boxShadow: 'none' }
         }}
-        direction="row"
         alignItems="center"
         justifyContent="flex-end"
       >
