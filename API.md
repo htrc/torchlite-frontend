@@ -95,43 +95,79 @@ type WorksetInfo = WorksetSummary & {
 ### VolumeMetadata
 ```typescript
 type VolumeMetadata = {
-  htid: string;                           // the HathiTrust volume identifier
-  title: string;                          // the volume title
-  pubDate: number | null;                 // the publication date
-  genre: string | string[];               // one or more genre categories
-  typeOfResource: string;                 // the type of resource
-  category: string | string[] | null;     // one or more categories
-  contributor: string | string[] | null;  // one or more contributors
-  publisher: string | string[] | null;    // one or more publishers
-  accessRights: string;                   // the volume access rights
-  pubPlace: string | string[] | null;     // the place of publication
-  language: string | string[] | null;     // one or more languages
-  sourceInstitution: string;              // the source institution code
+  htid: string;                     // the HathiTrust volume identifier
+  title: string;                    // the volume title
+  pubDate?: number;                 // the publication date
+  genre: string | string[];         // one or more genre categories
+  typeOfResource?: string;          // the type of resource
+  category?: string | string[];     // one or more categories
+  contributor?: string | string[];  // one or more contributors
+  publisher?: string | string[];    // one or more publishers
+  accessRights: string;             // the volume access rights
+  pubPlace?: string | string[];     // the place of publication
+  language?: string | string[];     // one or more languages
+  sourceInstitution: string;        // the source institution code
 }
 ```
 
 ### FilterSettings
 ```typescript
-type FilterSettings = {
-  titles: string[];
-  pubDates: number[];
-  genres: string[];
-  typesOfResources: string[];
-  categories: string[];
-  contributors: string[];
-  publishers: string[];
-  accessRights: string[];
-  pubPlaces: string[];
-  languages: string[];
-  sourceInstitutions: string[];
+export type FilterSettings = {
+  titles?: string[];
+  pubDates?: number[];
+  genres?: string[];
+  typesOfResources?: string[];
+  categories?: string[];
+  contributors?: string[];
+  publishers?: string[];
+  accessRights?: string[];
+  pubPlaces?: string[];
+  languages?: string[];
+  sourceInstitutions?: string[];
 }
 ```
 
 ### Widget
 ```typescript
 type Widget = {
-  type: string;   // the widget type (PubDateTimeline, ContributorMap, ...)
+  type: string;   // base class for the widget type (PublicationDateTimeline, MappingContributorData, ...)
 }
+```
+
+### PublicationDateTimeline
+```typescript
+type PublicationDateTimelineWidget = Widget & {
+  type: 'PublicationDateTimeline';
+  minYear?: number;
+  maxYear?: number;
+}
+
+type PubDateCount = {
+  year: number;
+  count: number;
+}
+
+type PublicationDateTimelineResponse = Array<PubDateCount>
+```
+
+### MappingContributorData
+```typescript
+type MappingContributorDataWidget = Widget & {
+  type: 'MappingContributorData';
+  minYear?: number;
+  maxYear?: number;
+}
+
+type WikidataEntry = {
+  item: string;
+  countryIso: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  yearOfBirth: number | null
+}
+
+type MappingContributorDataResponse = Array<WikidataEntry>
 ```
 
 ### DashboardState
@@ -206,12 +242,11 @@ PATCH /api/dashboards/<id>
 ```text
 GET /api/dashboards/<id>/widgets/<type>/data
 ```
-|                  |                                                                               |
-|------------------|-------------------------------------------------------------------------------|
-| **Description**  | Retrieves data for a particular widget type for the given dashboard           |
-| **Path params**  | `id` - the dashboard id<br>`type` - the widget type                           |
-| **Query params** | `format` - (optional) the download format (`json` or `csv`) (default: `json`) |
-| **Returns**      | The widget data in the specified format                                       |
+|                 |                                                                                                                                                         |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Description** | Retrieves data for a particular widget type for the given dashboard                                                                                     |
+| **Path params** | `id` - the dashboard id<br>`type` - the widget type                                                                                                     |
+| **Returns**     | The widget data as JSON (see [MappingContributorDataResponse](#mappingcontributordata) and [PublicationDateTimelineResponse](#publicationdatetimeline)) |
 
 ## Front-end Behavior 
 
@@ -303,7 +338,7 @@ When the logout action is invoked, just call the `signOut()` action from `next-a
 
 ### Download widget data action
 If a user wishes to download the data driving a particular widget's viz, the front-end can use the 
-[Get Widget Data](#get-widget-data) endpoint, specifying the user-selected `format`.
+[Get Widget Data](#get-widget-data) endpoint.
 
 ### Download the full workset EF dataset
 TBD

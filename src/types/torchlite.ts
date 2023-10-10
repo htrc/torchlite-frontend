@@ -1,18 +1,18 @@
 import { z } from 'zod';
 import { toZod } from 'tozod';
 
-export type VolumeMetadata = {
+type VolumeMetadata = {
   htid: string; // the HathiTrust volume identifier
   title: string; // the volume title
-  pubDate: number; // the publication date
+  pubDate?: number; // the publication date
   genre: string | string[]; // one or more genre categories
-  typeOfResource: string; // the type of resource
-  category: string | string[]; // one or more categories
-  contributor: string | string[]; // one or more contributors
-  publisher: string | string[]; // one or more publishers
+  typeOfResource?: string; // the type of resource
+  category?: string | string[]; // one or more categories
+  contributor?: string | string[]; // one or more contributors
+  publisher?: string | string[]; // one or more publishers
   accessRights: string; // the volume access rights
-  pubPlace: string | string[]; // the place of publication
-  language: string | string[]; // one or more languages
+  pubPlace?: string | string[]; // the place of publication
+  language?: string | string[]; // one or more languages
   sourceInstitution: string; // the source institution code
 };
 
@@ -30,17 +30,17 @@ export type WorksetInfo = WorksetSummary & {
 };
 
 export type FilterSettings = {
-  titles: string[];
-  pubDates: number[];
-  genres: string[];
-  typesOfResources: string[];
-  categories: string[];
-  contributors: string[];
-  publishers: string[];
-  accessRights: string[];
-  pubPlaces: string[];
-  languages: string[];
-  sourceInstitutions: string[];
+  titles?: string[];
+  pubDates?: number[];
+  genres?: string[];
+  typesOfResources?: string[];
+  categories?: string[];
+  contributors?: string[];
+  publishers?: string[];
+  accessRights?: string[];
+  pubPlaces?: string[];
+  languages?: string[];
+  sourceInstitutions?: string[];
 };
 
 export type Widget = {
@@ -71,17 +71,17 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
   worksetId: z.string().optional(),
   filters: z
     .object({
-      titles: z.string().array(),
-      pubDates: z.number().array(),
-      genres: z.string().array(),
-      typesOfResources: z.string().array(),
-      categories: z.string().array(),
-      contributors: z.string().array(),
-      publishers: z.string().array(),
-      accessRights: z.string().array(),
-      pubPlaces: z.string().array(),
-      languages: z.string().array(),
-      sourceInstitutions: z.string().array()
+      titles: z.string().array().optional(),
+      pubDates: z.number().array().optional(),
+      genres: z.string().array().optional(),
+      typesOfResources: z.string().array().optional(),
+      categories: z.string().array().optional(),
+      contributors: z.string().array().optional(),
+      publishers: z.string().array().optional(),
+      accessRights: z.string().array().optional(),
+      pubPlaces: z.string().array().optional(),
+      languages: z.string().array().optional(),
+      sourceInstitutions: z.string().array().optional()
     })
     .optional(),
   widgets: z
