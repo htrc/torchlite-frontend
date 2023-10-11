@@ -29,9 +29,10 @@ const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow
               width: 15,
               maxHeight: { xs: 15, md: 15 },
               maxWidth: { xs: 15, md: 15 },
-              position: 'absolute',
+              position: 'sticky',
               top: '10px',
-              right: '10px'
+              right: '10px',
+              float: 'right'
             }}
             alt={item.description}
             src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
