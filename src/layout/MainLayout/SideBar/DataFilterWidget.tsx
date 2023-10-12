@@ -42,7 +42,7 @@ const DataFilterWidget = () => {
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { worksetMetadata, appliedFilters } = useSelector((state) => state.dashboard);
+  const { filteredWorksetMetadata, worksetMetadata, appliedFilters } = useSelector((state) => state.dashboard);
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(appliedFilters));
 
@@ -84,9 +84,11 @@ const DataFilterWidget = () => {
       return true;
     });
 
-    getCountryCounts(filtered).then((res) => {
-      dispatch(getMapDataSuccess(res));
-    });
+    if (JSON.stringify(filtered) !== JSON.stringify(filteredWorksetMetadata)) {
+      getCountryCounts(filtered).then((res) => {
+        dispatch(getMapDataSuccess(res));
+      });
+    }
     dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
     dispatch(setFilteredWorksetMetadata(filtered));
     dispatch(setLoading(false));
