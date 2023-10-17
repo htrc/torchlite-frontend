@@ -12,6 +12,8 @@ import { languageCSVHeaders } from 'data/react-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { saveAs } from 'file-saver';
+import { getLanguageDataSuccess } from 'store/reducers/dashboard';
+import { getLanguageCounts } from 'services';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 
@@ -19,7 +21,7 @@ export const LanguageChart = ({ detailPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const { languageData: modifiedDataHistogram, languageRangedData: storedLanguageRangedData } = useSelector((state) => state.dashboard);
+  const { languageData: modifiedDataHistogram, languageRangedData: storedLanguageRangedData, appliedFilters } = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
   let width = dimensions?.width || 500;
@@ -44,47 +46,20 @@ export const LanguageChart = ({ detailPage = false }) => {
   };
 
   useEffect(() => {
-    fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/6409650730000004085ce312/metadata?fields=metadata.language`)
-      .then(response => {
-        if (response.status !== 200) {
-          console.log(`There was a problem: ${response.status}`)
-          return
-        }
-        response.json().then(languagedata => {
-          interface Langs {
-            [key: string]: number
+    if (storedLanguageRangedData.length == 0) {
+      fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/6409650730000004085ce312/metadata?fields=metadata.language`)
+        .then(response => {
+          if (response.status !== 200) {
+            console.log(`There was a problem: ${response.status}`)
+            return
           }
-          var langs: Langs = {}
-          for (var vol in languagedata.data) {
-            if (Array.isArray(languagedata.data[vol].metadata.language)) {
-              for (let l in languagedata.data[vol].metadata.language) {
-                if (languagedata.data[vol].metadata.language[l] in langs) {
-                  langs[languagedata.data[vol].metadata.language[l]] += 1;
-                }
-                else {
-                  langs[languagedata.data[vol].metadata.language[l]] = 1;
-                }
-              }
-            }
-            else {
-              if (languagedata.data[vol].metadata.language in langs) {
-                langs[languagedata.data[vol].metadata.language] += 1;
-              }
-              else {
-                langs[languagedata.data[vol].metadata.language] = 1;
-              }
-            }
-          }
-
-          var output_langs = [];
-          for (let lang in langs) {
-            output_langs.push({ lang: lang, count: langs[lang] });
-          }
-
-          setLangCounts(output_langs);
+          response.json().then(
+          languagedata => {
+            setLangCounts(getLanguageCounts(languagedata.data));
+          })
         })
-      })
-  }, []);
+    }
+  }, [storedLanguageRangedData]);
 
   useEffect(() => {
     // Check if the data has actually changed

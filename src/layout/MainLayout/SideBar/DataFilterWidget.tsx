@@ -14,12 +14,13 @@ import { useDispatch, useSelector } from 'store';
 import {
   getMapDataSuccess,
   getTimeLineDataSuccess,
+  setLanguageRangedData,
   setLoading,
   setAppliedFilters,
   setFilteredWorksetMetadata
 } from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
-import { getCountryCounts } from 'services';
+import { getCountryCounts, getLanguageCounts } from 'services';
 import { convertToTimelineChartData } from 'utils/helpers';
 
 const animatedComponents = makeAnimated();
@@ -90,6 +91,7 @@ const DataFilterWidget = () => {
       });
     }
     dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
+    dispatch(setLanguageRangedData(getLanguageCounts(filtered)))
     dispatch(setFilteredWorksetMetadata(filtered));
     dispatch(setLoading(false));
   };

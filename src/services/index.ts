@@ -49,6 +49,41 @@ export async function getMapWidgetData(selectedWorksetId: any) {
   });
 }
 
+export function getLanguageCounts(volumes: any) {
+  console.log(volumes)
+  interface Langs {
+    [key: string]: number
+  }
+  var langs: Langs = {}
+  for (var vol in volumes) {
+    if (Array.isArray(volumes[vol].metadata.language)) {
+      for (let l in volumes[vol].metadata.language) {
+        if (volumes[vol].metadata.language[l] in langs) {
+          langs[volumes[vol].metadata.language[l]] += 1;
+        }
+        else {
+          langs[volumes[vol].metadata.language[l]] = 1;
+        }
+      }
+    }
+    else {
+      if (volumes[vol].metadata.language in langs) {
+        langs[volumes[vol].metadata.language] += 1;
+      }
+      else {
+        langs[volumes[vol].metadata.language] = 1;
+      }
+    }
+  }
+
+  var output_langs = [];
+  for (let lang in langs) {
+    output_langs.push({ lang: lang, count: langs[lang] });
+  }
+
+  return output_langs;
+}
+
 export const getCountryCounts = async (volumns: any) => {
   const viafid_set = new Set();
   for (const vol in volumns) {
