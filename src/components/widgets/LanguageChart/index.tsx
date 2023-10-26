@@ -307,6 +307,16 @@ export const LanguageChart = ({ detailPage = false }) => {
     const container = d3.select(inputRef.current);
 //    const colors = d3.scaleOrdinal(d3.schemeCategory10);
     const colors = d3.scaleOrdinal([
+/*      "#b5508f",
+      "#6ca44f",
+      "#583789",
+      "#bda73b",
+      "#6c81d9",
+      "#b17535",
+      "#c071c9",
+      "#45c097",
+      "#bb486a",
+      "#bb4c41"*/
       "#50b47b",
       "#b55b37",
       "#902a6c",
@@ -323,7 +333,7 @@ export const LanguageChart = ({ detailPage = false }) => {
     const labelRadius = outerRadius * 0.8;
 
     var sortedLangCs = langCs.toSorted((a,b) => b.count - a.count);
-    if (sortedLangCs.length >= 10) {
+    if (sortedLangCs.length > 10) {
       sortedLangCs.push({lang: 'Other', count: sortedLangCs.slice(9).reduce((accumulator, currentValue) => accumulator + currentValue.count, 0)});
       var trunkatedLangCs = sortedLangCs.slice(0,9);
       trunkatedLangCs.push(sortedLangCs[sortedLangCs.length-1]);

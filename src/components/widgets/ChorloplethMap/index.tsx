@@ -155,7 +155,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       choropleth({ inputRef }, drawData, {
         id: (d) => d.country, // country name, e.g. Zimbabwe
         value: (d) => d.count, // health-adjusted life expectancy
-        range: d3.interpolateOrRd,
+        range: d3.interpolateYlOrRd,
         features: countries,
         //  featureId: d => d.properties.name, // i.e., not ISO 3166-1 numeric
         borders: countryMesh,
