@@ -150,12 +150,12 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
       }}
     >
       {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
+        <Typography variant="h3" sx={{ color: '#1e98d7', fontFamily:`'Domine', serif` }}>
           Publication Date Timeline
         </Typography>
       ) : (
         <NextLink href="/widget-details/timeline">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
+          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer', fontFamily:`'Domine', serif` }}>
             Publication Date Timeline
           </Typography>
         </NextLink>
