@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent, useTheme } from '@mui/material';
 import CustomButton from 'components/Button';
+import AuthModal from 'sections/auth/AuthModal';
 
-const DashboardHeader = () => {
+const DashboardHeader = ({ csrfToken }) => {
   const theme = useTheme();
   const router = useRouter();
   const { data: session } = useSession();
@@ -17,6 +18,16 @@ const DashboardHeader = () => {
   ];
   const [widget1, setWidget1] = useState<string>(widgetList1[0]);
   const [widget2, setWidget2] = useState<string>(widgetList2[0]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
@@ -96,17 +107,13 @@ const DashboardHeader = () => {
               lineHeight: 'normal',
               marginLeft: '1.3125rem'
             }}
-            onClick={() => {
-              router.push({
-                pathname: '/login',
-                query: { from: router.asPath }
-              });
-            }}
+            onClick={openModal}
           >
             Sign in
           </CustomButton>
         )}
       </Box>
+      <AuthModal isOpen={isModalOpen} onClose={closeModal} csrfToken={csrfToken} />
     </Stack>
   );
 };

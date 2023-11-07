@@ -46,10 +46,19 @@ export const convertToTimelineChartData = (worksetMetaData: any) => {
   }, {});
 };
 
-export const getCookieValue = (name: string, cookieString: string) => {
-  const matches = cookieString.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-  return matches ? matches.pop() : null;
-};
+export function getCookieValue(cookieName: any) {
+  const name = cookieName + '=';
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookieArray = decodedCookie.split(';');
+
+  for (let i = 0; i < cookieArray.length; i++) {
+    let cookie = cookieArray[i].trim();
+    if (cookie.indexOf(name) == 0) {
+      return cookie.substring(name.length, cookie.length);
+    }
+  }
+  return null;
+}
 
 export function hasFilters(filterObj: any): boolean {
   return Object.values(filterObj).some((value: any) => {
