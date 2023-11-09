@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "initialize-db": "ts-node initialize-db.ts",
-    "dev": "yarn initialize-db && ./env.sh next dev -p 8081",
+    "dev": "yarn initialize-db && ./env.sh next dev -p 3000",
     "build": "yarn initialize-db && ./env.sh next build",
     "start": "next start"
   },
@@ -72,6 +72,7 @@
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "stylis-plugin-rtl": "^2.1.1",
+    "swr": "^2.2.4",
     "topojson-client": "^3.1.0",
     "tozod": "^3.0.0",
     "ts-node": "^10.9.1",

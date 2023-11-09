@@ -6,11 +6,13 @@ import DataFilterWidget from './DataFilterWidget';
 import WorksetWidget from './WorksetWidget';
 import { useState, useEffect } from 'react';
 import { hasFilters } from 'utils/helpers';
+import useDashboardState from 'hooks/useDashboardState';
 
 const SideBar = () => {
   const theme = useTheme();
-  const { selectedWorksetId, appliedFilters } = useSelector((state) => state.dashboard);
-  const [isWorksetExpanded, setWorksetExpanded] = useState(!!selectedWorksetId);
+  const { dashboardState } = useDashboardState();
+  const { appliedFilters } = useSelector((state) => state.dashboard);
+  const [isWorksetExpanded, setWorksetExpanded] = useState(!!dashboardState?.worksetId);
   const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(appliedFilters));
 
   useEffect(() => {
@@ -19,8 +21,8 @@ const SideBar = () => {
   }, []);
 
   useEffect(() => {
-    setWorksetExpanded(!!selectedWorksetId);
-  }, [selectedWorksetId]);
+    setWorksetExpanded(!!dashboardState?.worksetId);
+  }, [dashboardState?.worksetId]);
 
   return (
     <Box

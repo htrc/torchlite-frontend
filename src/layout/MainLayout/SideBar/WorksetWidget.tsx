@@ -17,29 +17,31 @@ import {
   useTheme,
   Box
 } from '@mui/material';
-import { IWorkset } from 'types/dashboard';
 import { useDispatch, useSelector } from 'store';
 import { setTooltipId } from 'store/reducers/dashboard';
 import { setSelectedWorksetId } from 'store/reducers/dashboard';
 import CustomTableRow from 'components/CustomTableRow';
+import { WorksetInfo } from 'types/torchlite';
+import useDashboardState from 'hooks/useDashboardState';
 
 const WorksetWidget = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
+  const { dashboardState } = useDashboardState();
 
-  const { worksets, selectedWorksetId } = useSelector((state) => state.dashboard);
+  const { worksets } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('all');
-  const [selected, setSelected] = useState<IWorkset | null>(null);
-  const [worksetData, setWorksetData] = useState<IWorkset[]>(worksets);
+  const [selected, setSelected] = useState<WorksetInfo | null>(null);
+  const [worksetData, setWorksetData] = useState<WorksetInfo[]>(worksets);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     setType(value);
   };
 
-  const handleSelectWorkSet = (prop: IWorkset) => {
-    if (prop.id !== selectedWorksetId) {
+  const handleSelectWorkSet = (prop: WorksetInfo) => {
+    if (prop.id !== dashboardState?.worksetId) {
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }
@@ -58,8 +60,8 @@ const WorksetWidget = () => {
   }, [type, worksets]);
 
   useEffect(() => {
-    if (selectedWorksetId) {
-      const filtered = worksets.filter((workset) => workset.id === selectedWorksetId);
+    if (dashboardState?.worksetId) {
+      const filtered = worksets.filter((workset) => workset.id === dashboardState?.worksetId);
       if (filtered && filtered.length > 0) {
         setSelected(filtered[0]);
       }
@@ -68,7 +70,7 @@ const WorksetWidget = () => {
     setWorksetData(worksets);
     dispatch(setTooltipId(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worksets, selectedWorksetId]);
+  }, [worksets, dashboardState?.worksetId]);
 
   return (
     <>

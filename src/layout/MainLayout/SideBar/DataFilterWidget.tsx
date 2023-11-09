@@ -21,6 +21,7 @@ import {
 import { colourStyles } from 'styles/react-select';
 import { getCountryCounts } from 'services';
 import { convertToTimelineChartData } from 'utils/helpers';
+import useDashboardState from 'hooks/useDashboardState';
 
 const animatedComponents = makeAnimated();
 const convertFromUrl = (originalData: any) => {
@@ -42,7 +43,13 @@ const DataFilterWidget = () => {
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { worksetMetadata, appliedFilters } = useSelector((state) => state.dashboard);
+  const { dashboardState } = useDashboardState();
+
+  const { appliedFilters } = useSelector((state) => state.dashboard);
+  const worksetMetadata = dashboardState?.worksetInfo.volumes || [];
+  console.log('workset metadata', worksetMetadata);
+
+
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(appliedFilters));
 
@@ -68,12 +75,12 @@ const DataFilterWidget = () => {
         if (filters[key].length) {
           if (
             !filters[key].some((i: any) => {
-              if (Array.isArray(item.metadata[i.key])) {
-                return item.metadata[i.key].includes(i.value);
-              } else if (typeof item.metadata[i.key] === 'object' && item.metadata[i.key] !== null) {
-                return i.value == item.metadata[i.key].name;
+              if (Array.isArray(item[i.key])) {
+                return item[i.key].includes(i.value);
+              } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
+                return i.value == item[i.key].name;
               } else {
-                return i.value == item.metadata[i.key];
+                return i.value == item[i.key];
               }
             })
           ) {
@@ -87,7 +94,7 @@ const DataFilterWidget = () => {
     getCountryCounts(filtered).then((res) => {
       dispatch(getMapDataSuccess(res));
     });
-    dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
+    // dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
     dispatch(setFilteredWorksetMetadata(filtered));
     dispatch(setLoading(false));
   };
@@ -116,48 +123,49 @@ const DataFilterWidget = () => {
   };
 
   const getFilterByData = (timeLineData: any) => {
-    const pubTitles = [...new Set(timeLineData.map((obj: any) => obj.metadata.title))]
+    const pubTitles = [...new Set(timeLineData.flatMap((obj: any) => obj.title))]
       .filter((title) => title !== undefined)
       .sort()
       .map((title) => ({ value: title, label: title, key: 'title' }));
-    const pubDates = [...new Set(timeLineData.map((obj: any) => obj.metadata.pubDate))]
+    const pubDates = [...new Set(timeLineData.flatMap((obj: any) => obj.pubDate))]
       .filter((pubDate) => pubDate !== undefined)
       .sort()
       .map((pubDate) => ({ value: pubDate?.toString(), label: pubDate?.toString(), key: 'pubDate' }));
     //const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
-    const genres = [...new Set(timeLineData.flatMap((obj: any) => obj.metadata.genre))]
+    const genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
       .filter((genre) => genre !== undefined)
       .sort()
       .map((genre) => ({ value: genre, label: genre, key: 'genre' }));
-    const resTypes = [...new Set(timeLineData.flatMap((obj: any) => obj.metadata.type))]
+    const resTypes = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
       .filter((type) => type !== undefined)
       .sort()
       .map((type) => ({ value: type, label: type, key: 'type' }));
-    const categories = [...new Set(timeLineData.map((obj: any) => obj.metadata.category))]
+    const categories = [...new Set(timeLineData.flatMap((obj: any) => obj.category))]
       .filter((category) => category !== undefined)
       .sort()
       .map((category) => ({ value: category, label: category, key: 'category' }));
-    const contributors = [...new Set(timeLineData.map((obj: any) => obj.metadata.contributor?.name))]
+    const contributors = [...new Set(timeLineData.flatMap((obj: any) => obj.contributor))]
       .filter((contributor) => contributor !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'contributor' }));
-    const publishers = [...new Set(timeLineData.map((obj: any) => obj.metadata.publisher?.name))]
+    const publishers = [...new Set(timeLineData.flatMap((obj: any) => obj.publisher))]
       .filter((publisher) => publisher !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'publisher' }));
-    const accessRights = [...new Set(timeLineData.map((obj: any) => obj.metadata.accessRights))]
+    const accessRights = [...new Set(timeLineData.flatMap((obj: any) => obj.accessRights))]
       .filter((accessRights) => accessRights !== undefined)
       .sort()
       .map((accessRights) => ({ value: accessRights, label: accessRights, key: 'accessRights' }));
-    const pubPlaces = [...new Set(timeLineData.map((obj: any) => obj.metadata.pubPlace?.name))]
+    const pubPlaces = [...new Set(timeLineData.flatMap((obj: any) => obj.pubPlace))]
       .filter((pubPlace) => pubPlace !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'pubPlace' }));
-    const languages = [...new Set(timeLineData.map((obj: any) => obj.metadata.language))]
+    const languages = [...new Set(timeLineData.flatMap((obj: any) => obj.language))]
       .filter((language) => language !== undefined)
       .sort()
       .map((language) => ({ value: language, label: language, key: 'language' }));
-    const sourceInstitutions = [...new Set(timeLineData.map((obj: any) => obj.metadata.sourceInstitution?.name))]
+
+    const sourceInstitutions = [...new Set(timeLineData.flatMap((obj: any) => obj.sourceInstitution))]
       .filter((sourceInstitution) => sourceInstitution !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'sourceInstitution' }));
@@ -203,12 +211,12 @@ const DataFilterWidget = () => {
         if (selectedGroup[key].length) {
           if (
             !selectedGroup[key].some((i: any) => {
-              if (Array.isArray(item.metadata[i.key])) {
-                return item.metadata[i.key].includes(i.value);
-              } else if (typeof item.metadata[i.key] === 'object' && item.metadata[i.key] !== null) {
-                return i.value == item.metadata[i.key].name;
+              if (Array.isArray(item[i.key])) {
+                return item[i.key].includes(i.value);
+              } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
+                return i.value == item[i.key].name;
               } else {
-                return i.value == item.metadata[i.key];
+                return i.value == item[i.key];
               }
             })
           ) {
@@ -230,12 +238,12 @@ const DataFilterWidget = () => {
           if (selectedGroup[key].length) {
             if (
               !selectedGroup[key].some((i: any) => {
-                if (Array.isArray(item.metadata[i.key])) {
-                  return item.metadata[i.key].includes(i.value);
-                } else if (typeof item.metadata[i.key] === 'object' && item.metadata[i.key] !== null) {
-                  return i.value == item.metadata[i.key].name;
+                if (Array.isArray(item[i.key])) {
+                  return item[i.key].includes(i.value);
+                } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
+                  return i.value == item[i.key].name;
                 } else {
-                  return i.value == item.metadata[i.key];
+                  return i.value == item[i.key];
                 }
               })
             ) {

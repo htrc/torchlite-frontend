@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getCountryCounts, getWorksetMetadata, setFeaturedState } from 'services';
+import { getCountryCounts, getWorksetMetadata } from 'services';
 // types
 import { IDashboardProps } from 'types/dashboard';
 import { convertToTimelineChartData } from 'utils/helpers';
@@ -114,7 +114,7 @@ export const setAppliedFilters = createAsyncThunk<void, object, {}>(
 
       const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
       featuredState.filters = appliedFilters;
-      await setFeaturedState(JSON.stringify(featuredState));
+      // await setFeaturedState(JSON.stringify(featuredState));
 
       localStorage.setItem('featured_state', JSON.stringify(featuredState));
     } catch (error) {
@@ -137,7 +137,7 @@ export const setSelectedWorksetId = createAsyncThunk<void, string, {}>(
       const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
       featuredState.worksetId = worksetId;
       featuredState.filters = {};
-      await setFeaturedState(JSON.stringify(featuredState));
+      // await setFeaturedState(JSON.stringify(featuredState));
 
       localStorage.setItem('featured_state', JSON.stringify(featuredState));
 

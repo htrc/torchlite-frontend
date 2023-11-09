@@ -1,9 +1,10 @@
 import { ITimelineChart, IMapData } from './chart';
+import { WorksetInfo } from './torchlite';
 
 export type IDashboardProps = {
   dashboards: IDashboard[];
   filtering: object;
-  worksets: IWorkset[];
+  worksets: WorksetInfo[];
   mapData: IMapData[];
   mapRangedData: IMapData[];
   worksetMetadata: ITimelineChart[];

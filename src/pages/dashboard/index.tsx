@@ -10,9 +10,12 @@ import { PublicationTimeLineChart } from 'components/widgets/PublicationTimeLine
 import { ChorloplethMap } from 'components/widgets/ChorloplethMap';
 import { useSelector } from 'store';
 import CustomBackdrop from 'components/Backdrop';
+import useDashboardState from 'hooks/useDashboardState';
+import Widget from 'components/widgets';
 
 const DashboardDefault = ({ csrfToken }: any) => {
   const { loading } = useSelector((state) => state.dashboard);
+  const { dashboardState } = useDashboardState();
 
   return (
     <Page title="TORCHLITE Dashboard">
@@ -20,12 +23,14 @@ const DashboardDefault = ({ csrfToken }: any) => {
         <Box>
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <ChorloplethMap />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <PublicationTimeLineChart />
-            </Grid>
+            {dashboardState?.widgets.map((widget, index) => {
+              return (
+                <Grid item xs={12} md={6} key={index}>
+                 
+                  <Widget dashboardId={dashboardState.id} widgetType={widget.type} />
+                </Grid>
+              );
+            })}
           </Grid>
         </Box>
       </Box>
@@ -43,7 +48,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const csrfToken = await getCsrfToken(context);
 
   return {
-    props: { providers, csrfToken }
+    props: { providers, csrfToken: csrfToken ?? null }
   };
 }
 

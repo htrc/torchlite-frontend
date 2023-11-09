@@ -1,4 +1,4 @@
-import { IMapData, ITimelineChart } from 'types/chart';
+import { ITimelineChart } from 'types/chart';
 import { ZodObject } from 'zod';
 
 export type MapDataTableEntry = {
@@ -9,15 +9,14 @@ export type MapDataTableEntry = {
   yob: number;
 };
 
-export function transformMapDataForDataTable(data: IMapData[]): MapDataTableEntry[] {
+export function transformMapDataForDataTable(data: any[]): MapDataTableEntry[] {
   return data.map((entry) => {
     // Extracting latitude and longitude
-    const coords = entry.cityCoords.replace('Point(', '').replace(')', '').split(' ');
-    const latitude = parseFloat(coords[1]);
-    const longitude = parseFloat(coords[0]);
+    // const coords = entry.cityCoords.replace('Point(', '').replace(')', '').split(' ');
+    const { latitude, longitude } = entry;
 
     // Extracting year of birth
-    const yearOfBirth = new Date(entry.dob).getFullYear();
+    const yearOfBirth = entry.yearOfBirth;
 
     return {
       countryISO: entry.countryiso,
@@ -38,7 +37,7 @@ export function transformTimelineDataForDataTable(obj: any) {
 
 export const convertToTimelineChartData = (worksetMetaData: any) => {
   return worksetMetaData.reduce((prev: any, curr: ITimelineChart) => {
-    const pubDate = curr.metadata.pubDate;
+    const pubDate = curr.pubDate;
     if (!Number.isInteger(pubDate)) {
       return prev;
     } else if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
@@ -58,6 +57,11 @@ export function getCookieValue(cookieName: any) {
     }
   }
   return null;
+}
+
+export function setCookieValue(cookieName: any, cookieValue: any, maxAgeInSeconds: any) {
+  const maxAge = maxAgeInSeconds ? `max-age=${maxAgeInSeconds}` : '';
+  document.cookie = `${cookieName}=${cookieValue}; ${maxAge}; path=/`;
 }
 
 export function hasFilters(filterObj: any): boolean {

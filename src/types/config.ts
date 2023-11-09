@@ -102,6 +102,9 @@ export type CustomizationProps = {
   container: boolean;
   menuOrientation: MenuOrientation;
   mode: ThemeMode;
+  fontFamily: FontFamily;
+  presetColor: PresetColor;
+  themeDirection: ThemeDirection;
   onChangeMode: (mode: ThemeMode) => void;
   onChangeMenuOrientation: (menuOrientation: MenuOrientation) => void;
   onChangeMiniDrawer: (miniDrawer: boolean) => void;

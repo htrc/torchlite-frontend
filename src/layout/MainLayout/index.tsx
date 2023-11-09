@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import { useSession } from 'next-auth/react';
 import qs from 'qs';
 
 // material-ui
@@ -11,7 +12,6 @@ import { Box, Container, Toolbar, useMediaQuery } from '@mui/material';
 import Drawer from './Drawer';
 import Header from './Header';
 import Footer from './Footer';
-import HorizontalBar from './Drawer/HorizontalBar';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import CustomBackdrop from 'components/Backdrop';
 
@@ -23,10 +23,10 @@ import { openDrawer } from 'store/reducers/menu';
 import { RootStateProps } from 'types/root';
 import { LAYOUT_CONST } from 'types/config';
 import { DRAWER_WIDTH } from 'config';
-import { getWorksets } from 'services';
+import { getAvailableWorksets, getAvailableDashboards, getDashboardState } from 'services';
 import { setSelectedWorksetId, setWorksets, setAppliedFilters } from 'store/reducers/dashboard';
 import { useDispatch } from 'store';
-import { getFeaturedState } from 'services';
+import { DashboardState, WorksetSummary } from 'types/torchlite';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -40,6 +40,7 @@ const MainLayout = ({ children }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+  const { data: session } = useSession();
 
   const { container, miniDrawer, menuOrientation } = useConfig();
   const dispatch = useDispatch();
@@ -60,42 +61,56 @@ const MainLayout = ({ children }: Props) => {
     // Parse URL params
     const init = async () => {
       try {
+        // Get workset and filter from router query
         const { worksetId } = router.query;
         const filters = qs.parse(router.query.filters as string, { comma: true });
+        let selectedWorksetId: string, appliedFilters;
 
-        let selectedWorksetId, appliedFilters;
-        if (worksetId) {
-          selectedWorksetId = worksetId;
-          appliedFilters = filters;
+        // Get worksets and set in redux
+        const worksets: WorksetSummary[] = await getAvailableWorksets();
+        dispatch(setWorksets(worksets));
+
+        // Get dashboard state
+        const dashboardId = localStorage.getItem('dashboard_id');
+        let dashboardState: DashboardState;
+
+        if (!session) {
+          if (dashboardId) {
+            dashboardState = await getDashboardState(dashboardId);
+          } else {
+            const dashboards = await getAvailableDashboards();
+            dashboardState = dashboards[0];
+          }
+
+          localStorage.setItem('dashboard_id', dashboardState.id);
         } else {
-          const res = await getFeaturedState();
-          const apiRes = res.data;
+          const dashboards = await getAvailableDashboards(dashboardId);
+          dashboardState = dashboards[0];
 
-          if (apiRes.status === 'success' && apiRes.row?.data) {
-            const featuredState = JSON.parse(apiRes.row?.data ?? '{}') ?? {};
-            selectedWorksetId = featuredState.worksetId;
-            appliedFilters = featuredState.filters;
-            localStorage.setItem('featured_state', apiRes.row?.data);
+          if (dashboardId) {
+            localStorage.removeItem('dashboard_id');
           }
         }
+        console.log('dashboard state', dashboardState);
 
-        const response = await getWorksets();
-        const worksets: any[] = response.data;
-
-        dispatch(setWorksets(worksets));
-        await dispatch(setSelectedWorksetId(selectedWorksetId || worksets[0].id));
-        await dispatch(setAppliedFilters(appliedFilters || {}));
-
-        if (!worksetId) {
+        if (worksetId) {
+          selectedWorksetId = worksetId as string;
+          appliedFilters = filters;
+        } else {
+          selectedWorksetId = dashboardState.worksetId;
+          appliedFilters = dashboardState.filters;
           router.push({
             pathname: router.pathname,
             query: {
               ...router.query,
-              worksetId: selectedWorksetId || worksets[0].id,
+              worksetId: selectedWorksetId,
               filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
             }
           });
         }
+
+        await dispatch(setSelectedWorksetId(selectedWorksetId));
+        await dispatch(setAppliedFilters(appliedFilters || {}));
       } catch (error) {
         console.error(error);
       } finally {
@@ -144,7 +159,7 @@ const MainLayout = ({ children }: Props) => {
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
-      {!isHorizontal ? <Drawer open={open} handleDrawerToggle={handleDrawerToggle} /> : <HorizontalBar />}
+      <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box component="main" sx={{ width: `calc(100% - ${DRAWER_WIDTH}px)`, flexGrow: 1, p: { xs: 2, sm: 3 } }}>
         <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
         <Container

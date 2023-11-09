@@ -1,32 +1,43 @@
 import defaultAxios from 'axios';
 import axios from 'utils/axios';
+import idpList from 'data/idplist.json';
 
 export function confirmWorkset(dashboard_id: string, selected_workset_id: string) {
   return axios.put(`/dashboards/${dashboard_id}/workset/${selected_workset_id}`);
 }
 
-export function getDashboards() {
-  return axios.get(`/dashboards`);
+export async function getAvailableDashboards(dashboardId?: string | null) {
+  return defaultAxios.get(`/api/dashboards${dashboardId ? `?ref=${dashboardId}` : ''}`).then((response) => response.data);
 }
 
-export function getWorksets() {
-  return defaultAxios.get(`/api/worksets`);
+export async function getDashboardState(dashboardId: string) {
+  return defaultAxios.get(`/api/dashboards/${dashboardId}`).then((response) => response.data);
 }
 
-export function getWorksetMetadata(worksetId: any) {
+export async function getAvailableWorksets() {
+  return defaultAxios.get(`/api/worksets`).then((response) => response.data);
+}
+
+export async function getWidgetData(dashboardId: any, widgetType: any) {
+  return defaultAxios.get(`/api/dashboards/${dashboardId}/widgets/${widgetType}/data`).then((response) => response.data);
+}
+
+export async function getWorksetMetadata(worksetId: any) {
   return defaultAxios.get(`/api/worksets/${worksetId}/metadata`);
 }
 
-export function setFeaturedState(data: any) {
-  return defaultAxios.post('/api/featured-state', { data });
-}
+export async function getIdplist() {
+  return defaultAxios
+    .get('https://analytics.hathitrust.org/idplist')
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error('Error fetching remote data:', error);
 
-export function getFeaturedState() {
-  return defaultAxios.get('/api/featured-state');
-}
-
-export function getIdplist() {
-  return defaultAxios.get('https://analytics.hathitrust.org/idplist');
+      // If there's an error, load the local JSON file as a fallback
+      return idpList;
+    });
 }
 
 export async function getMapWidgetData(selectedWorksetId: any) {
@@ -56,7 +67,7 @@ export async function getMapWidgetData(selectedWorksetId: any) {
 export const getCountryCounts = async (volumns: any) => {
   const viafid_set = new Set();
   for (const vol in volumns) {
-    const { metadata } = volumns[vol];
+    const metadata = volumns[vol];
     if (metadata.contributor) {
       if (Array.isArray(metadata.contributor)) {
         for (const contributor of metadata.contributor) {

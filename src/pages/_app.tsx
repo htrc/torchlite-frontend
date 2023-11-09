@@ -22,6 +22,7 @@ import Locales from 'components/Locales';
 import ScrollTop from 'components/ScrollTop';
 import Snackbar from 'components/@extended/Snackbar';
 import { ConfigProvider } from 'contexts/ConfigContext';
+import { AppProvider } from 'contexts/AppContext';
 import { store } from 'store';
 import ThemeCustomization from 'themes';
 import Notistack from 'components/third-party/Notistack';
@@ -57,7 +58,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
           <Locales>
             <ScrollTop>
               <SessionProvider session={session} refetchInterval={0}>
-                <>
+                <AppProvider>
                   <Notistack>
                     <Snackbar />
                     {getLayout(<Component {...pageProps} />)}
@@ -79,7 +80,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
                       }}
                     ></div>
                   </Notistack>
-                </>
+                </AppProvider>
               </SessionProvider>
             </ScrollTop>
           </Locales>
