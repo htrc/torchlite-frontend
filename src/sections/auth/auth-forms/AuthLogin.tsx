@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // next
 // import Image from 'next/image';
@@ -31,6 +31,7 @@ import { Formik } from 'formik';
 // project import
 // import FirebaseSocial from './FirebaseSocial';
 import { APP_DEFAULT_PATH } from 'config';
+import { getCookieValue } from 'utils/helpers';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
@@ -39,13 +40,27 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
-const AuthLogin = ({ providers, csrfToken }: any) => {
+const AuthLogin = ({ csrfToken }: any) => {
   // const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [checked, setChecked] = React.useState(false);
   const [capsWarning, setCapsWarning] = React.useState(false);
 
   const { data: session } = useSession();
+  const idpPrefCookie = getCookieValue('idp_pref');
+  const [tag, setTag] = useState('');
+  const [entityID, setEntityID] = useState('');
 
+  useEffect(() => {
+    if (idpPrefCookie) {
+      // The cookie exists, now extract 'tag' and 'entityID' values
+      const cookieData = JSON.parse(idpPrefCookie);
+
+      if (cookieData.tag && cookieData.entityID) {
+        setTag(cookieData.tag);
+        setEntityID(cookieData.entityID);
+      }
+    }
+  }, []);
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -76,19 +91,35 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={(values, { setErrors, setSubmitting }) => {
-          signIn('login', {
-            redirect: false,
-            email: values.email,
-            password: values.password,
-            callbackUrl: APP_DEFAULT_PATH
-          }).then((res: any) => {
-            if (res?.error) {
-              setErrors({ submit: res.error });
-              setSubmitting(false);
-            } else {
-              setSubmitting(false);
-            }
-          });
+          if (tag === 'hathi') {
+            signIn('keycloak', {
+              redirect: false,
+              callbackUrl: APP_DEFAULT_PATH
+            }).then((res: any) => {
+              if (res?.error) {
+                setErrors({ submit: res.error });
+                setSubmitting(false);
+              } else {
+                setSubmitting(false);
+              }
+            });
+          } else if (tag === 'cilogon') {
+            signIn(
+              'keycloak',
+              { callbackUrl: '/' },
+              {
+                kc_idp_hint: 'cilogon',
+                idphint: entityID
+              }
+            ).then((res: any) => {
+              if (res?.error) {
+                setErrors({ submit: res.error });
+                setSubmitting(false);
+              } else {
+                setSubmitting(false);
+              }
+            });
+          }
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

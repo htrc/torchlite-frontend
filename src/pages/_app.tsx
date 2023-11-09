@@ -49,7 +49,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   if (isLoading) {
     return <CustomBackdrop loading={isLoading} />;
   }
-  console.log('BASE_API_URI: ', env('BASE_API_URI'));
+  // console.log('BASE_API_URI: ', env('BASE_API_URI'));
   return (
     <ReduxProvider store={store}>
       <ConfigProvider>

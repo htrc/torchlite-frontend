@@ -1,6 +1,8 @@
 import { ReactElement } from 'react';
 import { Box, Grid } from '@mui/material';
 
+import { NextPageContext } from 'next';
+import { getProviders, getCsrfToken } from 'next-auth/react';
 import Layout from 'layout';
 import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
@@ -9,14 +11,14 @@ import { ChorloplethMap } from 'components/widgets/ChorloplethMap';
 import { useSelector } from 'store';
 import CustomBackdrop from 'components/Backdrop';
 
-const DashboardDefault = () => {
+const DashboardDefault = ({ csrfToken }: any) => {
   const { loading } = useSelector((state) => state.dashboard);
 
   return (
     <Page title="TORCHLITE Dashboard">
       <Box>
         <Box>
-          <DashboardHeader />
+          <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <ChorloplethMap />
@@ -35,5 +37,14 @@ const DashboardDefault = () => {
 DashboardDefault.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
+
+export async function getServerSideProps(context: NextPageContext) {
+  const providers = await getProviders();
+  const csrfToken = await getCsrfToken(context);
+
+  return {
+    props: { providers, csrfToken }
+  };
+}
 
 export default DashboardDefault;

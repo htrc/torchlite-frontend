@@ -25,6 +25,10 @@ export function getFeaturedState() {
   return defaultAxios.get('/api/featured-state');
 }
 
+export function getIdplist() {
+  return defaultAxios.get('https://analytics.hathitrust.org/idplist');
+}
+
 export async function getMapWidgetData(selectedWorksetId: any) {
   return new Promise((resolve, reject) => {
     fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${selectedWorksetId}/metadata?fields=metadata.contributor.id`).then(
