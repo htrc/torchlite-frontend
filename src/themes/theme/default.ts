@@ -11,6 +11,7 @@ export const themeOptions: ThemeOptions = {
     mode: 'light',
     primary: {
       main: '#C35400',
+      darker: '#000000'
     },
     secondary: {
       main: '#505759',
@@ -52,7 +53,7 @@ const Default = (colors: PalettesProps): PaletteThemeProps => {
       main: '#C35400'/*blue[5]*/,
       dark: '#73787A'/*blue[6]*/,
       700: blue[7],
-      darker: blue[8],
+      darker: '#000000'/*blue[8]*/,
       900: blue[9],
       contrastText
     },

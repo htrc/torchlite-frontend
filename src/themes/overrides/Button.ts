@@ -16,7 +16,7 @@ interface ButtonStyleProps extends ExtendedStyleProps {
 
 function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
   const colors = getColors(theme, color);
-  const { lighter, main, dark, contrastText } = colors;
+  const { lighter, main, dark, darker, contrastText } = colors;
 
   const buttonShadow = `${color}Button`;
   const shadows = getShadow(theme, buttonShadow);
@@ -55,11 +55,11 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
       };
     case 'outlined':
       return {
-        borderColor: main,
+        borderColor: darker/*main*/,
         '&:hover': {
-          color: dark,
+          color: main/*darker*//*dark*/,
           backgroundColor: 'transparent',
-          borderColor: dark
+          borderColor: main
         },
         ...commonShadow
       };
