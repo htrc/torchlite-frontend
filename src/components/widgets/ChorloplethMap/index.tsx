@@ -523,12 +523,12 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       }}
     >
       {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7', fontFamily:`'Domine', serif` }}>
+        <Typography variant="h3" sx={{ color: '#505759' /*'#1e98d7'*/, fontFamily:`'Questrial', sans-serif` }}>
           Mapping Contributor Data
         </Typography>
       ) : (
         <NextLink href="/widget-details/mapping">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer', fontFamily:`'Domine', serif` }}>
+          <Typography variant="h3" sx={{ color: '#505759'/*'#1e98d7'*/, cursor: 'pointer', fontFamily:`'Questrial', sans-serif` }}>
             Mapping Contributor Data
           </Typography>
         </NextLink>
