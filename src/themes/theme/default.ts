@@ -1,9 +1,23 @@
 // types
 import { PaletteThemeProps } from 'types/theme';
 import { PalettesProps } from '@ant-design/colors';
-import { PaletteColorOptions } from '@mui/material/styles';
+import { PaletteColorOptions, ThemeOptions } from '@mui/material/styles';
 
 // ==============================|| PRESET THEME - DEFAULT ||============================== //
+
+//Jenny added ThemeOptions
+export const themeOptions: ThemeOptions = {
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#C35400',
+    },
+    secondary: {
+      main: '#505759',
+      light: '#73787A' //this is taken from the Material UI Theme Creator https://zenoo.github.io/mui-theme-creator/#Buttons
+    },
+  },
+};
 
 const Default = (colors: PalettesProps): PaletteThemeProps => {
   const { blue, red, gold, cyan, green, grey } = colors;
@@ -35,15 +49,15 @@ const Default = (colors: PalettesProps): PaletteThemeProps => {
       200: blue[2],
       light: blue[3],
       400: blue[4],
-      main: blue[5],
-      dark: blue[6],
+      main: '#C35400'/*blue[5]*/,
+      dark: '#73787A'/*blue[6]*/,
       700: blue[7],
       darker: blue[8],
       900: blue[9],
       contrastText
     },
     secondary: {
-      lighter: greyColors[100],
+      lighter: /*'#73787A'*/greyColors[100],
       100: greyColors[100],
       200: greyColors[200],
       light: greyColors[300],

@@ -45,7 +45,7 @@ const DashboardHeader = () => {
               padding: theme.spacing(0.25),
               borderRadius: '0.815rem',
               boxSizing: 'border-box',
-              fontSize: '0.8125rem'
+              fontSize: '0.8125rem',
             }}
             color="secondary"
             onChange={handleChange}
@@ -89,7 +89,7 @@ const DashboardHeader = () => {
               height: '39px',
               padding: '2px',
               borderRadius: '14px',
-              backgroundColor: '#1e98d7',
+              backgroundColor: '#505759'/*'#1e98d7'*/,
               boxSizing: 'border-box',
               color: '#ffffff',
               textAlign: 'center',

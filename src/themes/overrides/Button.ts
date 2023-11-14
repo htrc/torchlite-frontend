@@ -38,7 +38,7 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
     case 'contained':
       return {
         '&:hover': {
-          backgroundColor: dark
+          backgroundColor: main/*dark*/
         },
         ...commonShadow
       };
