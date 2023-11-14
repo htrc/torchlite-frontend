@@ -68,7 +68,7 @@ const DetailsPageHeader = () => {
               height: '39px',
               padding: '2px',
               borderRadius: '14px',
-              backgroundColor: '#1e98d7',
+              backgroundColor: '#505759'/*'#1e98d7'*/,
               boxSizing: 'border-box',
               color: '#ffffff',
               textAlign: 'center',
