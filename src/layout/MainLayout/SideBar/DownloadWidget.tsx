@@ -58,7 +58,7 @@ const CleanDataWidget = () => {
               height: theme.spacing(5),
               padding: theme.spacing(0.25),
               borderRadius: '15px',
-              backgroundColor: '#1e98d7',
+              backgroundColor: '#505759'/*'#1e98d7'*/,
               fontFamily: "'ArialMT', 'Arial', 'sans-serif'",
               fontSize: theme.spacing(1.625),
               color: theme.palette.common.white,

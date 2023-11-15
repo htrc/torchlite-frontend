@@ -102,7 +102,7 @@ const WorksetWidget = () => {
         </TableContainer>
 
         <Box sx={{ '& .MuiButtonBase-root::after': { boxShadow: 'none' } }}>
-          <Typography variant="h5" color="primary" sx={{ padding: theme.spacing(1.5) }}>
+          <Typography variant="h5" color='#505759'/*"primary"*/ sx={{ padding: theme.spacing(1.5) }}>
             Selected Workset Name:
             <Typography>{selected?.name}</Typography>
           </Typography>
