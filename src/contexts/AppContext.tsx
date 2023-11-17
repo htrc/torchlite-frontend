@@ -1,20 +1,16 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
-
-// project import
-import defaultConfig from 'config';
-import useLocalStorage from 'hooks/useLocalStorage';
+import { useRouter } from 'next/router';
+import qs from 'qs';
 
 // types
-import { CustomizationProps, MenuOrientation, ThemeMode } from 'types/config';
-import { DashboardContextProps, DashboardState } from 'types/torchlite';
+import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetSummary } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
-import { getAvailableDashboards, getDashboardState } from 'services';
+import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
+import CustomBackdrop from 'components/Backdrop';
 
 // initial state
 const initialState: DashboardContextProps = {
-  onChangeMode: () => {},
-  onChangeMiniDrawer: () => {},
-  onChangeMenuOrientation: () => {}
+  onChangeDashboardState: (e: DashboardStatePatch) => {}
 };
 
 // ==============================|| CONFIG CONTEXT & PROVIDER ||============================== //
@@ -26,14 +22,24 @@ type AppProviderProps = {
 };
 
 function AppProvider({ children }: AppProviderProps) {
-  // const [config, setConfig] = useLocalStorage('mantis-react-next-ts-config', initialState);
   const [dashboardState, setDashboardState] = useState<DashboardState>();
+  const [availableWorksets, setAvailableWorksets] = useState<WorksetSummary[]>();
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const { data: session } = useSession();
 
   useEffect(() => {
     const initApp = async () => {
       try {
+        // Get workset and filter from router query
+        const { worksetId } = router.query;
+        const filters = qs.parse(router.query.filters as string, { comma: true });
+        let selectedWorksetId: string, appliedFilters;
+
+        // Get worksets
+        const worksets: WorksetSummary[] = await getAvailableWorksets();
+        setAvailableWorksets(worksets);
+
         // Get dashboard state
         const dashboardId = localStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
@@ -57,6 +63,22 @@ function AppProvider({ children }: AppProviderProps) {
         }
         console.log('dashboard state', dashboardState);
         setDashboardState(dashboardState);
+
+        if (worksetId) {
+          selectedWorksetId = worksetId as string;
+          appliedFilters = filters;
+        } else {
+          selectedWorksetId = dashboardState.worksetId;
+          appliedFilters = dashboardState.filters;
+          router.push({
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              worksetId: selectedWorksetId,
+              filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+            }
+          });
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -67,24 +89,31 @@ function AppProvider({ children }: AppProviderProps) {
     initApp();
   }, []);
 
-  const onChangeMode = () => {
-  };
-
-  const onChangeMiniDrawer = () => {
-  };
-
-  const onChangeMenuOrientation = () => {
+  const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
+    console.log(newDashboardState);
+    try {
+      if (dashboardState) {
+        setLoading(true);
+        const updatedState = await updateDashboardState(dashboardState.id, newDashboardState);
+        setDashboardState(updatedState);
+        console.log(updatedState);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AppContext.Provider
       value={{
         dashboardState,
-        onChangeMode,
-        onChangeMiniDrawer,
-        onChangeMenuOrientation
+        availableWorksets,
+        onChangeDashboardState
       }}
     >
+      <CustomBackdrop loading={loading} />
       {children}
     </AppContext.Provider>
   );

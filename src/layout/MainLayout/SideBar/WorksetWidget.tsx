@@ -17,60 +17,57 @@ import {
   useTheme,
   Box
 } from '@mui/material';
-import { useDispatch, useSelector } from 'store';
-import { setTooltipId } from 'store/reducers/dashboard';
-import { setSelectedWorksetId } from 'store/reducers/dashboard';
 import CustomTableRow from 'components/CustomTableRow';
-import { WorksetInfo } from 'types/torchlite';
+import { WorksetSummary } from 'types/torchlite';
 import useDashboardState from 'hooks/useDashboardState';
 
 const WorksetWidget = () => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const router = useRouter();
-  const { dashboardState } = useDashboardState();
+  const { dashboardState, availableWorksets, onChangeDashboardState } = useDashboardState();
 
-  const { worksets } = useSelector((state) => state.dashboard);
+  // const { worksets } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('all');
-  const [selected, setSelected] = useState<WorksetInfo | null>(null);
-  const [worksetData, setWorksetData] = useState<WorksetInfo[]>(worksets);
+  const [selected, setSelected] = useState<WorksetSummary | null>(null);
+  const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets || []);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
     setType(value);
   };
 
-  const handleSelectWorkSet = (prop: WorksetInfo) => {
+  const handleSelectWorkSet = (prop: WorksetSummary) => {
     if (prop.id !== dashboardState?.worksetId) {
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }
       });
       setSelected(prop);
-      dispatch(setSelectedWorksetId(prop.id));
+      onChangeDashboardState({
+        worksetId: prop.id
+      });
     }
   };
 
   useEffect(() => {
     if (type === 'all' || type === 'A') {
-      setWorksetData(worksets);
+      setWorksetData(availableWorksets || []);
     } else {
       setWorksetData([]);
     }
-  }, [type, worksets]);
+  }, [type, availableWorksets]);
 
   useEffect(() => {
-    if (dashboardState?.worksetId) {
-      const filtered = worksets.filter((workset) => workset.id === dashboardState?.worksetId);
-      if (filtered && filtered.length > 0) {
-        setSelected(filtered[0]);
+    if (availableWorksets) {
+      if (dashboardState?.worksetId) {
+        const filtered = availableWorksets.filter((workset) => workset.id === dashboardState?.worksetId);
+        if (filtered && filtered.length > 0) {
+          setSelected(filtered[0]);
+        }
       }
+      setWorksetData(availableWorksets);
     }
-
-    setWorksetData(worksets);
-    dispatch(setTooltipId(''));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worksets, dashboardState?.worksetId]);
+  }, [availableWorksets, dashboardState?.worksetId]);
 
   return (
     <>

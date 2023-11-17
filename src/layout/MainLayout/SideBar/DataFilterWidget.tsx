@@ -43,12 +43,10 @@ const DataFilterWidget = () => {
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { dashboardState } = useDashboardState();
+  const { dashboardState, onChangeDashboardState } = useDashboardState();
 
   const { appliedFilters } = useSelector((state) => state.dashboard);
   const worksetMetadata = dashboardState?.worksetInfo.volumes || [];
-  console.log('workset metadata', worksetMetadata);
-
 
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(appliedFilters));
@@ -107,6 +105,10 @@ const DataFilterWidget = () => {
     }, {});
 
     updateFiltersRoute(transformed);
+    console.log(transformed)
+    onChangeDashboardState({
+      filters: transformed
+    });
     dispatch(setAppliedFilters(transformed));
   };
 
@@ -123,7 +125,7 @@ const DataFilterWidget = () => {
   };
 
   const getFilterByData = (timeLineData: any) => {
-    const pubTitles = [...new Set(timeLineData.flatMap((obj: any) => obj.title))]
+    const titles = [...new Set(timeLineData.flatMap((obj: any) => obj.title))]
       .filter((title) => title !== undefined)
       .sort()
       .map((title) => ({ value: title, label: title, key: 'title' }));
@@ -136,7 +138,7 @@ const DataFilterWidget = () => {
       .filter((genre) => genre !== undefined)
       .sort()
       .map((genre) => ({ value: genre, label: genre, key: 'genre' }));
-    const resTypes = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
+    const typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
       .filter((type) => type !== undefined)
       .sort()
       .map((type) => ({ value: type, label: type, key: 'type' }));
@@ -180,17 +182,17 @@ const DataFilterWidget = () => {
       }
     }
     const filterGroupData = {
-      title: pubTitles,
-      pubDate: pubDates,
-      genre: genres,
-      type: resTypes,
-      category: categories,
-      contributor: contributors,
-      publisher: publishers,
-      accessRights: accessRights,
-      pubPlace: pubPlaces,
-      language: languages,
-      sourceInstitution: sourceInstitutions
+      titles,
+      pubDates,
+      genres,
+      typesOfResources,
+      categories,
+      contributors,
+      publishers,
+      accessRights,
+      pubPlaces,
+      languages,
+      sourceInstitutions
     };
     setFilterGroup(filterGroupData);
   };

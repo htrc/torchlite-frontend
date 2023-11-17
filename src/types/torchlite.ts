@@ -97,7 +97,6 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
 
 export type DashboardContextProps = {
   dashboardState?: DashboardState;
-  onChangeMode: () => void;
-  onChangeMenuOrientation: () => void;
-  onChangeMiniDrawer: () => void;
+  availableWorksets?: WorksetSummary[];
+  onChangeDashboardState: (e: DashboardStatePatch) => void;
 };

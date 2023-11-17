@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { ChorloplethMap } from './ChorloplethMap';
 import { PublicationTimeLineChart } from './PublicationTimeLineChart';
 import MainCard from 'components/MainCard';
-import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { CircularProgress, Typography, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
 
 type WidgetProps = {

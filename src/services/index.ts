@@ -1,9 +1,9 @@
 import defaultAxios from 'axios';
-import axios from 'utils/axios';
 import idpList from 'data/idplist.json';
+import { DashboardStatePatch } from 'types/torchlite';
 
-export function confirmWorkset(dashboard_id: string, selected_workset_id: string) {
-  return axios.put(`/dashboards/${dashboard_id}/workset/${selected_workset_id}`);
+export async function updateDashboardState(dashboardId: string, body: DashboardStatePatch) {
+  return defaultAxios.patch(`/api/dashboards/${dashboardId}`, body).then((response) => response.data);
 }
 
 export async function getAvailableDashboards(dashboardId?: string | null) {
