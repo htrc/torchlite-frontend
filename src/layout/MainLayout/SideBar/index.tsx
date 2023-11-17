@@ -36,7 +36,7 @@ const SideBar = () => {
           },
           '& .MuiAccordionSummary-expandIconWrapper': { display: 'none' },
           '& .Mui-expanded': {
-            color: '#000000'/*'#1e98d7'*/, //changing header color to black
+            color: theme.palette.mode === 'dark' ? '#FFFFFF': '#000000', //changing header color to white if in dark mode, black if not
             backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : 'inherit'
           },
           '& h5:hover': { color: '#C35400'/*'#1e98d7'*/ } //changing the hover over color to HT orange
