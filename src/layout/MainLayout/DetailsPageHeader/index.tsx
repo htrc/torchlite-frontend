@@ -47,7 +47,8 @@ const DetailsPageHeader = () => {
             // backgroundColor: 'transparent',
             boxSizing: 'border-box',
             // color: '#ffffff',
-            color: '#000000',
+            borderColor: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+            color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
             textAlign: 'center',
             lineHeight: 'normal',
             marginLeft: '1.3125rem'
