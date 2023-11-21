@@ -207,8 +207,9 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     <div id="tooltip" style="position: absolute; text-align: left; width: auto; height: auto; padding: 5px 10px; font: 12px sans-serif; background: lightsteelblue; border: 0px; border-radius: 8px; pointer-events: none; z-index: 10; opacity: 0; left: 446px; top: 373px;"></div>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
+    <script type="application/json" id="countries_50m">${JSON.stringify(world)}</script>
     <script type="module">
-      const COUNTRIES_50M = ${JSON.stringify(world)}
+      const COUNTRIES_50M = JSON.parse(document.getElementById('countries_50m').innerHTML);
 
       const MAP_DATA = [
         {
@@ -3534,7 +3535,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
         </Stack>
       )}
       <Box sx={{ width: '100%', position: 'relative' }} ref={chartWrapper}>
-        <iframe srcDoc={iframeCode} width={width} height={height + 50} style={{ border: '0px'}} id="map_frame"></iframe>
+        <iframe srcDoc={iframeCode} /*src={`data:text/html,${encodeURIComponent(iframeCode)}`}*/ width={width} height={height + 50} style={{ border: '0px'}} id="map_frame"></iframe>
 {/*        <div id="graph-container" ref={inputRef} />
         {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}*/}
         <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
