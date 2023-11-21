@@ -41,9 +41,10 @@ function AppProvider({ children }: AppProviderProps) {
         setAvailableWorksets(worksets);
 
         // Get dashboard state
-        const dashboardId = localStorage.getItem('dashboard_id');
+        const dashboardId = sessionStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
 
+        console.log('dashboardId', dashboardId);
         if (!session) {
           if (dashboardId) {
             dashboardState = await getDashboardState(dashboardId);
@@ -52,13 +53,13 @@ function AppProvider({ children }: AppProviderProps) {
             dashboardState = dashboards[0];
           }
 
-          localStorage.setItem('dashboard_id', dashboardState.id);
+          sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
           const dashboards = await getAvailableDashboards(dashboardId);
           dashboardState = dashboards[0];
 
           if (dashboardId) {
-            localStorage.removeItem('dashboard_id');
+            sessionStorage.removeItem('dashboard_id');
           }
         }
         console.log('dashboard state', dashboardState);

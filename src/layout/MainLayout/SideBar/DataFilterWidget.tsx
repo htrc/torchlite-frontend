@@ -19,7 +19,6 @@ import {
   setFilteredWorksetMetadata
 } from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
-import { getCountryCounts } from 'services';
 import { convertToTimelineChartData } from 'utils/helpers';
 import useDashboardState from 'hooks/useDashboardState';
 
@@ -46,7 +45,7 @@ const DataFilterWidget = () => {
   const { dashboardState, onChangeDashboardState } = useDashboardState();
 
   const { appliedFilters } = useSelector((state) => state.dashboard);
-  const worksetMetadata = dashboardState?.worksetInfo.volumes || [];
+  const worksetMetadata = dashboardState?.worksetInfo?.volumes || [];
 
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(appliedFilters));
@@ -89,9 +88,9 @@ const DataFilterWidget = () => {
       return true;
     });
 
-    getCountryCounts(filtered).then((res) => {
-      dispatch(getMapDataSuccess(res));
-    });
+    // getCountryCounts(filtered).then((res) => {
+    //   dispatch(getMapDataSuccess(res));
+    // });
     // dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
     dispatch(setFilteredWorksetMetadata(filtered));
     dispatch(setLoading(false));
@@ -105,7 +104,7 @@ const DataFilterWidget = () => {
     }, {});
 
     updateFiltersRoute(transformed);
-    console.log(transformed)
+    console.log(transformed);
     onChangeDashboardState({
       filters: transformed
     });
@@ -132,7 +131,7 @@ const DataFilterWidget = () => {
     const pubDates = [...new Set(timeLineData.flatMap((obj: any) => obj.pubDate))]
       .filter((pubDate) => pubDate !== undefined)
       .sort()
-      .map((pubDate) => ({ value: pubDate?.toString(), label: pubDate?.toString(), key: 'pubDate' }));
+      .map((pubDate) => ({ value: pubDate, label: pubDate?.toString(), key: 'pubDate' }));
     //const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
     const genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
       .filter((genre) => genre !== undefined)

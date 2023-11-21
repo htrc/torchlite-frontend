@@ -27,12 +27,16 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
   let height = width / 2;
   const { loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
   const mapData = data;
-  const [dateRange, setDateRange] = useState<number[]>([]);
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
+
+  const yearsOfBirth = data.map((item) => item.yearOfBirth).filter((year) => year !== null && year !== undefined);
+  const minYearOfBirth = Math.min(...yearsOfBirth);
+  const maxYearOfBirth = Math.max(...yearsOfBirth);
+  const [dateRange, setDateRange] = useState<number[]>([minYearOfBirth, maxYearOfBirth]);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -45,19 +49,7 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
     setAnchorEl(null);
   };
 
-  // console.log(mapData);
   //group by dob mapData
-  const modifiedDataHistogram = useMemo(() => {
-    return mapData
-      .filter((item) => item.yearOfBirth !== null) // Filter out items with null yearOfBirth
-      .reduce((prev: any, curr: IMapData) => {
-        const yearOfBirth = curr.yearOfBirth;
-        if (prev[yearOfBirth]) return { ...prev, [yearOfBirth]: prev[yearOfBirth] + 1 };
-        else return { ...prev, [yearOfBirth]: 1 };
-      }, {});
-  }, [mapData]);
-
-  // console.log(modifiedDataHistogram);
   const handleMarkerClick = (event, d) => {
     const div = d3.select('#tooltip');
     div.style('opacity', 0.9);
@@ -73,6 +65,8 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
   }, [mapData, dateRange]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
+
+  console.log('mapdata', mapData, mapDataHistogram);
 
   useEffect(() => {
     // Check if the data has actually changed
@@ -105,17 +99,6 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
       setMaxPopulation(maxPop);
     }
   }, [cities]);
-
-  const minDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-  const maxDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
-  useEffect(() => {
-    setDateRange([minDate, maxDate]);
-  }, [minDate, maxDate]);
 
   useEffect(() => {
     fetch('/countries-50m.json').then((response) => {
@@ -578,7 +561,13 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider
+          value={dateRange}
+          minValue={minYearOfBirth}
+          maxValue={maxYearOfBirth}
+          step={10}
+          handleSliderChange={handleSliderChange}
+        />
       </Box>
     </>
   );

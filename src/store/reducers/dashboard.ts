@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getCountryCounts, getWorksetMetadata } from 'services';
 // types
 import { IDashboardProps } from 'types/dashboard';
 import { convertToTimelineChartData } from 'utils/helpers';
@@ -110,13 +109,6 @@ export const setAppliedFilters = createAsyncThunk<void, object, {}>(
   'dashboard/setAppliedFilters',
   async (appliedFilters, { dispatch, getState }) => {
     try {
-      dispatch(setAppliedFiltersSuccess(appliedFilters));
-
-      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
-      featuredState.filters = appliedFilters;
-      // await setFeaturedState(JSON.stringify(featuredState));
-
-      localStorage.setItem('featured_state', JSON.stringify(featuredState));
     } catch (error) {
       console.error(error);
       // throw error;
@@ -128,25 +120,6 @@ export const setSelectedWorksetId = createAsyncThunk<void, string, {}>(
   'dashboard/setSelectedWorksetId',
   async (worksetId, { dispatch, getState }) => {
     try {
-      dispatch(setSelectedWorksetIdSuccess(worksetId));
-      dispatch(setAppliedFiltersSuccess({}));
-
-      const response = await getWorksetMetadata(worksetId);
-      const data = response.data;
-
-      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
-      featuredState.worksetId = worksetId;
-      featuredState.filters = {};
-      // await setFeaturedState(JSON.stringify(featuredState));
-
-      localStorage.setItem('featured_state', JSON.stringify(featuredState));
-
-      dispatch(getTimeLineDataSuccess(convertToTimelineChartData(data.data)));
-      dispatch(setFilteredWorksetMetadata(data.data));
-      dispatch(getWorksetMetadataSuccess(data.data));
-
-      const countryCounts = await getCountryCounts(data.data);
-      dispatch(getMapDataSuccess(countryCounts));
     } catch (error) {
       console.error(error);
       // throw error;

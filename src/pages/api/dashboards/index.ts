@@ -16,7 +16,7 @@ async function cloneDashboard(dashboardId: string, headers: any): Promise<Dashbo
   });
 
   return await axios.post<DashboardSummary>(
-    `/dashboards`,
+    `/dashboards/`,
     {
       worksetId: worksetId,
       filters: filters,
@@ -46,6 +46,7 @@ async function getFeaturedDashboardClone(headers: any): Promise<[DashboardSummar
       // ...and pick a random one
       dashboardSummary = pickRandom(featuredDashboards);
       featuredDashboardId = dashboardSummary.id;
+      dashboardSummary = await cloneDashboard(featuredDashboardId, headers);
     } else throw Error('No featured dashboards available!');
   }
 

@@ -23,10 +23,9 @@ const DashboardDefault = ({ csrfToken }: any) => {
         <Box>
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
-            {dashboardState?.widgets.map((widget, index) => {
+            {dashboardState?.widgets?.map((widget, index) => {
               return (
                 <Grid item xs={12} md={6} key={index}>
-                 
                   <Widget dashboardId={dashboardState.id} widgetType={widget.type} />
                 </Grid>
               );
