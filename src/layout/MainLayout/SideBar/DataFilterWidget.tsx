@@ -7,19 +7,10 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 //mock data
-import { filterKeys } from 'data/datafilters';
+import { filterKeys, filterKeysMap } from 'data/datafilters';
 import genreData from 'data/genreData';
 import { IFilterKey } from 'types/dashboard';
-import { useDispatch, useSelector } from 'store';
-import {
-  getMapDataSuccess,
-  getTimeLineDataSuccess,
-  setLoading,
-  setAppliedFilters,
-  setFilteredWorksetMetadata
-} from 'store/reducers/dashboard';
 import { colourStyles } from 'styles/react-select';
-import { convertToTimelineChartData } from 'utils/helpers';
 import useDashboardState from 'hooks/useDashboardState';
 
 const animatedComponents = makeAnimated();
@@ -41,20 +32,15 @@ const convertFromUrl = (originalData: any) => {
 const DataFilterWidget = () => {
   const theme = useTheme();
   const router = useRouter();
-  const dispatch = useDispatch();
   const { dashboardState, onChangeDashboardState } = useDashboardState();
-
-  const { appliedFilters } = useSelector((state) => state.dashboard);
   const worksetMetadata = dashboardState?.worksetInfo?.volumes || [];
-
   const [filterGroup, setFilterGroup] = useState<any>({});
-  const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(appliedFilters));
+  const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(dashboardState?.filters));
 
   useEffect(() => {
-    setSelectedGroup(convertFromUrl(appliedFilters));
-    applyFilter(convertFromUrl(appliedFilters));
+    setSelectedGroup(convertFromUrl(dashboardState?.filters));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appliedFilters]);
+  }, [dashboardState?.filters]);
 
   const updateFiltersRoute = (newFilters: Record<string, any>) => {
     const queryString = qs.stringify(newFilters, { arrayFormat: 'comma', encode: false });
@@ -65,50 +51,16 @@ const DataFilterWidget = () => {
     });
   };
 
-  const applyFilter = (filters: any) => {
-    dispatch(setLoading(true));
-    const filtered = worksetMetadata.filter((item: any) => {
-      for (let key in filters) {
-        if (filters[key].length) {
-          if (
-            !filters[key].some((i: any) => {
-              if (Array.isArray(item[i.key])) {
-                return item[i.key].includes(i.value);
-              } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
-                return i.value == item[i.key].name;
-              } else {
-                return i.value == item[i.key];
-              }
-            })
-          ) {
-            return false;
-          }
-        }
-      }
-      return true;
-    });
-
-    // getCountryCounts(filtered).then((res) => {
-    //   dispatch(getMapDataSuccess(res));
-    // });
-    // dispatch(getTimeLineDataSuccess(convertToTimelineChartData(filtered)));
-    dispatch(setFilteredWorksetMetadata(filtered));
-    dispatch(setLoading(false));
-  };
-
   const handleApplyFilter = (filters: any) => {
-    applyFilter(filters);
     const transformed = Object.keys(filters).reduce((acc: any, key: any) => {
       acc[key] = filters[key].map((item: any) => item.value);
       return acc;
     }, {});
 
     updateFiltersRoute(transformed);
-    console.log(transformed);
     onChangeDashboardState({
       filters: transformed
     });
-    dispatch(setAppliedFilters(transformed));
   };
 
   const getNameMatchingShortname = (name: any) => {
@@ -140,7 +92,7 @@ const DataFilterWidget = () => {
     const typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
       .filter((type) => type !== undefined)
       .sort()
-      .map((type) => ({ value: type, label: type, key: 'type' }));
+      .map((type) => ({ value: type, label: type, key: 'typeOfResource' }));
     const categories = [...new Set(timeLineData.flatMap((obj: any) => obj.category))]
       .filter((category) => category !== undefined)
       .sort()
@@ -212,19 +164,18 @@ const DataFilterWidget = () => {
         if (selectedGroup[key].length) {
           if (
             !selectedGroup[key].some((i: any) => {
-              if (Array.isArray(item[i.key])) {
-                return item[i.key].includes(i.value);
-              } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
-                return i.value == item[i.key].name;
+              if (Array.isArray(item[filterKeysMap[key]])) {
+                return item[filterKeysMap[key]].includes(i.value);
+              } else if (typeof item[filterKeysMap[key]] === 'object' && item[filterKeysMap[key]] !== null) {
+                return i.value == item[filterKeysMap[key]].name;
               } else {
-                return i.value == item[i.key];
+                return i.value == item[filterKeysMap[key]];
               }
             })
           ) {
             return false;
           }
         }
-
         //}
       }
       return true;
@@ -239,12 +190,12 @@ const DataFilterWidget = () => {
           if (selectedGroup[key].length) {
             if (
               !selectedGroup[key].some((i: any) => {
-                if (Array.isArray(item[i.key])) {
-                  return item[i.key].includes(i.value);
-                } else if (typeof item[i.key] === 'object' && item[i.key] !== null) {
-                  return i.value == item[i.key].name;
+                if (Array.isArray(item[filterKeysMap[key]])) {
+                  return item[filterKeysMap[key]].includes(i.value);
+                } else if (typeof item[filterKeysMap[key]] === 'object' && item[filterKeysMap[key]] !== null) {
+                  return i.value == item[filterKeysMap[key]].name;
                 } else {
-                  return i.value == item[i.key];
+                  return i.value == item[filterKeysMap[key]];
                 }
               })
             ) {

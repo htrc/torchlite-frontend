@@ -1,28 +1,53 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useSWR from 'swr';
 import { ChorloplethMap } from './ChorloplethMap';
 import { PublicationTimeLineChart } from './PublicationTimeLineChart';
 import MainCard from 'components/MainCard';
 import { CircularProgress, Typography, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
+import { DashboardState } from 'types/torchlite';
 
 type WidgetProps = {
-  dashboardId: string;
+  dashboardState: DashboardState;
   widgetType: string;
 };
 
 const fetchWidgetData = (dashboardId: string, widgetType: string) => `/api/dashboards/${dashboardId}/widgets/${widgetType}/data`;
+const fetchData = async (dashboardState: DashboardState, widgetType: string, mutate: Function) => {
+  try {
+    // Inform useSWR that the data fetching is starting
+    mutate(undefined, true);
 
-const Widget = ({ dashboardId, widgetType }: WidgetProps) => {
+    const url = fetchWidgetData(dashboardState.id, widgetType);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const newData = await response.json();
+
+    // Inform useSWR that the data fetching is complete
+    mutate(newData);
+  } catch (error) {
+    // Inform useSWR about the error
+    mutate(undefined, false);
+    console.error('Error fetching data:', error);
+  }
+};
+
+const Widget = ({ dashboardState, widgetType }: WidgetProps) => {
   const theme = useTheme();
 
-  const { data, error } = useSWR(fetchWidgetData(dashboardId, widgetType), async (url) => {
+  const { data, error, mutate } = useSWR(fetchWidgetData(dashboardState.id, widgetType), async (url) => {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
     return response.json();
   });
+
+  useEffect(() => {
+    fetchData(dashboardState, widgetType, mutate);
+  }, [dashboardState, widgetType, mutate]);
 
   return (
     <MainCard

@@ -26,10 +26,11 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
 
-  console.log('data', data, modifiedDataHistogram);
+  const yearsOfBirth = data.map((item) => item.year).filter((year) => year !== null && year !== undefined);
+  const minYear = Math.min(...yearsOfBirth);
+  const maxYear = Math.max(...yearsOfBirth);
 
   const [dateRange, setDateRange] = useState<number[]>([]);
-
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
 
@@ -42,10 +43,8 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
   };
 
   const chartDataHistogram = useMemo(() => {
-    return Object.keys(modifiedDataHistogram)
-      .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item: any) => ({ date: item, value: modifiedDataHistogram[item] }));
-  }, [modifiedDataHistogram, dateRange]);
+    return data.filter((item) => item.year >= dateRange[0] && item.year <= dateRange[1]);
+  }, [data, dateRange]);
 
   useEffect(() => {
     // Check if the data has actually changed
@@ -54,17 +53,9 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
     }
   }, [chartDataHistogram, storedTimelineRangedData, dispatch]);
 
-  const minDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
-  const maxDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
   useEffect(() => {
-    setDateRange([minDate, maxDate]);
-  }, [minDate, maxDate]);
+    setDateRange([minYear, maxYear]);
+  }, [minYear, maxYear]);
 
   //Histogram properties
   let width = dimensions?.width || 500;
@@ -75,11 +66,8 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
   //x-axis scale for Histogram
   const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
   //y-axis scale for Histogram
-  const yScaleHistogram: any = d3
-    .scaleLinear()
-    .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
-    .range([boundsHeight, 0]);
-  const maxDataValue = Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)));
+  const maxDataValue = Math.max(...data.map((item) => item.count));
+  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]);
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
@@ -101,10 +89,10 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
       <rect
         key={i}
         fill="#6689c6"
-        x={xScaleHistogram(Number(bucket.date)) + BUCKET_PADDING / 2}
+        x={xScaleHistogram(bucket.year) + BUCKET_PADDING / 2}
         width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
-        y={yScaleHistogram(bucket.value)}
-        height={boundsHeight - yScaleHistogram(bucket.value)}
+        y={yScaleHistogram(bucket.count)}
+        height={boundsHeight - yScaleHistogram(bucket.count)}
       />
     );
   });
@@ -206,7 +194,7 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
           </g>
           <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );

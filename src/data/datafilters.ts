@@ -11,3 +11,17 @@ export const filterKeys = [
   { label: 'Language', checked: false, value: 'languages', selectedValue: [] },
   { label: 'Source Institution', checked: false, value: 'sourceInstitutions', selectedValue: [] }
 ];
+
+export const filterKeysMap: any = {
+  titles: 'title',
+  pubDates: 'pubDate',
+  genres: 'genre',
+  typesOfResources: 'typesOfResource',
+  categories: 'category',
+  contributors: 'contributor',
+  publishers: 'publisher',
+  accessRights: 'accessRights',
+  pubPlaces: 'pubPlace',
+  languages: 'language',
+  sourceInstitutions: 'sourceInstitution'
+};
