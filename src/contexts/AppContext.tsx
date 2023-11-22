@@ -36,7 +36,7 @@ function AppProvider({ children }: AppProviderProps) {
       try {
         // Get workset and filter from router query
         const { worksetId } = router.query;
-        const filters = qs.parse(router.query.filters as string, { comma: true });
+        const filters: any = qs.parse(router.query.filters as string, { comma: true });
         let selectedWorksetId: string, appliedFilters;
 
         // Get worksets
@@ -64,15 +64,20 @@ function AppProvider({ children }: AppProviderProps) {
             sessionStorage.removeItem('dashboard_id');
           }
         }
-        setDashboardState(dashboardState);
 
         if (worksetId) {
           selectedWorksetId = worksetId as string;
-          appliedFilters = filters;
-          await onChangeDashboardState({
+          if (filters) {
+            appliedFilters = {
+              ...filters,
+              pubDates: Array.isArray(filters.pubDates) ? filters.pubDates.map((year: any) => parseInt(year, 10)) : undefined
+            };
+          }
+          await updateDashboardState(dashboardState.id, {
             worksetId: selectedWorksetId,
-            filters: filters
+            filters: appliedFilters
           });
+          dashboardState = await getDashboardState(dashboardState.id);
         } else {
           selectedWorksetId = dashboardState.worksetId;
           appliedFilters = dashboardState.filters;
@@ -85,6 +90,7 @@ function AppProvider({ children }: AppProviderProps) {
             }
           });
         }
+        setDashboardState(dashboardState);
       } catch (error) {
         console.error(error);
       } finally {
@@ -93,7 +99,24 @@ function AppProvider({ children }: AppProviderProps) {
     };
 
     initApp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (dashboardState) {
+      const selectedWorksetId = dashboardState.worksetId;
+      const appliedFilters = dashboardState.filters;
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          worksetId: selectedWorksetId,
+          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.pathname]);
 
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
     try {

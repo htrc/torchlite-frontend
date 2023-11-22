@@ -15,9 +15,9 @@ import IconButton from 'components/@extended/IconButton';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { transformMapDataForDataTable } from 'utils/helpers';
-import { mapCSVHeaders } from 'data/react-table';
 import { saveAs } from 'file-saver';
 import useDashboardState from 'hooks/useDashboardState';
+import { CSVHeaders } from 'data/constants';
 
 export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
@@ -540,7 +540,7 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
             <CSVLink
               data={datatableData}
               filename={`Contributor_Data${new Date().toISOString().split('T')[0]}.csv`}
-              headers={mapCSVHeaders}
+              headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>

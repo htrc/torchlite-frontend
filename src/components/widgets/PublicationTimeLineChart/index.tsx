@@ -9,11 +9,11 @@ import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import { setTimelineRangedData } from 'store/reducers/dashboard';
 import IconButton from 'components/@extended/IconButton';
-import { timelineCSVHeaders } from 'data/react-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { saveAs } from 'file-saver';
 import useDashboardState from 'hooks/useDashboardState';
+import { CSVHeaders } from 'data/constants';
 
 const MARGIN = { top: 20, right: 25, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
@@ -169,7 +169,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
             <CSVLink
               data={chartDataHistogram}
               filename={`Timeline_Data${new Date().toISOString().split('T')[0]}.csv`}
-              headers={timelineCSVHeaders}
+              headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
