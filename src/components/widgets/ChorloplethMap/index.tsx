@@ -57,7 +57,7 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
       maxYear: maxYear,
       data: mapDataHistogram
     });
-  }, [mapDataHistogram, minYear, maxYear, widgetType, onChangeWidgetState]);
+  }, [mapDataHistogram, minYear, maxYear, widgetType]);
 
   //group by dob mapData
   const handleMarkerClick = (event, d) => {

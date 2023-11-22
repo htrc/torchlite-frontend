@@ -47,7 +47,6 @@ function AppProvider({ children }: AppProviderProps) {
         const dashboardId = sessionStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
 
-        console.log('dashboardId', dashboardId);
         if (!session) {
           if (dashboardId) {
             dashboardState = await getDashboardState(dashboardId);
@@ -65,12 +64,15 @@ function AppProvider({ children }: AppProviderProps) {
             sessionStorage.removeItem('dashboard_id');
           }
         }
-        console.log('dashboard state', dashboardState);
         setDashboardState(dashboardState);
 
         if (worksetId) {
           selectedWorksetId = worksetId as string;
           appliedFilters = filters;
+          await onChangeDashboardState({
+            worksetId: selectedWorksetId,
+            filters: filters
+          });
         } else {
           selectedWorksetId = dashboardState.worksetId;
           appliedFilters = dashboardState.filters;
@@ -100,7 +102,6 @@ function AppProvider({ children }: AppProviderProps) {
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
         setDashboardState(updatedState);
-        console.log(updatedState);
       }
     } catch (error) {
       console.error(error);
@@ -109,14 +110,6 @@ function AppProvider({ children }: AppProviderProps) {
     }
   };
 
-  /*
-  const newWidgetState = {
-    widgetType: 'Map',
-    minYear: 2019,
-    maxYear: 2023,
-    data: [...]
-  }
-  */
   const onChangeWidgetState = (newWidgetState: any) => {
     setWidgetState({
       ...widgetState,

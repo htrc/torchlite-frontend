@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, FormControl, FormControlLabel, Stack, RadioGroup, Radio, useTheme, Typography } from '@mui/material';
 import CustomButton from 'components/Button';
-import { useSelector } from 'store';
 import { saveAs } from 'file-saver';
+import useDashboardState from 'hooks/useDashboardState';
 
 const CleanDataWidget = () => {
   const theme = useTheme();
-  const { worksetMetadata, filteredWorksetMetadata } = useSelector((state) => state.dashboard);
+  const { dashboardState } = useDashboardState();
   const [selectedValue, setSelectedValue] = useState('full');
 
   const handleChange = (event: any) => {
@@ -15,10 +15,10 @@ const CleanDataWidget = () => {
 
   const onClickDownload = () => {
     if (selectedValue === 'full') {
-      const blob = new Blob([JSON.stringify(worksetMetadata, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(dashboardState?.worksetInfo.volumes, null, 2)], { type: 'application/json' });
       saveAs(blob, 'full-EF.json');
     } else if (selectedValue === 'filtered') {
-      const blob = new Blob([JSON.stringify(filteredWorksetMetadata, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(dashboardState?.worksetInfo.volumes, null, 2)], { type: 'application/json' });
       saveAs(blob, 'filtered-EF.json');
     }
   };

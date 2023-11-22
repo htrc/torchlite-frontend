@@ -6,21 +6,20 @@ import { getProviders, getCsrfToken } from 'next-auth/react';
 import Layout from 'layout';
 import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
-import { useSelector } from 'store';
 import DataTable from 'components/DataTable';
-import { timelineColumns, timelineCSVHeaders } from 'data/react-table';
 import CustomBackdrop from 'components/Backdrop';
 import useDashboardState from 'hooks/useDashboardState';
 import Widget from 'components/widgets';
 import NestedList from 'sections/widget-details/NestedList';
+import { CSVHeaders, TableColumns, TableHeader } from 'data/constants';
 
 const WidgetDetails = ({ csrfToken }: any) => {
-  const { loading } = useSelector((state) => state.dashboard);
   const { dashboardState, widgetState } = useDashboardState();
   const router = useRouter();
+  const widgetType = router.query.widgetType as string;
 
   if (!dashboardState) {
-    return <CustomBackdrop loading={loading} />;
+    return <CustomBackdrop loading={true} />;
   }
 
   return (
@@ -30,7 +29,7 @@ const WidgetDetails = ({ csrfToken }: any) => {
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <Widget dashboardState={dashboardState} widgetType={router.query.widgetType as string} isDetailsPage />
+              <Widget dashboardState={dashboardState} widgetType={widgetType} isDetailsPage />
             </Grid>
             <Grid item xs={12} md={3}>
               <NestedList widgetType={router.query.widgetType as string} />
@@ -42,17 +41,16 @@ const WidgetDetails = ({ csrfToken }: any) => {
             <Grid item md={1}></Grid>
             <Grid item xs={12} md={7}>
               <DataTable
-                data={widgetState[router.query.widgetType as string]?.data ?? []}
-                columns={timelineColumns}
-                title={'Timeline Data'}
-                csvHeaders={timelineCSVHeaders}
+                data={widgetState[widgetType]?.data ?? []}
+                columns={TableColumns[widgetType]}
+                title={TableHeader[widgetType]}
+                csvHeaders={CSVHeaders[widgetType]}
                 sort
               />
             </Grid>
           </Grid>
         </Box>
       </Box>
-      <CustomBackdrop loading={loading} />
     </Page>
   );
 };

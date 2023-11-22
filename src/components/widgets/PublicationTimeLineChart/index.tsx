@@ -15,14 +15,14 @@ import { CSVLink } from 'react-csv';
 import { saveAs } from 'file-saver';
 import useDashboardState from 'hooks/useDashboardState';
 
-const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
+const MARGIN = { top: 20, right: 25, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
 export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
-  const chartWrapper = useRef();
+  const chartWrapper = useRef(null);
   const dimensions = useResizeObserver(chartWrapper);
   const { onChangeWidgetState } = useDashboardState();
 
@@ -53,7 +53,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
       maxYear: maxYear,
       data: chartDataHistogram
     });
-  }, [chartDataHistogram, minYear, maxYear, widgetType, onChangeWidgetState]);
+  }, [chartDataHistogram, minYear, maxYear, widgetType]);
 
   useEffect(() => {
     setDateRange([minYear, maxYear]);

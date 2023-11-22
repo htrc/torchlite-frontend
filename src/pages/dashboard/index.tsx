@@ -5,13 +5,10 @@ import { getProviders, getCsrfToken } from 'next-auth/react';
 import Layout from 'layout';
 import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
-import { useSelector } from 'store';
-import CustomBackdrop from 'components/Backdrop';
 import useDashboardState from 'hooks/useDashboardState';
 import Widget from 'components/widgets';
 
 const DashboardDefault = ({ csrfToken }: any) => {
-  const { loading } = useSelector((state) => state.dashboard);
   const { dashboardState } = useDashboardState();
 
   return (
@@ -30,7 +27,6 @@ const DashboardDefault = ({ csrfToken }: any) => {
           </Grid>
         </Box>
       </Box>
-      <CustomBackdrop loading={loading} />
     </Page>
   );
 };

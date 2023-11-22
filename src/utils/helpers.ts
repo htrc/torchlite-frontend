@@ -1,4 +1,3 @@
-import { ITimelineChart } from 'types/chart';
 import { ZodObject } from 'zod';
 
 export type MapDataTableEntry = {
@@ -28,23 +27,6 @@ export function transformMapDataForDataTable(data: any[]): MapDataTableEntry[] {
   });
 }
 
-export function transformTimelineDataForDataTable(obj: any) {
-  return Object.entries(obj).map(([key, value]) => ({
-    publicationDate: parseInt(key, 10),
-    count: value
-  }));
-}
-
-export const convertToTimelineChartData = (worksetMetaData: any) => {
-  return worksetMetaData.reduce((prev: any, curr: ITimelineChart) => {
-    const pubDate = curr.pubDate;
-    if (!Number.isInteger(pubDate)) {
-      return prev;
-    } else if (prev[pubDate]) return { ...prev, [pubDate]: prev[pubDate] + 1 };
-    else return { ...prev, [pubDate]: 1 };
-  }, {});
-};
-
 export function getCookieValue(cookieName: any) {
   const name = cookieName + '=';
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -65,6 +47,7 @@ export function setCookieValue(cookieName: any, cookieValue: any, maxAgeInSecond
 }
 
 export function hasFilters(filterObj: any): boolean {
+  if (!filterObj) return false;
   return Object.values(filterObj).some((value: any) => {
     if (Array.isArray(value)) {
       return value.length > 0;

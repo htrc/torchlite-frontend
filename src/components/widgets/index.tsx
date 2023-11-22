@@ -49,8 +49,6 @@ const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
     init();
   }, [dashboardState, widgetType]);
 
-  console.log(data);
-
   return (
     <MainCard
       content={false}
