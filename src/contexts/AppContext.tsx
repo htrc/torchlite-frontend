@@ -48,6 +48,7 @@ function AppProvider({ children }: AppProviderProps) {
         let dashboardState: DashboardState;
 
         if (!session) {
+          console.log('Anonymous session');
           if (dashboardId) {
             dashboardState = await getDashboardState(dashboardId);
           } else {
@@ -57,6 +58,7 @@ function AppProvider({ children }: AppProviderProps) {
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
+          console.log('Session: ', session);
           const dashboards = await getAvailableDashboards(dashboardId);
           dashboardState = dashboards[0];
 
