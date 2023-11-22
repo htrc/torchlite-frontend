@@ -174,7 +174,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     if (iframeWindow) {
         console.log(iframeWindow);
         console.log(event.target.value);
-        iframeWindow.postMessage(event.target.value);
+        iframeWindow.postMessage(event.target.value,'*');
     }
 //    const container = d3.select('#map_frame');
 //    console.log(iframe);
@@ -3535,7 +3535,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
         </Stack>
       )}
       <Box sx={{ width: '100%', position: 'relative' }} ref={chartWrapper}>
-        <iframe srcDoc={iframeCode} /*src={`data:text/html,${encodeURIComponent(iframeCode)}`}*/ width={width} height={height + 50} style={{ border: '0px'}} id="map_frame"></iframe>
+        <iframe /*srcDoc={iframeCode}*/ src={`data:text/html,${encodeURIComponent(iframeCode)}`} width={width} height={height + 50} style={{ border: '0px'}} id="map_frame"></iframe>
 {/*        <div id="graph-container" ref={inputRef} />
         {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}*/}
         <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
