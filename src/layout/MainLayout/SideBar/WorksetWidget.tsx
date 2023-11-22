@@ -44,7 +44,8 @@ const WorksetWidget = () => {
       });
       setSelected(prop);
       onChangeDashboardState({
-        worksetId: prop.id
+        worksetId: prop.id,
+        filters: {}
       });
     }
   };
