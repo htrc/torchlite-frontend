@@ -43,6 +43,11 @@ function AuthModal({ isOpen, onClose }: any) {
             value: item.entityId,
             tag: item.tag
           }));
+          modifiedData.push({
+            label: 'HTRC',
+            value: 'HTRC',
+            tag: 'HTRC'
+          });
           setIdpList(modifiedData);
 
           let selected: any = {};
@@ -62,7 +67,7 @@ function AuthModal({ isOpen, onClose }: any) {
     }
 
     fetchData();
-  }, [isOpen]);
+  }, [isOpen, idpPrefCookie]);
 
   const handleSelectChange = (selected: any) => {
     const newCookieData = { tag: selected.tag, entityID: selected.value };
@@ -95,6 +100,13 @@ function AuthModal({ isOpen, onClose }: any) {
           idphint: selected.value
         }
       ).then((res: any) => {
+        console.log(res);
+      });
+    } else {
+      signIn('keycloak', {
+        redirect: false,
+        callbackUrl: '/'
+      }).then((res: any) => {
         console.log(res);
       });
     }

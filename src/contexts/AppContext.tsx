@@ -1,3 +1,4 @@
+'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import qs from 'qs';
@@ -29,7 +30,7 @@ function AppProvider({ children }: AppProviderProps) {
   const [availableWorksets, setAvailableWorksets] = useState<WorksetSummary[]>();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  const { data: session } = useSession();
+  const { status } = useSession();
 
   useEffect(() => {
     const initApp = async () => {
@@ -47,8 +48,7 @@ function AppProvider({ children }: AppProviderProps) {
         const dashboardId = sessionStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
 
-        if (!session) {
-          console.log('Anonymous session');
+        if (status === 'unauthenticated') {
           if (dashboardId) {
             dashboardState = await getDashboardState(dashboardId);
           } else {
@@ -58,7 +58,6 @@ function AppProvider({ children }: AppProviderProps) {
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
-          console.log('Session: ', session);
           const dashboards = await getAvailableDashboards(dashboardId);
           dashboardState = dashboards[0];
 
@@ -100,9 +99,11 @@ function AppProvider({ children }: AppProviderProps) {
       }
     };
 
-    initApp();
+    if (status !== 'loading') {
+      initApp();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     if (dashboardState) {
