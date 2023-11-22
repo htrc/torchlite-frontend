@@ -24,11 +24,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   const chartWrapper = useRef(null);
   const dimensions = useResizeObserver(chartWrapper);
   let width = dimensions?.width || 500;
-  console.log("Width A");
-  console.log(width);
   let height = width / 2;
-  console.log("Height A");
-  console.log(height);
   const { mapData, loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
   const [dateRange, setDateRange] = useState<number[]>([]);
   const [world, setWorld] = useState({});
@@ -168,18 +164,12 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     }
   }, [drawData, world]);
   const handleSliderChange = (event: any) => {
-    console.log("SLIDER CHANGE");
     let iframe = document.getElementById('map_frame');
     let iframeWindow = iframe.contentWindow;
     if (iframeWindow) {
-        console.log(iframeWindow);
-        console.log(event.target.value);
         iframeWindow.postMessage(event.target.value,'*');
     }
-//    const container = d3.select('#map_frame');
-//    console.log(iframe);
-//    console.log(drawData);
-//    console.log(world);
+
     setDateRange(event.target.value);
   };
   // @ts-ignore
@@ -2843,19 +2833,11 @@ export const ChorloplethMap = ({ detailPage = false }) => {
         const cities = widgetData['cities']
         const maxPopulation = widgetData['maxPopulation']
         let width = innerWidth || 500;
-        console.log("Width B");
-        console.log(width);
         let height = width / 2;
-        console.log("Height B");
-        console.log(height);
 
         const handleMarkerClick = (event, d) => {
           const div = d3.select('#tooltip');
           div.style('opacity', 0.9);
-          console.log(event.pageX);
-          console.log(event.pageY);
-          console.log(innerWidth);
-          console.log(innerHeight);
           div
             .html(\`<strong>Location: \${d.name}<br/> Contributors: \${d.population}</strong>\`)
             .style('left', event.pageX + 10 + 'px')
@@ -3125,9 +3107,9 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       window.addEventListener(
         "message",
         (event) => {
-            console.log("THE EVENT");
-            console.log(event);
-            runDataPipeline(MAP_DATA,COUNTRIES_50M,event.data);
+            if (Array.isArray(event.data) && event.data.length == 2 && typeof event.data[0] === "number" && typeof event.data[1] === "number") {
+                runDataPipeline(MAP_DATA,COUNTRIES_50M,event.data);
+            }
         }
       )
     </script>
