@@ -48,6 +48,6 @@ export const timelineColumns = [
 ];
 
 export const timelineCSVHeaders = [
-  { label: 'Publication Date', key: 'date' },
-  { label: 'Count', key: 'value' }
+  { label: 'Publication Date', key: 'year' },
+  { label: 'Count', key: 'count' }
 ];

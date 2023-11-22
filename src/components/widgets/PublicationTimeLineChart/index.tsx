@@ -13,20 +13,20 @@ import { timelineCSVHeaders } from 'data/react-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { saveAs } from 'file-saver';
+import useDashboardState from 'hooks/useDashboardState';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
-export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
+export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
-
-  const { timelineData: modifiedDataHistogram, timelineRangedData: storedTimelineRangedData } = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
+  const { onChangeWidgetState } = useDashboardState();
 
-  const yearsOfBirth = data.map((item) => item.year).filter((year) => year !== null && year !== undefined);
+  const yearsOfBirth = data?.map((item) => item.year).filter((year) => year !== null && year !== undefined);
   const minYear = Math.min(...yearsOfBirth);
   const maxYear = Math.max(...yearsOfBirth);
 
@@ -47,11 +47,13 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
   }, [data, dateRange]);
 
   useEffect(() => {
-    // Check if the data has actually changed
-    if (JSON.stringify(storedTimelineRangedData) !== JSON.stringify(chartDataHistogram)) {
-      dispatch(setTimelineRangedData(chartDataHistogram));
-    }
-  }, [chartDataHistogram, storedTimelineRangedData, dispatch]);
+    onChangeWidgetState({
+      widgetType: widgetType,
+      minYear: minYear,
+      maxYear: maxYear,
+      data: chartDataHistogram
+    });
+  }, [chartDataHistogram, minYear, maxYear, widgetType, onChangeWidgetState]);
 
   useEffect(() => {
     setDateRange([minYear, maxYear]);
@@ -131,19 +133,7 @@ export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
 
   return (
     <>
-      {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-          Publication Date Timeline
-        </Typography>
-      ) : (
-        <NextLink href="/widget-details/timeline">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
-            Publication Date Timeline
-          </Typography>
-        </NextLink>
-      )}
-
-      {detailPage && (
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{

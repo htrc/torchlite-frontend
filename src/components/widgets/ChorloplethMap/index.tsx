@@ -17,26 +17,27 @@ import { CSVLink } from 'react-csv';
 import { transformMapDataForDataTable } from 'utils/helpers';
 import { mapCSVHeaders } from 'data/react-table';
 import { saveAs } from 'file-saver';
+import useDashboardState from 'hooks/useDashboardState';
 
-export const ChorloplethMap = ({ data, detailPage = false }) => {
+export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const dimensions = useResizeObserver(inputRef);
   let width = dimensions?.width || 500;
   let height = width / 2;
-  const { loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
   const mapData = data;
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
+  const { onChangeWidgetState } = useDashboardState();
 
-  const yearsOfBirth = data.map((item) => item.yearOfBirth).filter((year) => year !== null && year !== undefined);
-  const minYearOfBirth = Math.min(...yearsOfBirth);
-  const maxYearOfBirth = Math.max(...yearsOfBirth);
-  const [dateRange, setDateRange] = useState<number[]>([minYearOfBirth, maxYearOfBirth]);
+  const yearsOfBirth = data?.map((item) => item.yearOfBirth).filter((year) => year !== null && year !== undefined);
+  const minYear = Math.min(...yearsOfBirth);
+  const maxYear = Math.max(...yearsOfBirth);
+  const [dateRange, setDateRange] = useState<number[]>([minYear, maxYear]);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -48,6 +49,15 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    onChangeWidgetState({
+      widgetType: widgetType,
+      minYear: minYear,
+      maxYear: maxYear,
+      data: mapDataHistogram
+    });
+  }, [mapDataHistogram, minYear, maxYear, widgetType, onChangeWidgetState]);
 
   //group by dob mapData
   const handleMarkerClick = (event, d) => {
@@ -65,13 +75,6 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
   }, [mapData, dateRange]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
-
-  useEffect(() => {
-    // Check if the data has actually changed
-    if (JSON.stringify(storedMapRangedData) !== JSON.stringify(mapDataHistogram)) {
-      dispatch(setMapRangedData(mapDataHistogram));
-    }
-  }, [mapDataHistogram, storedMapRangedData, dispatch]);
 
   const cities = useMemo(() => {
     const cityMap = mapDataHistogram.reduce((map, item) => {
@@ -501,19 +504,7 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
 
   return (
     <>
-      {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-          Mapping Contributor Data
-        </Typography>
-      ) : (
-        <NextLink href="/widget-details/mapping">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
-            Mapping Contributor Data
-          </Typography>
-        </NextLink>
-      )}
-
-      {detailPage && (
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{
@@ -559,13 +550,7 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        <CustomSlider
-          value={dateRange}
-          minValue={minYearOfBirth}
-          maxValue={maxYearOfBirth}
-          step={10}
-          handleSliderChange={handleSliderChange}
-        />
+        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );

@@ -11,8 +11,6 @@ import { CSVExport, TablePagination, HeaderSort } from 'components/third-party/R
 
 // ==============================|| REACT TABLE ||============================== //
 
-const emptyArray: [] = [];
-
 function ReactTable({ columns, data, top, sort }: { columns: Column[]; data: []; top?: boolean; sort?: boolean }) {
   const {
     getTableProps,
@@ -88,6 +86,7 @@ const DataTable = ({ data, columns, sort, title, csvHeaders }: any) => {
   const currentDate = new Date().toISOString().split('T')[0];
   const formattedTitle = `${title.replace(/\s+/g, '_')}_${currentDate}.csv`;
 
+  console.log(data)
   return (
     <Grid item xs={12}>
       <MainCard title={title} content={false} secondary={data && <CSVExport data={data} filename={formattedTitle} headers={csvHeaders} />}>

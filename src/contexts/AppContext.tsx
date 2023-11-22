@@ -10,7 +10,9 @@ import CustomBackdrop from 'components/Backdrop';
 
 // initial state
 const initialState: DashboardContextProps = {
-  onChangeDashboardState: (e: DashboardStatePatch) => {}
+  widgetState: {},
+  onChangeDashboardState: (e: DashboardStatePatch) => {},
+  onChangeWidgetState: (e: any) => {}
 };
 
 // ==============================|| CONFIG CONTEXT & PROVIDER ||============================== //
@@ -22,6 +24,7 @@ type AppProviderProps = {
 };
 
 function AppProvider({ children }: AppProviderProps) {
+  const [widgetState, setWidgetState] = useState<any>({});
   const [dashboardState, setDashboardState] = useState<DashboardState>();
   const [availableWorksets, setAvailableWorksets] = useState<WorksetSummary[]>();
   const router = useRouter();
@@ -91,7 +94,6 @@ function AppProvider({ children }: AppProviderProps) {
   }, []);
 
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
-    console.log(newDashboardState);
     try {
       if (dashboardState) {
         setLoading(true);
@@ -107,12 +109,31 @@ function AppProvider({ children }: AppProviderProps) {
     }
   };
 
+  /*
+  const newWidgetState = {
+    widgetType: 'Map',
+    minYear: 2019,
+    maxYear: 2023,
+    data: [...]
+  }
+  */
+  const onChangeWidgetState = (newWidgetState: any) => {
+    setWidgetState({
+      ...widgetState,
+      [newWidgetState.widgetType]: {
+        ...newWidgetState
+      }
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
+        widgetState,
         dashboardState,
         availableWorksets,
-        onChangeDashboardState
+        onChangeDashboardState,
+        onChangeWidgetState
       }}
     >
       <CustomBackdrop loading={loading} />
