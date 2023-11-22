@@ -73,10 +73,17 @@ function AuthModal({ isOpen, onClose }: any) {
 
   const handleLogin = () => {
     if (selected.tag === 'hathi') {
-      signIn('keycloak', {
-        redirect: false,
-        callbackUrl: '/'
-      }).then((res: any) => {
+      signIn(
+        'keycloak',
+        {
+          redirect: false,
+          callbackUrl: '/'
+        },
+        {
+          kc_idp_hint: 'htidp',
+          entityID: selected.value
+        }
+      ).then((res: any) => {
         console.log(res);
       });
     } else if (selected.tag === 'cilogon') {
