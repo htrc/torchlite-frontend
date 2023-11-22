@@ -1,4 +1,3 @@
-import { useSelector } from 'store';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, useTheme } from '@mui/material';
 import CleanDataWidget from './CleanDataWidget';
 import DownloadWidget from './DownloadWidget';
@@ -11,14 +10,13 @@ import useDashboardState from 'hooks/useDashboardState';
 const SideBar = () => {
   const theme = useTheme();
   const { dashboardState } = useDashboardState();
-  const { appliedFilters } = useSelector((state) => state.dashboard);
   const [isWorksetExpanded, setWorksetExpanded] = useState(!!dashboardState?.worksetId);
-  const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(appliedFilters));
+  const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(dashboardState?.filters));
 
   useEffect(() => {
-    setFilterExpanded(hasFilters(appliedFilters));
+    setFilterExpanded(hasFilters(dashboardState?.filters));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dashboardState?.filters]);
 
   useEffect(() => {
     setWorksetExpanded(!!dashboardState?.worksetId);

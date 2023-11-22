@@ -1,7 +1,5 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import qs from 'qs';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -12,8 +10,6 @@ import Drawer from './Drawer';
 import Header from './Header';
 import Footer from './Footer';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import CustomBackdrop from 'components/Backdrop';
-
 import navigation from 'menu-items';
 import useConfig from 'hooks/useConfig';
 import { openDrawer } from 'store/reducers/menu';
@@ -32,7 +28,6 @@ interface Props {
 
 const MainLayout = ({ children }: Props) => {
   const theme = useTheme();
-  const router = useRouter();
   const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -50,25 +45,6 @@ const MainLayout = ({ children }: Props) => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
-
-  useEffect(() => {
-    const { worksetId } = router.query;
-    if (!worksetId) {
-      console.log('url changing!');
-      const featuredState = JSON.parse(localStorage.getItem('featured_state') ?? '{}') ?? {};
-      const selectedWorksetId = featuredState.worksetId;
-      const appliedFilters = featuredState.filters;
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          worksetId: selectedWorksetId,
-          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.pathname]);
 
   // set media wise responsive drawer
   useEffect(() => {

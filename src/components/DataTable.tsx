@@ -11,8 +11,6 @@ import { CSVExport, TablePagination, HeaderSort } from 'components/third-party/R
 
 // ==============================|| REACT TABLE ||============================== //
 
-const emptyArray: [] = [];
-
 function ReactTable({ columns, data, top, sort }: { columns: Column[]; data: []; top?: boolean; sort?: boolean }) {
   const {
     getTableProps,
