@@ -17,13 +17,16 @@ import { saveAs } from 'file-saver';
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
-export const PublicationTimeLineChart = ({ detailPage = false }) => {
+export const PublicationTimeLineChart = ({ data, detailPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
+
   const { timelineData: modifiedDataHistogram, timelineRangedData: storedTimelineRangedData } = useSelector((state) => state.dashboard);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
+
+  console.log('data', data, modifiedDataHistogram);
 
   const [dateRange, setDateRange] = useState<number[]>([]);
 
@@ -139,16 +142,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   };
 
   return (
-    <MainCard
-      content={false}
-      sx={{
-        padding: theme.spacing(4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative'
-      }}
-    >
+    <>
       {detailPage ? (
         <Typography variant="h3" sx={{ color: '#1e98d7' }}>
           Publication Date Timeline
@@ -214,6 +208,6 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
         </svg>
         <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
       </Box>
-    </MainCard>
+    </>
   );
 };

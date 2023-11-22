@@ -94,3 +94,9 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
     .optional(),
   isShared: z.boolean().optional()
 });
+
+export type DashboardContextProps = {
+  dashboardState?: DashboardState;
+  availableWorksets?: WorksetSummary[];
+  onChangeDashboardState: (e: DashboardStatePatch) => void;
+};

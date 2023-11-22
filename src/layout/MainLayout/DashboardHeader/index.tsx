@@ -1,14 +1,8 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { Box, Stack, FormControl, Select, MenuItem, SelectChangeEvent, useTheme } from '@mui/material';
-import CustomButton from 'components/Button';
-import AuthModal from 'sections/auth/AuthModal';
 
-const DashboardHeader = ({ csrfToken }) => {
+const DashboardHeader = ({ csrfToken }: any) => {
   const theme = useTheme();
-  const router = useRouter();
-  const { data: session } = useSession();
   const widgetList1 = ['Mapping Contributor Data', 'Publication Date Timeline', 'Workset Languages'];
   const widgetList2 = [
     'Jupyter Notebooks',
@@ -18,16 +12,6 @@ const DashboardHeader = ({ csrfToken }) => {
   ];
   const [widget1, setWidget1] = useState<string>(widgetList1[0]);
   const [widget2, setWidget2] = useState<string>(widgetList2[0]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
@@ -91,29 +75,7 @@ const DashboardHeader = ({ csrfToken }) => {
             ))}
           </Select>
         </FormControl>
-        {!session && (
-          <CustomButton
-            variant="contained"
-            color="secondary"
-            sx={{
-              width: '145px',
-              height: '39px',
-              padding: '2px',
-              borderRadius: '14px',
-              backgroundColor: '#1e98d7',
-              boxSizing: 'border-box',
-              color: '#ffffff',
-              textAlign: 'center',
-              lineHeight: 'normal',
-              marginLeft: '1.3125rem'
-            }}
-            onClick={openModal}
-          >
-            Sign in
-          </CustomButton>
-        )}
       </Box>
-      <AuthModal isOpen={isModalOpen} onClose={closeModal} csrfToken={csrfToken} />
     </Stack>
   );
 };

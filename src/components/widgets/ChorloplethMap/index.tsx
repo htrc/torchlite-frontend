@@ -18,20 +18,25 @@ import { transformMapDataForDataTable } from 'utils/helpers';
 import { mapCSVHeaders } from 'data/react-table';
 import { saveAs } from 'file-saver';
 
-export const ChorloplethMap = ({ detailPage = false }) => {
+export const ChorloplethMap = ({ data, detailPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const dimensions = useResizeObserver(inputRef);
   let width = dimensions?.width || 500;
   let height = width / 2;
-  const { mapData, loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
-  const [dateRange, setDateRange] = useState<number[]>([]);
+  const { loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
+  const mapData = data;
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
+
+  const yearsOfBirth = data.map((item) => item.yearOfBirth).filter((year) => year !== null && year !== undefined);
+  const minYearOfBirth = Math.min(...yearsOfBirth);
+  const maxYearOfBirth = Math.max(...yearsOfBirth);
+  const [dateRange, setDateRange] = useState<number[]>([minYearOfBirth, maxYearOfBirth]);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -44,17 +49,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     setAnchorEl(null);
   };
 
-  // console.log(mapData);
   //group by dob mapData
-  const modifiedDataHistogram = useMemo(() => {
-    return mapData.reduce((prev: any, curr: IMapData) => {
-      const dob = Number(curr.dob.slice(0, 4));
-      if (prev[dob]) return { ...prev, [dob]: prev[dob] + 1 };
-      else return { ...prev, [dob]: 1 };
-    }, {});
-  }, [mapData]);
-
-  // console.log(modifiedDataHistogram);
   const handleMarkerClick = (event, d) => {
     const div = d3.select('#tooltip');
     div.style('opacity', 0.9);
@@ -66,10 +61,12 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   };
 
   const mapDataHistogram = useMemo(() => {
-    return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
+    return mapData.filter((item) => item.yearOfBirth >= dateRange[0] && item.yearOfBirth <= dateRange[1]);
   }, [mapData, dateRange]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
+
+  console.log('mapdata', mapData, mapDataHistogram);
 
   useEffect(() => {
     // Check if the data has actually changed
@@ -80,11 +77,15 @@ export const ChorloplethMap = ({ detailPage = false }) => {
 
   const cities = useMemo(() => {
     const cityMap = mapDataHistogram.reduce((map, item) => {
-      if (item.city.trim() === '' || item.cityCoords.trim() === '') {
+      if (item.city.trim() === '') {
         return map;
       }
-      const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
-      const city = map.get(item.city) || { name: item.city, coordinates: [parseFloat(coords[0]), parseFloat(coords[1])], population: 0 };
+      // const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
+      const city = map.get(item.city) || {
+        name: item.city,
+        coordinates: [parseFloat(item.longitude), parseFloat(item.latitude)],
+        population: 0
+      };
       city.population++;
       return map.set(item.city, city);
     }, new Map());
@@ -98,17 +99,6 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       setMaxPopulation(maxPop);
     }
   }, [cities]);
-
-  const minDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-  const maxDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
-  useEffect(() => {
-    setDateRange([minDate, maxDate]);
-  }, [minDate, maxDate]);
 
   useEffect(() => {
     fetch('/countries-50m.json').then((response) => {
@@ -130,13 +120,13 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     if (mapDataHistogram.length) {
       let counts = {};
       for (let item of mapDataHistogram) {
-        const { countryiso } = item;
-        if (countryiso in counts) {
+        const { countryIso } = item;
+        if (countryIso in counts) {
           // @ts-ignore
-          counts[countryiso]++;
+          counts[countryIso]++;
         } else {
           // @ts-ignore
-          counts[countryiso] = 1;
+          counts[countryIso] = 1;
         }
       }
       if (Object.keys(world).length !== 0) {
@@ -512,16 +502,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   };
 
   return (
-    <MainCard
-      content={false}
-      sx={{
-        padding: theme.spacing(4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative'
-      }}
-    >
+    <>
       {detailPage ? (
         <Typography variant="h3" sx={{ color: '#1e98d7' }}>
           Mapping Contributor Data
@@ -580,9 +561,14 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider
+          value={dateRange}
+          minValue={minYearOfBirth}
+          maxValue={maxYearOfBirth}
+          step={10}
+          handleSliderChange={handleSliderChange}
+        />
       </Box>
-    </MainCard>
+    </>
   );
 };

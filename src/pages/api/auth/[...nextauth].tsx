@@ -84,6 +84,7 @@ function isExpiredAccessToken(token: JWT): boolean {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [keycloak],
   callbacks: {
     async jwt({ token, user, account }) {
