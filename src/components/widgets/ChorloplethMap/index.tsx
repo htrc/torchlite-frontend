@@ -66,8 +66,6 @@ export const ChorloplethMap = ({ data, detailPage = false }) => {
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
 
-  console.log('mapdata', mapData, mapDataHistogram);
-
   useEffect(() => {
     // Check if the data has actually changed
     if (JSON.stringify(storedMapRangedData) !== JSON.stringify(mapDataHistogram)) {
