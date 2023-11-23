@@ -93,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       setCookie('featured_dashboard_id', featuredDashboardId, {
         req,
         res,
-        maxAge: 60 * 60 * 24 * 365 // 1 year
+        maxAge: 60 * 60 * 24 * 1 // 1 day
       });
 
     const dashboardState: DashboardState = { ...dashboardSummary, worksetInfo: worksetInfo };
