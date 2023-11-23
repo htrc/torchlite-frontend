@@ -77,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         headers: headers
       });
 
-      if (dashboards) dashboardSummary = dashboards[0]; // we can only handle one dashboard right now
+      if (dashboards.length) dashboardSummary = dashboards[0]; // we can only handle one dashboard right now
       else if (req.query.ref) dashboardSummary = await cloneDashboard(req.query.ref as string, headers);
     }
 
