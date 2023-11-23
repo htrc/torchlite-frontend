@@ -10,9 +10,9 @@ import { pickRandom } from 'utils/helpers';
 
 const torchliteUid: string = '95164779-1fc9-4592-9c74-7a014407f46d';
 
-async function cloneDashboard(dashboardId: string, headers: any): Promise<DashboardSummary> {
+async function cloneDashboard(dashboardId: string, headers: any, headersGet: any = headers): Promise<DashboardSummary> {
   const { worksetId, filters, widgets } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
-    headers: headers
+    headers: headersGet
   });
 
   return await axios.post<DashboardSummary>(
@@ -78,7 +78,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       if (dashboards.length) dashboardSummary = dashboards[0]; // we can only handle one dashboard right now
-      else if (req.query.ref) dashboardSummary = await cloneDashboard(req.query.ref as string, headers);
+      else if (req.query.ref) {
+        const oldDashboardId = req.query.ref as string;
+        // headersGet = {} to be able to access the old "anonymous" dashboard
+        dashboardSummary = await cloneDashboard(oldDashboardId, headers, {});
+      }
     }
 
     if (!dashboardSummary)
