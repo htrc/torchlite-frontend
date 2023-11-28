@@ -176,7 +176,7 @@ const Profile = () => {
               width: '120px',
               height: '36px',
               borderRadius: '4px',
-              backgroundColor: '#1e98d7',
+              backgroundColor: '#73787A'/*'#1e98d7'*/,
               boxSizing: 'border-box',
               color: '#ffffff',
               textAlign: 'center',

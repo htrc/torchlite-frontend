@@ -38,7 +38,7 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
     case 'contained':
       return {
         '&:hover': {
-          backgroundColor: dark
+          backgroundColor: main/*dark*/
         },
         ...commonShadow
       };
@@ -56,6 +56,7 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
     case 'outlined':
       return {
         borderColor: main,
+        /*backgroundColor: 'transparent',*/
         '&:hover': {
           color: dark,
           backgroundColor: 'transparent',
@@ -91,6 +92,7 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
 export default function Button(theme: Theme) {
   const primaryDashed = getColorStyle({ variant: 'dashed', color: 'primary', theme });
   const primaryShadow = getColorStyle({ variant: 'shadow', color: 'primary', theme });
+  const primaryContained = getColorStyle({ variant: 'contained', color: 'primary', theme });
 
   const disabledStyle = {
     '&.Mui-disabled': {
@@ -110,7 +112,7 @@ export default function Button(theme: Theme) {
       },
       styleOverrides: {
         root: {
-          fontWeight: 400,
+          fontWeight: 800/*400*/,
           '&::after': {
             content: '""',
             display: 'block',
