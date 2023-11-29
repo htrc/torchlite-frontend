@@ -34,7 +34,7 @@ const CustomSlider = ({ label, value, minValue, maxValue, step, handleSliderChan
           onChange={handleSliderChange}
           valueLabelDisplay="auto"
           sx={{
-            color: '#1e98d7',
+            color: theme.palette.primary[700]/*'#1e98d7'*/,
             '.MuiSlider-thumb': {
               backgroundColor: theme.palette.common.white,
               width: theme.spacing(3.75),

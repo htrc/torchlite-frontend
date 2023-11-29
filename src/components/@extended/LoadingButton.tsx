@@ -198,7 +198,7 @@ const LoadingButtonStyle = styled(MuiLoadingButton, { shouldForwardProp: (prop) 
     }),
     ...((variant === 'contained' || variant === 'shadow') &&
       !loading && {
-        color: '#fff'
+        color: theme.palette.common.white/*'#fff'*/
       }),
     ...(variant !== 'text' && {
       ...getColorStyle({ variant, theme, color, loadingPosition })
