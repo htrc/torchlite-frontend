@@ -38,7 +38,8 @@ function AppProvider({ children }: AppProviderProps) {
         // Get workset and filter from router query
         const { worksetId } = router.query;
         const filters: any = qs.parse(router.query.filters as string, { comma: true });
-        let selectedWorksetId: string, appliedFilters;
+        let selectedWorksetId: string,
+          appliedFilters: any = {};
 
         // Get worksets
         const worksets: WorksetSummary[] = await getAvailableWorksets();
@@ -69,10 +70,17 @@ function AppProvider({ children }: AppProviderProps) {
         if (worksetId) {
           selectedWorksetId = worksetId as string;
           if (filters) {
-            appliedFilters = {
-              ...filters,
-              pubDates: Array.isArray(filters.pubDates) ? filters.pubDates.map((year: any) => parseInt(year, 10)) : undefined
-            };
+            for (const key in filters) {
+              if (Object.prototype.hasOwnProperty.call(filters, key)) {
+                if (key === 'pubDates') {
+                  appliedFilters[key] = Array.isArray(filters[key])
+                    ? filters[key].map((year: any) => parseInt(year, 10))
+                    : [parseInt(filters[key], 10)];
+                } else {
+                  appliedFilters[key] = Array.isArray(filters[key]) ? filters[key] : [filters[key]];
+                }
+              }
+            }
           }
           await updateDashboardState(dashboardState.id, {
             worksetId: selectedWorksetId,
