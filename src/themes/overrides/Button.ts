@@ -56,11 +56,10 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
     case 'outlined':
       return {
         borderColor: main,
-        /*backgroundColor: 'transparent',*/
         '&:hover': {
-          color: dark,
+          color: theme.palette.mode === 'light' ? dark : theme.palette.common.white,
           backgroundColor: 'transparent',
-          borderColor: dark
+          borderColor: theme.palette.mode === 'light' ? dark : theme.palette.common.white
         },
         ...commonShadow
       };

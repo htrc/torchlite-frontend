@@ -176,9 +176,9 @@ const Profile = () => {
               width: '120px',
               height: '36px',
               borderRadius: '4px',
-              backgroundColor: '#73787A'/*'#1e98d7'*/,
+              backgroundColor: /*'#73787A'/*'#1e98d7'*/ theme.palette.primary[700],
               boxSizing: 'border-box',
-              color: '#ffffff',
+              color: theme.palette.common.white/*'#ffffff'*/,
               textAlign: 'center',
               lineHeight: 'normal'
             }}
