@@ -9,7 +9,7 @@ export const DRAWER_WIDTH = 360;
 // ==============================|| THEME CONFIG  ||============================== //
 
 const config: DefaultConfigProps = {
-  fontFamily: `'Public Sans', sans-serif`,
+  fontFamily: `'Questrial', sans-serif`,
   i18n: 'en',
   menuOrientation: 'vertical',
   miniDrawer: false,

@@ -36,10 +36,10 @@ const SideBar = () => {
           },
           '& .MuiAccordionSummary-expandIconWrapper': { display: 'none' },
           '& .Mui-expanded': {
-            color: '#1e98d7',
+            color: theme.palette.mode === 'light'? theme.palette.common.black/*'#1e98d7'*/ : theme.palette.common.white,
             backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : 'inherit'
           },
-          '& h5:hover': { color: '#1e98d7' }
+          '& h5:hover': { color: theme.palette.primary.main/*'#1e98d7'*/ }
         }
       }}
     >
