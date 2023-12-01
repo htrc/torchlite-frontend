@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChorloplethMap } from './ChorloplethMap';
 import { PublicationTimeLineChart } from './PublicationTimeLineChart';
 import MainCard from 'components/MainCard';
-import { CircularProgress, Typography, useTheme } from '@mui/material';
+import { CircularProgress, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
 import { DashboardState } from 'types/torchlite';
 import WidgetTitle from './WidgetTitle';

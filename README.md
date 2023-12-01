@@ -1,6 +1,13 @@
 # Torchlite-Frontend
 *Next.js based dashboard that integrates the data visualization widgets*
 
+## Development Notes
+
+- **Mantis MUI Template**: This project utilizes the Mantis MUI template (v2.0.0). You can find more information about the template in its [Documentation](https://codedthemes.gitbook.io/mantis/v/v2.0.0-1/).
+
+- **API Documentation**: Explore the API documentation in the [api.md](./API.md) file for details on available endpoints and functionality.
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -51,7 +58,9 @@ yarn dev
 Open http://localhost:8081 with your browser to see the result.
 
 
-## Folder Structure
+## Project Overview
+
+### Folder Structure
 
 ```
 torchlite-frontend
@@ -64,42 +73,39 @@ torchlite-frontend
 │   │   ├── widgets
 │   │   ├── card
 │   │   ├── ...
-│   ├── contexts           -> State context for Login and other
+│   ├── contexts           -> State context for Dashboard and Config
 │   ├── hooks              -> Custom hooks
 │   ├── layout
 │   │   ├── MainLayout     -> Layout for main components & routers
 │   ├── menu-items         -> menu items for each main menu
 │   ├── pages              -> next js pages
-│   ├── store              -> Redux actions, reducers
-│   │   ├── slices         -> different slices of toolkit
+│   ├── store              -> Redux actions, reducers (from template)
 │   ├── themes             -> Contains application style and theme
 │   ├── types              -> common types for Typescript
 │   ├── utils              -> utilities
 ├── config.js              -> Project constant value and live customization  
 ```
 
-## State Management
+### State Management
 
-### Context API
+#### Context API
 Context provides a way to pass data through the component tree without having to pass props down manually at every level.
 
-We are using context for login methods JWT.
+We are using context for DashboardState and Config.
 
-### Redux
+#### Redux
 This project uses Redux. React Redux is the official React binding for Redux. It lets your React components read data from a Redux store, and dispatch actions to the store to update data.
 
-### State
-With Redux, our application state is always kept in plain JavaScript objects and arrays which means you may not put other things into the Redux state - no class instances, built-in JS types like Map / Set Promise / Date, functions, or anything else that is not plain JS data
+We are using redux for storing menu state.
 
 
+### How to
 
-## How to
+#### Create a new widget
 
-### Create a new widget
+Map widget and Timeline widget Component are under `src/components/widget/` directory.
 
-Map widget and Timeline widget Component is under `src/components/widget/` directory.
-
-You can create a new visualization widget using D3 library and import it in `src/pages/dashboard/index.tsx` to show it on Dashboard page.
+You can create a new widget component under `src/components/widget/` and import it in `src/components/widget/index.tsx` and render depending on widgetType.
 
 Here is an example to create WorldMap component that will render a map based on [world-110m map from the topojson-worldatlas](https://github.com/topojson/world-atlas#world/110m.json).
 
@@ -151,15 +157,65 @@ export default WorldMap
 ```
 
 ```javascript
-// src/pages/dashboard/index.tsx
-import React from "react"
+// src/components/widgets/index.tsx
 
-import WorldMap from "components/widgets/WorldMap"
+// ...
+import WorldMap from "./WorldMap"
 
 // Import the component in the return 
 
-  <WorldMap />
+  return (
+    <MainCard
+      content={false}
+      sx={{
+        padding: theme.spacing(4),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative'
+      }}
+    >
+      <WidgetTitle widgetType={widgetType} isDetailsPage={isDetailsPage} />
+      {loading ? (
+        <CircularProgress sx={{ my: 3 }} color="primary" />
+      ) : (
+        <>
+          {/* Other widgets */}
+          {widgetType === WidgetType.WorldMap && (
+            <WorldMap />
+          )}
+        </>
+      )}
+    </MainCard>
+  )
 
 // ...
 export default Page
 ```
+
+```javascript
+// src/pages/dashboard/index.tsx
+import React from "react"
+
+
+// Import the component in the return, if widget.type === 'WordMap', it will render the WorldMap widget
+
+  <Widget dashboardState={dashboardState} widgetType={widget.type} />
+
+// ...
+export default Page
+```
+
+#### Modify a widget
+
+You can modify the component under `src/components/widgets/` folder.
+
+#### Manage user sessions
+
+This project uses [next-auth](https://next-auth.js.org/) library to handle user sessions. You can use `useSession()` hook to get authenticated state and current session.
+
+#### Change styles, colors, fonts, etc
+
+Default configurations are defined in `src/config.ts` and you can change styles and colors by updating themes in `src/themes/palette.ts` and `src/themes/theme`.
+
+Here is the template [documentation](https://codedthemes.gitbook.io/mantis/v/v2.0.0-1/theme-config) how to customize it.
