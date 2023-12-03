@@ -50,15 +50,6 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    onChangeWidgetState({
-      widgetType: widgetType,
-      minYear: minYear,
-      maxYear: maxYear,
-      data: mapDataHistogram
-    });
-  }, [mapDataHistogram, minYear, maxYear, widgetType]);
-
   //group by dob mapData
   const handleMarkerClick = (event, d) => {
     const div = d3.select('#tooltip');
@@ -73,6 +64,15 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
   const mapDataHistogram = useMemo(() => {
     return mapData.filter((item) => item.yearOfBirth >= dateRange[0] && item.yearOfBirth <= dateRange[1]);
   }, [mapData, dateRange]);
+
+  useEffect(() => {
+    onChangeWidgetState({
+      widgetType: widgetType,
+      minYear: minYear,
+      maxYear: maxYear,
+      data: mapDataHistogram
+    });
+  }, [mapDataHistogram, minYear, maxYear, widgetType]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
 
