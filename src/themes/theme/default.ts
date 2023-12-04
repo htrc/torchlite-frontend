@@ -33,7 +33,7 @@ const Default = (colors: PalettesProps): PaletteThemeProps => {
       lighter: '#73787A'/*blue[0]*/,
       100: blue[1],
       200: blue[2],
-      light: blue[3],
+      light: '#73787A'/*blue[3]*/, //change this to an orange hue
       400: blue[4],
       main: '#C35400'/*blue[5]*/,
       dark: '#73787A'/*blue[6]*/,
