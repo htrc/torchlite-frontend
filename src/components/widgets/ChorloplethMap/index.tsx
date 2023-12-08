@@ -412,7 +412,7 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
       .attr('class', 'marker')
       .attr('cx', (d) => projection(d.coordinates)[0])
       .attr('cy', (d) => projection(d.coordinates)[1])
-      .attr('r', (d) => (8 / maxPopulation) * d.population)
+      .attr('r', (d) => (8 / maxPopulation) * d.population > 1 ? (8 / maxPopulation) * d.population : 1)
       // .attr('r', (d) => (maxPopulation > 8 ? (8 / maxPopulation) * d.population : d.population * 1.5))
       .each(function (d) {
         d.initialRadius = d3.select(this).attr('r');
@@ -550,7 +550,7 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );

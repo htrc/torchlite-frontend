@@ -66,25 +66,38 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
   //x-axis scale for Histogram
-  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
+  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]+1]).range([0, boundsWidth]);
   //y-axis scale for Histogram
   const maxDataValue = Math.max(...data.map((item) => item.count));
-  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]);
+  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]).nice();
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat((d) => Math.round(d));
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    const dateSpread = dateRange[1] - dateRange[0] > 0 ? dateRange[1] - dateRange[0] : 1;
+    if (dateSpread < 10) {
+      xAxisGenerator.ticks(dateSpread).tickFormat((d) => Math.round(d));
+    }
+    else {
+      xAxisGenerator.tickFormat((d) => Math.round(d));
+    }
     svgElement
       .append('g')
-      .attr('transform', 'translate(0,' + boundsHeight + ')')
+      .attr('transform', `translate(0,${boundsHeight})`)
       .call(xAxisGenerator);
 
     // @ts-ignore
-    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
+    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram)
+    if (maxDataValue < 10) {
+      yAxisGenerator.ticks(maxDataValue).tickFormat(d3.format('~d'));
+    }
+    else {
+      yAxisGenerator.ticks().tickFormat(d3.format('~d'));
+    }
     svgElement.append('g').call(yAxisGenerator);
-  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue, dateRange]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
     return (
@@ -92,7 +105,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
         key={i}
         fill="#6689c6"
         x={xScaleHistogram(bucket.year) + BUCKET_PADDING / 2}
-        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
+        width={Math.abs(1 + dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (1 + dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
         y={yScaleHistogram(bucket.count)}
         height={boundsHeight - yScaleHistogram(bucket.count)}
       />
@@ -184,7 +197,7 @@ export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = fal
           </g>
           <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust publication years on timeline" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
     </>
   );
