@@ -58,7 +58,11 @@ export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
       .html(`<strong>Location: ${d.name}<br/> Contributors: ${d.population}</strong>`)
       .style('left', event.pageX + 10 + 'px')
       .style('top', event.pageY - 12 + 'px')
-      .style('position', 'absolute');
+      .style('position', 'absolute')
+      .style('font-family', 'Questrial, sans-serif') // Change 'YourChosenFont' to the desired font-family
+      .style('font-size', '16px')
+      .style('background-color', theme.palette.common.white)
+      .style('color', theme.palette.common.black);
   };
 
   const mapDataHistogram = useMemo(() => {
