@@ -13,12 +13,7 @@ const useUser = () => {
   const { data: session } = useSession();
   if (session) {
     const user = session?.user;
-    const provider = session?.provider;
     let thumb = user?.image!;
-    if (provider === 'cognito') {
-      const email = user?.email?.split('@');
-      user!.name = email ? email[0] : 'Jone Doe';
-    }
 
     if (!user?.image) {
       user!.image = '/assets/images/users/avatar-1.png';
@@ -30,7 +25,7 @@ const useUser = () => {
       email: user!.email!,
       avatar: user?.image!,
       thumb,
-      role: 'UI/UX Designer'
+      role: ''
     };
 
     return newUser;

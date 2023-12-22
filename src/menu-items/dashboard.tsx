@@ -1,6 +1,3 @@
-// third-party
-import { FormattedMessage } from 'react-intl';
-
 // project import
 // import { useSelector } from 'store';
 
@@ -19,7 +16,7 @@ const icons = {
 
 const DashboardMenu: NavItemType = {
   id: 'dashboard',
-  title: <FormattedMessage id="dashboard" />,
+  title: 'Dashboard',
   icon: icons.dashboardOutlined,
   type: 'navigation',
   url: '/dashboard'

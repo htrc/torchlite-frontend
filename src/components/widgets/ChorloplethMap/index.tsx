@@ -15,23 +15,29 @@ import IconButton from 'components/@extended/IconButton';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { transformMapDataForDataTable } from 'utils/helpers';
-import { mapCSVHeaders } from 'data/react-table';
 import { saveAs } from 'file-saver';
+import useDashboardState from 'hooks/useDashboardState';
+import { CSVHeaders } from 'data/constants';
 
-export const ChorloplethMap = ({ detailPage = false }) => {
+export const ChorloplethMap = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const dimensions = useResizeObserver(inputRef);
   let width = dimensions?.width || 500;
   let height = width / 2;
-  const { mapData, loadingMap, mapRangedData: storedMapRangedData } = useSelector((state) => state.dashboard);
-  const [dateRange, setDateRange] = useState<number[]>([]);
+  const mapData = data;
   const [world, setWorld] = useState({});
   const [drawData, setDrawData] = useState({});
   const [countries, setCountries] = useState({});
   const [countryMesh, setCountryMesh] = useState({});
   const [maxPopulation, setMaxPopulation] = useState(0);
+  const { onChangeWidgetState } = useDashboardState();
+
+  const yearsOfBirth = data?.map((item) => item.yearOfBirth).filter((year) => year !== null && year !== undefined);
+  const minYear = Math.min(...yearsOfBirth);
+  const maxYear = Math.max(...yearsOfBirth);
+  const [dateRange, setDateRange] = useState<number[]>([minYear, maxYear]);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -44,17 +50,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     setAnchorEl(null);
   };
 
-  // console.log(mapData);
   //group by dob mapData
-  const modifiedDataHistogram = useMemo(() => {
-    return mapData.reduce((prev: any, curr: IMapData) => {
-      const dob = Number(curr.dob.slice(0, 4));
-      if (prev[dob]) return { ...prev, [dob]: prev[dob] + 1 };
-      else return { ...prev, [dob]: 1 };
-    }, {});
-  }, [mapData]);
-
-  // console.log(modifiedDataHistogram);
   const handleMarkerClick = (event, d) => {
     const div = d3.select('#tooltip');
     div.style('opacity', 0.9);
@@ -62,29 +58,39 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       .html(`<strong>Location: ${d.name}<br/> Contributors: ${d.population}</strong>`)
       .style('left', event.pageX + 10 + 'px')
       .style('top', event.pageY - 12 + 'px')
-      .style('position', 'absolute');
+      .style('position', 'absolute')
+      .style('font-family', 'Questrial, sans-serif') // Change 'YourChosenFont' to the desired font-family
+      .style('font-size', '16px')
+      .style('background-color', theme.palette.common.white)
+      .style('color', theme.palette.common.black);
   };
 
   const mapDataHistogram = useMemo(() => {
-    return mapData.filter((item) => Number(item.dob.slice(0, 4)) >= dateRange[0] && Number(item.dob.slice(0, 4)) <= dateRange[1]);
+    return mapData.filter((item) => item.yearOfBirth >= dateRange[0] && item.yearOfBirth <= dateRange[1]);
   }, [mapData, dateRange]);
+
+  useEffect(() => {
+    onChangeWidgetState({
+      widgetType: widgetType,
+      minYear: minYear,
+      maxYear: maxYear,
+      data: mapDataHistogram
+    });
+  }, [mapDataHistogram, minYear, maxYear, widgetType]);
 
   const datatableData = transformMapDataForDataTable(mapDataHistogram);
 
-  useEffect(() => {
-    // Check if the data has actually changed
-    if (JSON.stringify(storedMapRangedData) !== JSON.stringify(mapDataHistogram)) {
-      dispatch(setMapRangedData(mapDataHistogram));
-    }
-  }, [mapDataHistogram, storedMapRangedData, dispatch]);
-
   const cities = useMemo(() => {
     const cityMap = mapDataHistogram.reduce((map, item) => {
-      if (item.city.trim() === '' || item.cityCoords.trim() === '') {
+      if (item.city.trim() === '') {
         return map;
       }
-      const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
-      const city = map.get(item.city) || { name: item.city, coordinates: [parseFloat(coords[0]), parseFloat(coords[1])], population: 0 };
+      // const coords = item.cityCoords.replace('Point(', '').replace(')', '').split(' ');
+      const city = map.get(item.city) || {
+        name: item.city,
+        coordinates: [parseFloat(item.longitude), parseFloat(item.latitude)],
+        population: 0
+      };
       city.population++;
       return map.set(item.city, city);
     }, new Map());
@@ -98,17 +104,6 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       setMaxPopulation(maxPop);
     }
   }, [cities]);
-
-  const minDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-  const maxDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
-  useEffect(() => {
-    setDateRange([minDate, maxDate]);
-  }, [minDate, maxDate]);
 
   useEffect(() => {
     fetch('/countries-50m.json').then((response) => {
@@ -130,13 +125,13 @@ export const ChorloplethMap = ({ detailPage = false }) => {
     if (mapDataHistogram.length) {
       let counts = {};
       for (let item of mapDataHistogram) {
-        const { countryiso } = item;
-        if (countryiso in counts) {
+        const { countryIso } = item;
+        if (countryIso in counts) {
           // @ts-ignore
-          counts[countryiso]++;
+          counts[countryIso]++;
         } else {
           // @ts-ignore
-          counts[countryiso] = 1;
+          counts[countryIso] = 1;
         }
       }
       if (Object.keys(world).length !== 0) {
@@ -421,7 +416,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       .attr('class', 'marker')
       .attr('cx', (d) => projection(d.coordinates)[0])
       .attr('cy', (d) => projection(d.coordinates)[1])
-      .attr('r', (d) => (8 / maxPopulation) * d.population)
+      .attr('r', (d) => (8 / maxPopulation) * d.population > 1 ? (8 / maxPopulation) * d.population : 1)
       // .attr('r', (d) => (maxPopulation > 8 ? (8 / maxPopulation) * d.population : d.population * 1.5))
       .each(function (d) {
         d.initialRadius = d3.select(this).attr('r');
@@ -512,29 +507,8 @@ export const ChorloplethMap = ({ detailPage = false }) => {
   };
 
   return (
-    <MainCard
-      content={false}
-      sx={{
-        padding: theme.spacing(4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative'
-      }}
-    >
-      {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-          Mapping Contributor Data
-        </Typography>
-      ) : (
-        <NextLink href="/widget-details/mapping">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
-            Mapping Contributor Data
-          </Typography>
-        </NextLink>
-      )}
-
-      {detailPage && (
+    <>
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{
@@ -570,7 +544,7 @@ export const ChorloplethMap = ({ detailPage = false }) => {
             <CSVLink
               data={datatableData}
               filename={`Contributor_Data${new Date().toISOString().split('T')[0]}.csv`}
-              headers={mapCSVHeaders}
+              headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
@@ -580,9 +554,8 @@ export const ChorloplethMap = ({ detailPage = false }) => {
       )}
       <Box sx={{ width: '100%', position: 'relative' }}>
         <div id="graph-container" ref={inputRef} />
-        {loadingMap ? <CircularProgress color="inherit" sx={{ position: 'absolute', left: width / 2, top: height - 50 }} /> : ''}
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust contributor birth years on map" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
-    </MainCard>
+    </>
   );
 };

@@ -9,24 +9,28 @@ import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import { setTimelineRangedData } from 'store/reducers/dashboard';
 import IconButton from 'components/@extended/IconButton';
-import { timelineCSVHeaders } from 'data/react-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import { saveAs } from 'file-saver';
+import useDashboardState from 'hooks/useDashboardState';
+import { CSVHeaders } from 'data/constants';
 
-const MARGIN = { top: 20, right: 20, bottom: 20, left: 25 };
+const MARGIN = { top: 20, right: 25, bottom: 20, left: 25 };
 const BUCKET_PADDING = 1;
 
-export const PublicationTimeLineChart = ({ detailPage = false }) => {
+export const PublicationTimeLineChart = ({ data, widgetType, isDetailsPage = false }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
-  const { timelineData: modifiedDataHistogram, timelineRangedData: storedTimelineRangedData } = useSelector((state) => state.dashboard);
-  const chartWrapper = useRef();
+  const chartWrapper = useRef(null);
   const dimensions = useResizeObserver(chartWrapper);
+  const { onChangeWidgetState } = useDashboardState();
+
+  const yearsOfBirth = data?.map((item) => item.year).filter((year) => year !== null && year !== undefined);
+  const minYear = Math.min(...yearsOfBirth);
+  const maxYear = Math.max(...yearsOfBirth);
 
   const [dateRange, setDateRange] = useState<number[]>([]);
-
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
 
@@ -39,29 +43,21 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   };
 
   const chartDataHistogram = useMemo(() => {
-    return Object.keys(modifiedDataHistogram)
-      .filter((item) => Number(item) >= dateRange[0] && Number(item) <= dateRange[1])
-      .map((item: any) => ({ date: item, value: modifiedDataHistogram[item] }));
-  }, [modifiedDataHistogram, dateRange]);
+    return data.filter((item) => item.year >= dateRange[0] && item.year <= dateRange[1]);
+  }, [data, dateRange]);
 
   useEffect(() => {
-    // Check if the data has actually changed
-    if (JSON.stringify(storedTimelineRangedData) !== JSON.stringify(chartDataHistogram)) {
-      dispatch(setTimelineRangedData(chartDataHistogram));
-    }
-  }, [chartDataHistogram, storedTimelineRangedData, dispatch]);
-
-  const minDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.min(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
-
-  const maxDate = useMemo(() => {
-    return Object.keys(modifiedDataHistogram).length ? Math.max(...Object.keys(modifiedDataHistogram).map((item: any) => Number(item))) : 0;
-  }, [modifiedDataHistogram]);
+    onChangeWidgetState({
+      widgetType: widgetType,
+      minYear: minYear,
+      maxYear: maxYear,
+      data: chartDataHistogram
+    });
+  }, [chartDataHistogram, minYear, maxYear, widgetType]);
 
   useEffect(() => {
-    setDateRange([minDate, maxDate]);
-  }, [minDate, maxDate]);
+    setDateRange([minYear, maxYear]);
+  }, [minYear, maxYear]);
 
   //Histogram properties
   let width = dimensions?.width || 500;
@@ -70,38 +66,48 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
   //x-axis scale for Histogram
-  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]]).range([0, boundsWidth]);
+  const xScaleHistogram = d3.scaleLinear().domain([dateRange[0], dateRange[1]+1]).range([0, boundsWidth]);
   //y-axis scale for Histogram
-  const yScaleHistogram: any = d3
-    .scaleLinear()
-    .domain([0, Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)))])
-    .range([boundsHeight, 0]);
-  const maxDataValue = Math.max(...Object.values(modifiedDataHistogram).map((item: any) => Number(item)));
+  const maxDataValue = Math.max(...data.map((item) => item.count));
+  const yScaleHistogram: any = d3.scaleLinear().domain([0, maxDataValue]).range([boundsHeight, 0]).nice();
 
   useEffect(() => {
     const svgElement = d3.select(axesRef.current);
     svgElement.selectAll('*').remove();
 
-    const xAxisGenerator = d3.axisBottom(xScaleHistogram).tickFormat((d) => Math.round(d));
+    const xAxisGenerator = d3.axisBottom(xScaleHistogram);
+    const dateSpread = dateRange[1] - dateRange[0] > 0 ? dateRange[1] - dateRange[0] : 1;
+    if (dateSpread < 10) {
+      xAxisGenerator.ticks(dateSpread).tickFormat((d) => Math.round(d));
+    }
+    else {
+      xAxisGenerator.tickFormat((d) => Math.round(d));
+    }
     svgElement
       .append('g')
-      .attr('transform', 'translate(0,' + boundsHeight + ')')
+      .attr('transform', `translate(0,${boundsHeight})`)
       .call(xAxisGenerator);
 
     // @ts-ignore
-    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram).ticks(maxDataValue).tickFormat(d3.format('~d'));
+    const yAxisGenerator: any = d3.axisLeft(yScaleHistogram)
+    if (maxDataValue < 10) {
+      yAxisGenerator.ticks(maxDataValue).tickFormat(d3.format('~d'));
+    }
+    else {
+      yAxisGenerator.ticks().tickFormat(d3.format('~d'));
+    }
     svgElement.append('g').call(yAxisGenerator);
-  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue]);
+  }, [xScaleHistogram, yScaleHistogram, boundsHeight, maxDataValue, dateRange]);
 
   const allRects = chartDataHistogram.map((bucket, i) => {
     return (
       <rect
         key={i}
         fill="#6689c6"
-        x={xScaleHistogram(Number(bucket.date)) + BUCKET_PADDING / 2}
-        width={Math.abs(dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
-        y={yScaleHistogram(bucket.value)}
-        height={boundsHeight - yScaleHistogram(bucket.value)}
+        x={xScaleHistogram(bucket.year) + BUCKET_PADDING / 2}
+        width={Math.abs(1 + dateRange[1] - dateRange[0] == 0 ? 10 : boundsWidth / (1 + dateRange[1] - dateRange[0]) - BUCKET_PADDING)}
+        y={yScaleHistogram(bucket.count)}
+        height={boundsHeight - yScaleHistogram(bucket.count)}
       />
     );
   });
@@ -139,29 +145,8 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
   };
 
   return (
-    <MainCard
-      content={false}
-      sx={{
-        padding: theme.spacing(4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative'
-      }}
-    >
-      {detailPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-          Publication Date Timeline
-        </Typography>
-      ) : (
-        <NextLink href="/widget-details/timeline">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
-            Publication Date Timeline
-          </Typography>
-        </NextLink>
-      )}
-
-      {detailPage && (
+    <>
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{
@@ -197,7 +182,7 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
             <CSVLink
               data={chartDataHistogram}
               filename={`Timeline_Data${new Date().toISOString().split('T')[0]}.csv`}
-              headers={timelineCSVHeaders}
+              headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
@@ -212,8 +197,8 @@ export const PublicationTimeLineChart = ({ detailPage = false }) => {
           </g>
           <g width={boundsWidth} height={boundsHeight} ref={axesRef} transform={`translate(${[MARGIN.left, MARGIN.top].join(',')})`} />
         </svg>
-        <CustomSlider value={dateRange} minValue={minDate} maxValue={maxDate} step={10} handleSliderChange={handleSliderChange} />
+        <CustomSlider label="Adjust publication years on timeline" value={dateRange} minValue={minYear} maxValue={maxYear} step={10} handleSliderChange={handleSliderChange} />
       </Box>
-    </MainCard>
+    </>
   );
 };

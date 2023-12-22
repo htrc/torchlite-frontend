@@ -30,16 +30,16 @@ const Default = (colors: PalettesProps): PaletteThemeProps => {
 
   return {
     primary: {
-      lighter: blue[0],
+      lighter: '#73787A'/*blue[0]*/,
       100: blue[1],
       200: blue[2],
-      light: blue[3],
+      light: '#73787A'/*blue[3]*/, //change this to an orange hue
       400: blue[4],
-      main: blue[5],
-      dark: blue[6],
-      700: blue[7],
+      main: '#C35400'/*blue[5]*/,
+      dark: '#73787A'/*blue[6]*/,
+      700: '#73787A'/*blue[7]*/,
       darker: blue[8],
-      900: blue[9],
+      900: '#505759'/*blue[9]*/,
       contrastText
     },
     secondary: {

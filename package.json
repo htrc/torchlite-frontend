@@ -3,9 +3,8 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "initialize-db": "ts-node initialize-db.ts",
-    "dev": "yarn initialize-db && ./env.sh next dev -p 8081",
-    "build": "yarn initialize-db && ./env.sh next build",
+    "dev": "./env.sh next dev -p 3000",
+    "build": "./env.sh next build",
     "start": "next start"
   },
   "dependencies": {
@@ -32,6 +31,7 @@
     "@types/topojson-client": "^3.1.1",
     "axios": "^1.1.2",
     "chance": "^1.1.8",
+    "cookies-next": "^4.0.0",
     "d3": "^7.8.4",
     "d3-geo": "^3.1.0",
     "d3-geo-projection": "^4.0.0",
@@ -42,7 +42,9 @@
     "framer-motion": "^7.5.3",
     "gray-matter": "^4.0.3",
     "immutability-helper": "^3.1.1",
+    "ioredis": "^5.3.2",
     "js-cookie": "^3.0.5",
+    "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "match-sorter": "^6.3.1",
     "next": "12.3.1",
@@ -69,10 +71,13 @@
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "stylis-plugin-rtl": "^2.1.1",
+    "swr": "^2.2.4",
     "topojson-client": "^3.1.0",
+    "tozod": "^3.0.0",
     "ts-node": "^10.9.1",
     "uuid": "^9.0.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",

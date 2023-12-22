@@ -1,98 +1,138 @@
-// next
+import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import KeycloakProvider from 'next-auth/providers/keycloak';
+import { JWT } from 'next-auth/jwt';
+import axios, { AxiosError } from 'axios';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
+import redis from 'lib/redis';
+import { AuthInfo } from 'types/auth';
+import { v4 as uuidv4 } from 'uuid';
+import { deleteSession, getSessionAuthInfo, setSessionAuthInfo, setSessionExpiration } from 'utils/database';
 
-// third-party
-import axios from 'axios';
+const keycloak = KeycloakProvider({
+  clientId: process.env.KEYCLOAK_CLIENT_ID || '',
+  clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
+  issuer: process.env.KEYCLOAK_ISSUER_BASE_URL
+});
 
-export let users = [
-  {
-    id: 1,
-    name: 'Jone Doe',
-    email: 'info@codedthemes.com',
-    password: '123456'
+async function doFinalSignoutHandshake(token: JWT) {
+  if (token.provider == keycloak.id) {
+    try {
+      const authInfo: AuthInfo = await getSessionAuthInfo(token.sessionId);
+      await redis.del(`sessions:${token.sessionId}`);
+      await axios.get(`${keycloak.options!.issuer}/protocol/openid-connect/logout`, { params: { id_token_hint: authInfo.idToken } });
+    } catch (e: any) {
+      console.debug('Unable to perform post-logout handshake', (e as AxiosError)?.code || e);
+    }
   }
-];
+}
 
-export default NextAuth({
-  secret: process.env.NEXTAUTH_SECRET_KEY,
-  providers: [
-    CredentialsProvider({
-      id: 'login',
-      name: 'Login',
-      credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'Enter Email' },
-        password: { label: 'Password', type: 'password', placeholder: 'Enter Password' }
-      },
-      async authorize(credentials) {
-        try {
-          const user = await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
-            password: credentials?.password,
-            email: credentials?.email
-          });
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+  const now = Math.floor(Date.now() / 1000);
 
-          if (user) {
-            return user.data;
-          }
-        } catch (e: any) {
-          const errorMessage = e?.response.data.message;
-          throw new Error(errorMessage);
-        }
-      }
-    }),
-    CredentialsProvider({
-      id: 'register',
-      name: 'Register',
-      credentials: {
-        name: { label: 'Name', type: 'text', placeholder: 'Enter Name' },
-        email: { label: 'Email', type: 'email', placeholder: 'Enter Email' },
-        password: { label: 'Password', type: 'password', placeholder: 'Enter Password' }
-      },
-      async authorize(credentials) {
-        try {
-          const user = await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/register`, {
-            name: credentials?.name,
-            password: credentials?.password,
-            email: credentials?.email
-          });
+  try {
+    let authInfo: AuthInfo = await getSessionAuthInfo(token.sessionId);
 
-          if (user) {
-            users.push(user.data);
-            return user.data;
-          }
-        } catch (e: any) {
-          const errorMessage = e?.response.data.message;
-          throw new Error(errorMessage);
-        }
-      }
-    })
-  ],
+    if (now > authInfo.refreshTokenExpires) throw new Error('refreshAccessToken: Refresh token is expired!');
+
+    console.debug('Refreshing expired access token...');
+
+    const params = new URLSearchParams({
+      client_id: keycloak.options!.clientId,
+      client_secret: keycloak.options!.clientSecret,
+      grant_type: 'refresh_token',
+      refresh_token: authInfo.refreshToken
+    });
+
+    const response = await axios.post(`${keycloak.options!.issuer}/protocol/openid-connect/token`, params.toString()).catch((error) => {
+      throw new Error(`refreshAccessToken error [${error.response.data.error}]: ${error.response.data.error_description}`);
+    });
+
+    const refreshedTokens = response.data;
+
+    authInfo.idToken = refreshedTokens.id_token;
+    authInfo.accessToken = refreshedTokens.access_token;
+    authInfo.refreshToken = refreshedTokens.refresh_token;
+    authInfo.refreshTokenExpires = now + refreshedTokens.refresh_expires_in;
+
+    await setSessionAuthInfo(token.sessionId, authInfo);
+
+    return {
+      ...token,
+      accessTokenExpires: now + refreshedTokens.expires_in
+    };
+  } catch (error) {
+    console.debug(error);
+
+    await deleteSession(token.sessionId);
+
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError'
+    };
+  }
+}
+
+function isExpiredAccessToken(token: JWT): boolean {
+  const now = Math.floor(Date.now() / 1000);
+  const expires = token.accessTokenExpires;
+
+  console.debug(`    now: ${now}`);
+  console.debug(`expires: ${expires}`);
+
+  return now > expires;
+}
+
+export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: [keycloak],
   callbacks: {
-    jwt: ({ token, user, account }) => {
-      if (user) {
-        token.id = user.id;
-        token.provider = account?.provider;
+    async jwt({ token, user, account }) {
+      if (account && user) {
+        const sessionId = uuidv4();
+        const decodedAccessToken = jwt_decode<JwtPayload>(account.access_token!);
+        const decodedRefreshToken = jwt_decode<JwtPayload>(account.refresh_token!);
+
+        const authInfo: AuthInfo = {
+          idToken: account.id_token!,
+          accessToken: account.access_token!,
+          refreshToken: account.refresh_token!,
+          refreshTokenExpires: decodedRefreshToken.exp!,
+          authTimestamp: Math.floor(Date.now() / 1000)
+        };
+
+        token.sessionId = sessionId;
+        token.provider = account.provider;
+        token.accessTokenExpires = decodedAccessToken.exp!;
+
+        await setSessionAuthInfo(sessionId, authInfo);
+
+        console.debug('Created new session', sessionId);
+
+        return token;
       }
+
+      if (isExpiredAccessToken(token)) token = await refreshAccessToken(token);
+
       return token;
     },
-    session: ({ session, token }) => {
-      if (token) {
-        session.id = token.id;
-        session.provider = token.provider;
-        session.tocken = token;
+    async session({ session, token }) {
+      session.sessionId = token.sessionId;
+
+      if (session?.expires) {
+        await setSessionExpiration(session.sessionId, new Date(session.expires).getTime());
       }
+
+      if (token?.error) {
+        session.error = token.error;
+      }
+
       return session;
     }
   },
-  session: {
-    strategy: 'jwt',
-    maxAge: Number(process.env.JWT_TIMEOUT!)
-  },
-  jwt: {
-    secret: process.env.JWT_SECRET
-  },
-  pages: {
-    signIn: '/login',
-    newUser: '/register'
+  events: {
+    signOut: ({ token }) => doFinalSignoutHandshake(token)
   }
-});
+};
+
+export default NextAuth(authOptions);
