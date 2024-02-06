@@ -11,6 +11,7 @@ import DrawerHeader from 'layout/MainLayout/Drawer/DrawerHeader';
 // type
 import { LAYOUT_CONST } from 'types/config';
 import Customization from './Customization';
+import GetHelpMenu from './GetHelpMenu';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
@@ -24,6 +25,7 @@ const HeaderContent = () => {
       {menuOrientation === LAYOUT_CONST.HORIZONTAL_LAYOUT && !downLG && <DrawerHeader open={true} />}
       <Box sx={{ width: '100%', ml: 1 }} />
       <Customization />
+      <GetHelpMenu />
       <Profile />
     </>
   );
