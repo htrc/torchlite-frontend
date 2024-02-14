@@ -1,20 +1,48 @@
-import { useMemo, useState } from 'react';
+//import { useMemo, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Drawer, Stack, Typography } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 // project import
-import ThemeMode from './ThemeMode';
-import MainCard from 'components/MainCard';
+//import ThemeMode from './ThemeMode';
+//import MainCard from 'components/MainCard';
+//import SimpleBar from 'components/third-party/SimpleBar';
 import IconButton from 'components/@extended/IconButton';
-import AnimateButton from 'components/@extended/AnimateButton';
-import SimpleBar from 'components/third-party/SimpleBar';
 import useConfig from 'hooks/useConfig';
 
 // assets
-import { HighlightOutlined, SettingOutlined, CloseCircleOutlined } from '@ant-design/icons';
+//import { HighlightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
+const Customization = () => {
+  const theme = useTheme();
+  const { mode, onChangeMode } = useConfig();
+
+  const handleToggleMode = () => {
+    onChangeMode(mode === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <Box sx={{ flexShrink: 0, ml: 2, mr: 2 }}>
+      <IconButton
+        color="secondary"
+        variant="light"
+        sx={{ color: 'text.primary', bgcolor: theme.palette.mode === 'dark' ? 'grey.200' : 'grey.100' }}
+        onClick={handleToggleMode}
+        aria-label="Toggle light/dark mode"
+      >
+        {mode === 'dark' ? <WbSunnyIcon /> : <Brightness4Icon />}
+      </IconButton>
+    </Box>
+  );
+};
+
+export default Customization;
+
+
+/*This is the old way that the light/dark mode was toggled. Preserving for now in case we want another Drawer right-side menu in the future. The below configuation is related to ThemeMode.tsx
 // ==============================|| HEADER CONTENT - CUSTOMIZATION ||============================== //
 
 const Customization = () => {
@@ -43,9 +71,7 @@ const Customization = () => {
           onClick={handleToggle}
           aria-label="settings toggler"
         >
-          <AnimateButton type="rotate">
-            <SettingOutlined />
-          </AnimateButton>
+          {theme.palette.mode === 'dark' ? <WbSunnyIcon /> : <Brightness4Icon />}
         </IconButton>
       </Box>
       <Drawer
@@ -137,4 +163,4 @@ const Customization = () => {
   );
 };
 
-export default Customization;
+export default Customization;*/

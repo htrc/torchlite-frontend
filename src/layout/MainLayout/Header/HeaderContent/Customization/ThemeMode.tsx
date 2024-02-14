@@ -14,6 +14,8 @@ const darkLayout = '/assets/images/customization/dark.svg';
 
 import { ThemeMode } from 'types/config';
 
+//** NOTE: this is for the old right-sided 'Drawer' menu that pulled out for light/dark mode. We are currently not using this implementation, but presering this file in case we need a template for it in the future**
+
 // ==============================|| CUSTOMIZATION - MODE ||============================== //
 
 const ThemeModeLayout = () => {
