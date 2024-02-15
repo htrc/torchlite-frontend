@@ -78,7 +78,7 @@
     "ts-node": "^10.9.1",
     "uuid": "^9.0.0",
     "yup": "^0.32.11",
-    "zod": "^3.22.2"
+    "zod": "^3.22.3"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",
