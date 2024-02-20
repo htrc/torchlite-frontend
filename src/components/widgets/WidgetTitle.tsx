@@ -16,7 +16,7 @@ const WidgetTitle = ({ widgetType, isDetailsPage }: WidgetTitleProps) => {
           {WidgetTitles[widgetType]}
         </Typography>
       ) : (
-        <NextLink href={`/widget-details/${widgetType}`}>
+        <NextLink href={`/widget-details/${widgetType}`} style={{textDecorationLine: 'none'}}>
           <Typography 
             variant="h3" 
             sx = {{ 

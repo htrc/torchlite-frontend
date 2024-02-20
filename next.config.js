@@ -3,9 +3,10 @@
  */
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-const withTM = require('next-transpile-modules')(['@babel/preset-react']);
+//const withTM = require('next-transpile-modules')(['@babel/preset-react']);
 
-module.exports = withTM({
+module.exports = {
+  transpilePackages: ['@babel/preset-react'],
   reactStrictMode: false,
   output: 'standalone',
   images: {
@@ -29,4 +30,4 @@ module.exports = withTM({
       }
     ];
   }
-});
+};

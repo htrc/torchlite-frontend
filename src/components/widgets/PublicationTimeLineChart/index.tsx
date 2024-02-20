@@ -5,7 +5,6 @@ import { Box, Menu, MenuItem, Stack, Typography, useTheme } from '@mui/material'
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
 import { useDispatch, useSelector } from 'store';
-import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import { setTimelineRangedData } from 'store/reducers/dashboard';
 import IconButton from 'components/@extended/IconButton';

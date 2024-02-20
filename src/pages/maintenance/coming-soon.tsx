@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 // next
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
