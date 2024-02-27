@@ -35,7 +35,7 @@ const DrawerHeader = ({ open }: Props) => {
         paddingLeft: isHorizontal ? { xs: '24px', lg: '0' } : open ? '24px' : 0
       }}
     >
-      <Logo sx={{ width: open ? 'auto' : 35, height: 35 }} isIcon={!open} />
+      <Logo sx={{ width: open ? 'auto' : 35, height: 35, color: theme.palette.common.black }} isIcon={!open} />
     </DrawerHeaderStyled>
   );
 };
