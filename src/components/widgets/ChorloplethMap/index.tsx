@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 // @ts-ignore
 import * as topojson from 'topojson-client';
 import { useDispatch, useSelector } from 'store';
-import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import CustomSlider from 'components/CustomSlider';
 import { Box, CircularProgress, Typography, useTheme, Stack, Menu, MenuItem } from '@mui/material';
