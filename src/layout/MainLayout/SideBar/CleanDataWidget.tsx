@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
@@ -12,6 +12,16 @@ interface IMockState {
   value: any;
   description: string;
 }
+
+ const stopwordsOptions = [
+   { value: 'default', label: 'Choose a list' },
+   { value: 'English', label: 'English' },
+   { value: 'French', label: 'French' },
+   { value: 'German', label: 'German' },
+   { value: 'Spanish', label: 'Spanish' },
+  // Add other options as needed
+ ];
+
 const filterSpeech = [
   { label: 'CC: Coordinating conjunction', value: 'CC' },
   { label: 'CD: Cardinal number', value: 'CD' },
@@ -57,6 +67,17 @@ const CleanDataWidget = () => {
       fileInputRef.current.click();
     }
   };
+
+  const [selectedOption, setSelectedOption] = useState(stopwordsOptions[0]); 
+
+  const handleSelectChange = (selectedOption) => {
+    return setSelectedOption(selectedOption);
+  };
+
+  useEffect(() => {
+    console.log("Selected Option State:", selectedOption);
+  }, [selectedOption]);
+  
   const handleDownload = () => {
     const fname = 'example.txt';
     const fileContent = 'This is an example file content.';
@@ -87,22 +108,42 @@ const CleanDataWidget = () => {
       case 'Apply Stopwords':
         return (
           <RadioGroup aria-label="size" name="radio-buttons-group" sx={{ ml: 3 }} defaultValue="default">
-            <Stack direction="row" alignItems="center">
-              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Use default" />
-              <a
+            <Stack direction="row" alignItems="left">            
+            <Select
+              options={stopwordsOptions}
+              defaultValue={stopwordsOptions[0]} // Set the default value
+              isSearchable={false} // Disable search if needed
+              onChange={handleSelectChange}// Handle the selected value change here
+              styles={{
+                control: (styles) => ({
+                  ...styles,
+                  minWidth: '200px', // Set the width as needed
+                  borderColor: theme.palette.primary[700],
+                }),
+                singleValue: (styles) => ({
+                  ...styles,
+                  color: theme.palette.primary[700],
+                }),
+              }}
+            />
+            </Stack>
+            <Stack>
+              <button
                 style={{
                   color: theme.palette.primary[700]/*'#1e98d7'*/,
-                  textAlign: 'center',
+                  textAlign: 'left',
                   lineHeight: 'normal',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  marginTop: '10px',
+                  width: '220px'
                 }}
                 onClick={handleDownload}
               >
-                Download default list
-              </a>
+                Download selected list (optional)
+              </button>
             </Stack>
             <Stack>
-              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />
+              {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
               {fileName}
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
               <CustomButton
@@ -114,11 +155,13 @@ const CleanDataWidget = () => {
                   backgroundColor: theme.palette.primary[700]/*'#1e98d7'*/,
                   color: theme.palette.common.white,
                   textAlign: 'center',
-                  lineHeight: 'normal'
+                  lineHeight: 'normal',
+                  marginTop: '20px',
+                  textTransform: 'none'
                 }}
                 onClick={handleButtonClick}
               >
-                Upload list
+                Or upload a custom list
               </CustomButton>
             </Stack>
           </RadioGroup>
