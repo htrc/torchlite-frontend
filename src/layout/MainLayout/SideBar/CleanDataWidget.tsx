@@ -202,7 +202,7 @@ const CleanDataWidget = () => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedOption]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
