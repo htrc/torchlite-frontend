@@ -138,6 +138,7 @@ const CleanDataWidget = () => {
                   width: '220px'
                 }}
                 onClick={handleDownload}
+                disabled={selectedOption.value === 'default'} // not working -- why???
               >
                 Download selected list (optional)
               </button>
