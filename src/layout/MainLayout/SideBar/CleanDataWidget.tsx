@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel  } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
@@ -13,8 +13,8 @@ interface IMockState {
   description: string;
 }
 
+//stopwords
  const stopwordsOptions = [
-   { value: 'default', label: 'Choose a list' },
    { value: 'English', label: 'English' },
    { value: 'French', label: 'French' },
    { value: 'German', label: 'German' },
@@ -68,12 +68,15 @@ const CleanDataWidget = () => {
     }
   };
 
-  const [selectedOption, setSelectedOption] = useState(stopwordsOptions[0]); 
+  //stopwords
+  const [selectedOption, setSelectedOption] = useState(''); 
 
-  const handleSelectChange = (selectedOption) => {
-    return setSelectedOption(selectedOption);
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSelectedOption(event.target.value);
   };
 
+  //stopwords
   useEffect(() => {
     console.log("Selected Option State:", selectedOption);
   }, [selectedOption]);
@@ -108,24 +111,24 @@ const CleanDataWidget = () => {
       case 'Apply Stopwords':
         return (
           <RadioGroup aria-label="size" name="radio-buttons-group" sx={{ ml: 3 }} defaultValue="default">
-            <Stack direction="row" alignItems="left">            
-            <Select
-              options={stopwordsOptions}
-              defaultValue={stopwordsOptions[0]} // Set the default value
-              isSearchable={false} // Disable search if needed
-              onChange={handleSelectChange}// Handle the selected value change here
-              styles={{
-                control: (styles) => ({
-                  ...styles,
-                  minWidth: '200px', // Set the width as needed
+            <Stack direction="row" alignItems="left">   
+            <FormControl>
+              <InputLabel>Choose a list</InputLabel>  
+              <MUISelect
+                value={selectedOption}
+                onChange={handleSelectChange}
+                style={{
+                  minWidth: '200px',
                   borderColor: theme.palette.primary[700],
-                }),
-                singleValue: (styles) => ({
-                  ...styles,
-                  color: theme.palette.primary[700],
-                }),
-              }}
-            />
+                }}
+              >
+                {stopwordsOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </MUISelect>
+            </FormControl>         
             </Stack>
             <Stack>
               <button
@@ -133,12 +136,12 @@ const CleanDataWidget = () => {
                   color: theme.palette.primary[700]/*'#1e98d7'*/,
                   textAlign: 'left',
                   lineHeight: 'normal',
-                  cursor: 'pointer',
+                  cursor: selectedOption !== '' ? 'pointer' : 'default',
                   marginTop: '10px',
                   width: '220px'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption.value === 'default'} // not working -- why???
+                disabled={selectedOption === ''} 
               >
                 Download selected list (optional)
               </button>
@@ -147,6 +150,7 @@ const CleanDataWidget = () => {
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
               {fileName}
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+              {selectedOption === '' && 
               <CustomButton
                 variant="contained"
                 sx={{
@@ -161,9 +165,10 @@ const CleanDataWidget = () => {
                   textTransform: 'none'
                 }}
                 onClick={handleButtonClick}
+                //disabled={selectedOption !== ''}
               >
                 Or upload a custom list
-              </CustomButton>
+              </CustomButton>}
             </Stack>
           </RadioGroup>
         );
