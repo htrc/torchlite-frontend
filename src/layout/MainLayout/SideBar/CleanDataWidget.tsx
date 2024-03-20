@@ -133,12 +133,15 @@ const CleanDataWidget = () => {
             <Stack>
               <button
                 style={{
-                  color: theme.palette.primary[700]/*'#1e98d7'*/,
+                  color: theme.palette.common.black/*'#1e98d7'*/,
+                  backgroundColor: theme.palette.background.default,
                   textAlign: 'left',
                   lineHeight: 'normal',
                   cursor: selectedOption !== '' ? 'pointer' : 'default',
                   marginTop: '10px',
-                  width: '220px'
+                  width: '220px',
+                  border: '.5px solid',
+                  borderRadius: '5px'
                 }}
                 onClick={handleDownload}
                 disabled={selectedOption === ''} 
