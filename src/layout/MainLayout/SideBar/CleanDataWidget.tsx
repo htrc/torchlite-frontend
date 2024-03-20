@@ -68,6 +68,19 @@ const CleanDataWidget = () => {
     }
   };
 
+  const handleClearButton = () => {
+    // Reset checkboxes and radios to their original state
+    setTypeGroup((prevTypeGroup) =>
+      prevTypeGroup.map((item) => ({
+        ...item,
+        checked: false,
+        value: item.label === 'Apply Stopwords' ? null : item.value // Reset specific values if needed
+      }))
+    );
+    // Reset other state variables if needed
+    setSelectedOption('');
+  }
+
   //stopwords
   const [selectedOption, setSelectedOption] = useState(''); 
 
@@ -278,7 +291,7 @@ const CleanDataWidget = () => {
               textAlign: 'center',
               textTransform: 'none'
             }}
-            onClick={() => {}}
+            onClick={handleClearButton}
           >
             Clear cleaning
           </CustomButton>
