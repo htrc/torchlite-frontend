@@ -6,6 +6,8 @@ import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
+import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+
 interface IMockState {
   label: string;
   checked: boolean;
@@ -60,12 +62,24 @@ const CleanDataWidget = () => {
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
   const [selectedValue, setSelectedValue] = useState('default');
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleButtonClick = () => {
+
+  //old handler for the upload stopwords button
+  /*const handleButtonClick = () => {
     setSelectedValue('upload');
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };*/
+
+  //modal handlers for the custom stopwords upload button
+  const handleUploadClick = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const handleClearButton = () => {
@@ -180,11 +194,13 @@ const CleanDataWidget = () => {
                   marginTop: '20px',
                   textTransform: 'none'
                 }}
-                onClick={handleButtonClick}
+                //onClick={handleButtonClick}
+                onClick={handleUploadClick}
                 //disabled={selectedOption !== ''}
               >
                 Or upload a custom list
               </CustomButton>}
+              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal}/>
             </Stack>
           </RadioGroup>
         );
@@ -223,7 +239,7 @@ const CleanDataWidget = () => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption]);
+  }, [selectedOption, modalOpen]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
