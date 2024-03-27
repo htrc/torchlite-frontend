@@ -83,9 +83,19 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                       label="Enter URL"
                       variant="outlined"
                       fullWidth
+                      sx={{mb: 2}}
                       value={url}
                       onChange={handleUrlChange}
                     />
+                  </Grid>
+                  <Divider sx={{my:2}} />
+                  <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
+                    <Button variant="contained" color="secondary" onClick={handleClose} sx={{ minWidth: '100px', marginRight: '8px'}}>
+                      Cancel
+                    </Button>
+                    <Button variant="contained" color="primary" sx={{ minWidth: '100px' }}>
+                      Save
+                    </Button>
                   </Grid>
                 </Grid>
             </Box>
