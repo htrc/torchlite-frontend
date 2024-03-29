@@ -16,18 +16,18 @@ import type { AppProps } from 'next/app';
 
 // third party
 import { Provider as ReduxProvider } from 'react-redux';
+import { SWRConfig, SWRConfiguration } from 'swr';
 
 // project import
 import Locales from 'components/Locales';
 import ScrollTop from 'components/ScrollTop';
 import Snackbar from 'components/@extended/Snackbar';
 import { ConfigProvider } from 'contexts/ConfigContext';
+import { AppProvider } from 'contexts/AppContext';
 import { store } from 'store';
 import ThemeCustomization from 'themes';
 import Notistack from 'components/third-party/Notistack';
 import CustomBackdrop from 'components/Backdrop';
-
-import { env } from 'utils/utils';
 
 // types
 type LayoutProps = NextPage & {
@@ -39,62 +39,66 @@ interface Props {
   pageProps: any;
 }
 
-export default function App({ Component, pageProps }: AppProps & Props) {
+const swrConfig: SWRConfiguration = {
+  // Don't automatically refresh every X times
+  refreshInterval: 0,
+  // Don't automatically refresh on mount if it's stale
+  revalidateIfStale: false,
+  // Don't auotmatically revalidate on focus. Delete this when offline support is completed
+  revalidateOnFocus: false,
+
+  // Don't make the same request twice in 5 seconds
+  dedupingInterval: 5000
+};
+
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps & Props) {
   const [isLoading, setIsLoading] = useState(true);
   const getLayout = Component.getLayout ?? ((page: any) => page);
   useEffect(() => {
-    const init = async () => {
-      try {
-        await fetch('/api/set-session-id');
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    init();
+    setIsLoading(false);
   }, []);
 
   if (isLoading) {
     return <CustomBackdrop loading={isLoading} />;
   }
-  console.log('BASE_API_URI: ', env('BASE_API_URI'));
+
   return (
-    <ReduxProvider store={store}>
-      <ConfigProvider>
-        <ThemeCustomization>
-          <Locales>
-            <ScrollTop>
-              <SessionProvider session={pageProps.session} refetchInterval={0}>
-                <>
-                  <Notistack>
-                    <Snackbar />
-                    {getLayout(<Component {...pageProps} />)}
-                    <div
-                      id="tooltip"
-                      style={{
-                        position: 'absolute',
-                        textAlign: 'left',
-                        width: 'auto',
-                        height: 'auto',
-                        padding: '5px 10px',
-                        font: '12px sans-serif',
-                        background: 'lightsteelblue',
-                        border: '0px',
-                        borderRadius: '8px',
-                        pointerEvents: 'none',
-                        zIndex: '10',
-                        opacity: '0'
-                      }}
-                    ></div>
-                  </Notistack>
-                </>
-              </SessionProvider>
-            </ScrollTop>
-          </Locales>
-        </ThemeCustomization>
-      </ConfigProvider>
-    </ReduxProvider>
+    <SWRConfig value={swrConfig}>
+      <ReduxProvider store={store}>
+        <ConfigProvider>
+          <ThemeCustomization>
+            <Locales>
+              <ScrollTop>
+                <SessionProvider session={session} refetchInterval={0}>
+                  <AppProvider>
+                    <Notistack>
+                      <Snackbar />
+                      {getLayout(<Component {...pageProps} />)}
+                      <div
+                        id="tooltip"
+                        style={{
+                          position: 'absolute',
+                          textAlign: 'left',
+                          width: 'auto',
+                          height: 'auto',
+                          padding: '5px 10px',
+                          font: '12px sans-serif',
+                          background: 'lightsteelblue',
+                          border: '0px',
+                          borderRadius: '8px',
+                          pointerEvents: 'none',
+                          zIndex: '10',
+                          opacity: '0'
+                        }}
+                      ></div>
+                    </Notistack>
+                  </AppProvider>
+                </SessionProvider>
+              </ScrollTop>
+            </Locales>
+          </ThemeCustomization>
+        </ConfigProvider>
+      </ReduxProvider>
+    </SWRConfig>
   );
 }

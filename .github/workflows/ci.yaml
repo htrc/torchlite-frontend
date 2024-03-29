@@ -2,9 +2,16 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (dev|stage|prod)'
+        required: true
+        default: 'dev'
+
   push:
     branches:
       - develop
+      - release
 
 permissions:
   contents: read
@@ -102,15 +109,30 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Repository Dispatch
+        if: github.event.inputs.environment == ''
         uses: peter-evans/repository-dispatch@v2
         env:
           HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
         with:
           token: ${{ secrets.PAT }}
           repository: htrc/torchlite-argocd
-          event-type: dev_commit_frontend
+          event-type: ${{ github.head_ref || github.ref_name }}_commit_frontend
           client-payload: >-
             {
               "image": "${{ fromJSON(steps.meta.outputs.json).tags[0] }}",
               "commit_msg": ${{ env.HEAD_COMMIT_MESSAGE }}
+            }
+      - name: Manual Repository Dispatch
+        if: github.event.inputs.environment != ''
+        uses: peter-evans/repository-dispatch@v2
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
+        with:
+          token: ${{ secrets.PAT }}
+          repository: htrc/torchlite-argocd
+          event-type: ${{ github.event.inputs.environment }}_commit_frontend
+          client-payload: >-
+            {
+              "image": "${{ fromJSON(steps.meta.outputs.json).tags[0] }}",
+              "commit_msg": "Manual deployment by ${{ github.triggering_actor }}"
             }

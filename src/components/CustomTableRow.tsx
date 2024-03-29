@@ -1,11 +1,11 @@
 import { Box, TableCell, TableRow, useTheme } from '@mui/material';
-import { IWorkset } from 'types/dashboard';
 import { BootstrapTooltip } from './BootstrapTooltip';
+import { WorksetSummary } from 'types/torchlite';
 
 interface ICustomTableRow {
-  item: IWorkset;
+  item: WorksetSummary;
   selected: boolean;
-  handleSelectWorkSet: (item: IWorkset) => any;
+  handleSelectWorkSet: (item: WorksetSummary) => any;
 }
 
 const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow) => {
@@ -20,7 +20,7 @@ const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow
         {item.name}
       </TableCell>
       <TableCell align="center">
-        {item.volumes}
+        {item.numVolumes}
         <BootstrapTooltip title={item.description}>
           <Box
             component="img"
@@ -29,9 +29,10 @@ const CustomTableRow = ({ item, handleSelectWorkSet, selected }: ICustomTableRow
               width: 15,
               maxHeight: { xs: 15, md: 15 },
               maxWidth: { xs: 15, md: 15 },
-              position: 'absolute',
+              position: 'sticky',
               top: '10px',
-              right: '10px'
+              right: '10px',
+              float: 'right'
             }}
             alt={item.description}
             src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}

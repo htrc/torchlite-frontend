@@ -8,7 +8,7 @@ import MainCard from 'components/MainCard';
 
 // assets
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { widgetInfoLinks } from 'data/widgetInfoLinks';
+import { WidgetInfoLinks } from 'data/constants';
 
 // ==============================|| LIST - NESTED ||============================== //
 
@@ -25,21 +25,25 @@ const NestedList = ({ widgetType }: { widgetType: string }) => {
         <ListItem disablePadding divider>
           <ListItemButton onClick={() => handleClick('sample')}>
             <ListItemText primary="Widget Documentation" />
-            {open === 'sample' ? <DownOutlined style={{ fontSize: '0.75rem' }} /> : <UpOutlined style={{ fontSize: '0.75rem' }} />}
+            {open === 'sample' ? (
+              <DownOutlined style={{ fontSize: '0.75rem' }} rev={undefined} />
+            ) : (
+              <UpOutlined style={{ fontSize: '0.75rem' }} rev={undefined} />
+            )}
           </ListItemButton>
         </ListItem>
         <Collapse in={open === 'sample'} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ bgcolor: 'secondary.100' }}>
             <ListItemButton sx={{ pl: 5 }}>
               <ListItemText>
-                <Link href={widgetInfoLinks[widgetType]?.github} target="_blank" rel="noopener noreferrer">
+                <Link href={WidgetInfoLinks[widgetType]?.github} target="_blank" rel="noopener noreferrer">
                   GitHub
                 </Link>
               </ListItemText>
             </ListItemButton>
             <ListItemButton sx={{ pl: 5 }}>
               <ListItemText>
-                <Link href={widgetInfoLinks[widgetType]?.lib} target="_blank" rel="noopener noreferrer">
+                <Link href={WidgetInfoLinks[widgetType]?.lib} target="_blank" rel="noopener noreferrer">
                   External Libraries
                 </Link>
               </ListItemText>
@@ -49,7 +53,7 @@ const NestedList = ({ widgetType }: { widgetType: string }) => {
         <ListItem disablePadding>
           <ListItemButton>
             <ListItemText>
-              <Link href={widgetInfoLinks[widgetType]?.insights} target="_blank" rel="noopener noreferrer">
+              <Link href={WidgetInfoLinks[widgetType]?.insights} target="_blank" rel="noopener noreferrer">
                 Results Insights
               </Link>
             </ListItemText>

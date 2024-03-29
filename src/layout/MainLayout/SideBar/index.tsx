@@ -1,4 +1,3 @@
-import { useSelector } from 'store';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Box, useTheme } from '@mui/material';
 import CleanDataWidget from './CleanDataWidget';
 import DownloadWidget from './DownloadWidget';
@@ -6,21 +5,22 @@ import DataFilterWidget from './DataFilterWidget';
 import WorksetWidget from './WorksetWidget';
 import { useState, useEffect } from 'react';
 import { hasFilters } from 'utils/helpers';
+import useDashboardState from 'hooks/useDashboardState';
 
 const SideBar = () => {
   const theme = useTheme();
-  const { selectedWorksetId, appliedFilters } = useSelector((state) => state.dashboard);
-  const [isWorksetExpanded, setWorksetExpanded] = useState(!!selectedWorksetId);
-  const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(appliedFilters));
+  const { dashboardState } = useDashboardState();
+  const [isWorksetExpanded, setWorksetExpanded] = useState(!!dashboardState?.worksetId);
+  const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(dashboardState?.filters));
 
   useEffect(() => {
-    setFilterExpanded(hasFilters(appliedFilters));
+    setFilterExpanded(hasFilters(dashboardState?.filters));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dashboardState?.filters]);
 
   useEffect(() => {
-    setWorksetExpanded(!!selectedWorksetId);
-  }, [selectedWorksetId]);
+    setWorksetExpanded(!!dashboardState?.worksetId);
+  }, [dashboardState?.worksetId]);
 
   return (
     <Box
@@ -36,10 +36,10 @@ const SideBar = () => {
           },
           '& .MuiAccordionSummary-expandIconWrapper': { display: 'none' },
           '& .Mui-expanded': {
-            color: '#1e98d7',
+            color: theme.palette.mode === 'light'? theme.palette.common.black/*'#1e98d7'*/ : theme.palette.common.white,
             backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : 'inherit'
           },
-          '& h5:hover': { color: '#1e98d7' }
+          '& h5:hover': { color: theme.palette.primary.main/*'#1e98d7'*/ }
         }
       }}
     >

@@ -4,7 +4,6 @@ import { Box, useMediaQuery } from '@mui/material';
 
 // project import
 import Profile from './Profile';
-import MobileSection from './MobileSection';
 
 import useConfig from 'hooks/useConfig';
 import DrawerHeader from 'layout/MainLayout/Drawer/DrawerHeader';
@@ -12,6 +11,7 @@ import DrawerHeader from 'layout/MainLayout/Drawer/DrawerHeader';
 // type
 import { LAYOUT_CONST } from 'types/config';
 import Customization from './Customization';
+import GetHelpMenu from './GetHelpMenu';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
@@ -25,8 +25,8 @@ const HeaderContent = () => {
       {menuOrientation === LAYOUT_CONST.HORIZONTAL_LAYOUT && !downLG && <DrawerHeader open={true} />}
       <Box sx={{ width: '100%', ml: 1 }} />
       <Customization />
-      {!downLG && <Profile />}
-      {downLG && <MobileSection />}
+      <GetHelpMenu />
+      <Profile />
     </>
   );
 };
