@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
@@ -12,6 +12,16 @@ interface IMockState {
   value: any;
   description: string;
 }
+
+//stopwords
+ const stopwordsOptions = [
+   { value: 'English', label: 'English' },
+   { value: 'French', label: 'French' },
+   { value: 'German', label: 'German' },
+   { value: 'Spanish', label: 'Spanish' },
+  // Add other options as needed
+ ];
+
 const filterSpeech = [
   { label: 'CC: Coordinating conjunction', value: 'CC' },
   { label: 'CD: Cardinal number', value: 'CD' },
@@ -57,6 +67,33 @@ const CleanDataWidget = () => {
       fileInputRef.current.click();
     }
   };
+
+  const handleClearButton = () => {
+    // Reset checkboxes and radios to their original state
+    setTypeGroup((prevTypeGroup) =>
+      prevTypeGroup.map((item) => ({
+        ...item,
+        checked: false,
+        value: item.label === 'Apply Stopwords' ? null : item.value // Reset specific values if needed
+      }))
+    );
+    // Reset other state variables if needed
+    setSelectedOption('');
+  }
+
+  //stopwords
+  const [selectedOption, setSelectedOption] = useState(''); 
+
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSelectedOption(event.target.value);
+  };
+
+  //stopwords
+  useEffect(() => {
+    console.log("Selected Option State:", selectedOption);
+  }, [selectedOption]);
+  
   const handleDownload = () => {
     const fname = 'example.txt';
     const fileContent = 'This is an example file content.';
@@ -87,24 +124,49 @@ const CleanDataWidget = () => {
       case 'Apply Stopwords':
         return (
           <RadioGroup aria-label="size" name="radio-buttons-group" sx={{ ml: 3 }} defaultValue="default">
-            <Stack direction="row" alignItems="center">
-              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Use default" />
-              <a
+            <Stack direction="row" alignItems="left">   
+            <FormControl>
+              <InputLabel>Choose a list</InputLabel>  
+              <MUISelect
+                value={selectedOption}
+                onChange={handleSelectChange}
                 style={{
-                  color: theme.palette.primary[700]/*'#1e98d7'*/,
-                  textAlign: 'center',
-                  lineHeight: 'normal',
-                  cursor: 'pointer'
+                  minWidth: '200px',
+                  borderColor: theme.palette.primary[700],
                 }}
-                onClick={handleDownload}
               >
-                Download default list
-              </a>
+                {stopwordsOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </MUISelect>
+            </FormControl>         
             </Stack>
             <Stack>
-              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />
+              <button
+                style={{
+                  color: theme.palette.common.black/*'#1e98d7'*/,
+                  backgroundColor: theme.palette.background.default,
+                  textAlign: 'left',
+                  lineHeight: 'normal',
+                  cursor: selectedOption !== '' ? 'pointer' : 'default',
+                  marginTop: '10px',
+                  width: '220px',
+                  border: '.5px solid',
+                  borderRadius: '5px'
+                }}
+                onClick={handleDownload}
+                disabled={selectedOption === ''} 
+              >
+                Download selected list (optional)
+              </button>
+            </Stack>
+            <Stack>
+              {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
               {fileName}
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+              {selectedOption === '' && 
               <CustomButton
                 variant="contained"
                 sx={{
@@ -114,12 +176,15 @@ const CleanDataWidget = () => {
                   backgroundColor: theme.palette.primary[700]/*'#1e98d7'*/,
                   color: theme.palette.common.white,
                   textAlign: 'center',
-                  lineHeight: 'normal'
+                  lineHeight: 'normal',
+                  marginTop: '20px',
+                  textTransform: 'none'
                 }}
                 onClick={handleButtonClick}
+                //disabled={selectedOption !== ''}
               >
-                Upload list
-              </CustomButton>
+                Or upload a custom list
+              </CustomButton>}
             </Stack>
           </RadioGroup>
         );
@@ -158,7 +223,7 @@ const CleanDataWidget = () => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedOption]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
@@ -226,7 +291,7 @@ const CleanDataWidget = () => {
               textAlign: 'center',
               textTransform: 'none'
             }}
-            onClick={() => {}}
+            onClick={handleClearButton}
           >
             Clear cleaning
           </CustomButton>
