@@ -31,12 +31,28 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
       setUrl(event.target.value);
     }
 
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        setFilePath(file.name);
+        // Do something with the file, like saving it or processing it
+      }
+    }
+
     const handleClose = () => {
       setStopwordsName(''); // Reset the text box value when modal is closed
       setFilePath('');
       setUrl('');
       onClose();
   };
+
+    const handleUploadButtonClick = () => {
+      if(fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     return (
         <Modal open={open} onClose={handleClose}>
@@ -59,9 +75,15 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                 </Typography>
                 <Grid container alignItems="center">
                   <Grid item xs={6}>
-                    <Button variant="contained" color="primary" sx={{ height: '30px', textTransform: 'none'}}>
+                    <Button variant="contained" color="primary" sx={{ height: '30px', textTransform: 'none'}} onClick={handleUploadButtonClick}>
                       Upload from your computer
                     </Button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{display: 'none'}}
+                      onChange={handleFileChange}
+                    />
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="body1" sx={{ textAlign: 'right' }}>{filePath}</Typography>
