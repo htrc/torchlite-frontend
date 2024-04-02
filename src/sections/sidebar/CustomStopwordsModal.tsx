@@ -83,6 +83,7 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                       ref={fileInputRef}
                       style={{display: 'none'}}
                       onChange={handleFileChange}
+                      accept=".txt, .csv"
                     />
                   </Grid>
                   <Grid item xs={6}>
