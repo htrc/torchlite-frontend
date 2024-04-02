@@ -80,6 +80,13 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
       handleClose()
     }
 
+    const handleClear = () => {
+      setStopwordsName("");
+      setFilePath("");
+      setUrl("");
+      setUrlError("");
+  };
+
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={style}>
@@ -101,7 +108,13 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                 </Typography>
                 <Grid container alignItems="center">
                   <Grid item xs={6}>
-                    <Button variant="contained" color="primary" sx={{ height: '30px', textTransform: 'none'}} onClick={handleUploadButtonClick}>
+                    <Button 
+                    variant="contained" 
+                    color="primary" 
+                    sx={{ height: '30px', textTransform: 'none'}} 
+                    onClick={handleUploadButtonClick}
+                    disabled={url !== ""}
+                    >
                       Upload from your computer
                     </Button>
                     <input
@@ -137,18 +150,22 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                       onChange={handleUrlChange}
                       error={urlError !== ""}
                       helperText={urlError}
+                      disabled={filePath !== ""}
                     />
                   </Grid>
-                  <Divider sx={{my:2}} />
-                  <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-                    <Button variant="contained" color="secondary" onClick={handleClose} sx={{ minWidth: '100px', marginRight: '8px'}}>
-                      Cancel
-                    </Button>
-                    <Button variant="contained" color="primary" sx={{ minWidth: '100px' }} onClick={handleSave}>
-                      Save
-                    </Button>
-                  </Grid>
-                </Grid>
+                  <Divider sx={{my:2}} />                 
+                    <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
+                        <Button variant="outlined" color="secondary" onClick={handleClear} sx={{ minWidth: '100px', marginRight: '420px'}}>
+                          Clear
+                        </Button>                      
+                      <Button variant="contained" color="secondary" onClick={handleClose} sx={{ minWidth: '100px', marginRight: '8px'}}>
+                        Cancel
+                      </Button>
+                      <Button variant="contained" color="primary" sx={{ minWidth: '100px' }} onClick={handleSave}>
+                        Save
+                      </Button>
+                    </Grid>
+                  </Grid>                
             </Box>
         </Modal>
       )
