@@ -21,14 +21,25 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
     const [stopwordsName, setStopwordsName] = useState("");
     const [filePath, setFilePath] = useState("");
     const [url, setUrl] = useState('');
+    const [urlError, setUrlError] = useState('');
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setStopwordsName(event.target.value);
       console.log(stopwordsName);
     }
 
+    const isValidURL  = (value: string) => {
+      //Regex for URL validation
+      const urlRegex = /^(ftp|http|https):\/\/[^ "]+\.txt$/;
+      return urlRegex.test(value)
+    }
+
     const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setUrl(event.target.value);
+      const value = event.target.value;
+      setUrl(value);
+      //Validate URL
+      const isValid = isValidURL(value);
+      setUrlError(isValid ? "" : "Please enter a valid URL. You must include the full URL path and this path must end with a .txt format.")
     }
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +54,7 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
       setStopwordsName(''); // Reset the text box value when modal is closed
       setFilePath('');
       setUrl('');
+      setUrlError('');
       onClose();
   };
 
@@ -53,6 +65,20 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
     }
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleSave = () => {
+      if (url !== '') {
+        //handle URL upload
+        console.log('URL: ', url);
+      } else if (filePath !== '') {
+        //handle local file upload
+        console.log('Local file: ', filePath);
+      } else {
+        //no file selected
+        console.log('No file selected');
+      }
+      handleClose()
+    }
 
     return (
         <Modal open={open} onClose={handleClose}>
@@ -109,6 +135,8 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                       sx={{mb: 2}}
                       value={url}
                       onChange={handleUrlChange}
+                      error={urlError !== ""}
+                      helperText={urlError}
                     />
                   </Grid>
                   <Divider sx={{my:2}} />
@@ -116,7 +144,7 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
                     <Button variant="contained" color="secondary" onClick={handleClose} sx={{ minWidth: '100px', marginRight: '8px'}}>
                       Cancel
                     </Button>
-                    <Button variant="contained" color="primary" sx={{ minWidth: '100px' }}>
+                    <Button variant="contained" color="primary" sx={{ minWidth: '100px' }} onClick={handleSave}>
                       Save
                     </Button>
                   </Grid>
