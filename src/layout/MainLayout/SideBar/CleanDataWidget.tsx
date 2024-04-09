@@ -15,7 +15,7 @@ interface IMockState {
   description: string;
 }
 
-//stopwords
+//stopwords dropdown
  const stopwordsOptions = [
    { value: 'English', label: 'English' },
    { value: 'French', label: 'French' },
@@ -56,13 +56,16 @@ const dataTypes = [
   { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
 ];
 const animatedComponents = makeAnimated();
+
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
-  const [selectedValue, setSelectedValue] = useState('default');
+  //const [selectedValue, setSelectedValue] = useState('default');
+  const [selectedOption, setSelectedOption] = useState(''); 
   const [modalOpen, setModalOpen] = useState(false);
+  const [stopwordsName, setStopwordsName] = useState('');
 
 
   //old handler for the upload stopwords button
@@ -95,15 +98,31 @@ const CleanDataWidget = () => {
     setSelectedOption('');
   }
 
-  //stopwords
-  const [selectedOption, setSelectedOption] = useState(''); 
-
-
-  const handleSelectChange = (event: SelectChangeEvent) => {
+  //previous handleSelectChange
+  /*const handleSelectChange = (event: SelectChangeEvent) => {
     setSelectedOption(event.target.value);
-  };
+  };*/
 
-  //stopwords
+  //stopwords selection change
+  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedOption(event.target.value as string);
+};
+
+//stopwords -- saving user selection
+const handleSaveName = (name: string) => {
+  setStopwordsName(name); // Update state with the saved name
+  // Check if the name is not already in the list of options
+  if (!stopwordsOptions.some(option => option.label === name)) {
+    // Add the new name to the list of options
+    setSelectedOption(prevOptions => [
+      ...prevOptions,
+      { value: name, label: name }
+    ]);
+}
+  setSelectedOption(name);
+};
+
+  //stopwords update check
   useEffect(() => {
     console.log("Selected Option State:", selectedOption);
   }, [selectedOption]);
@@ -200,7 +219,7 @@ const CleanDataWidget = () => {
               >
                 Or upload a custom list
               </CustomButton>}
-              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal}/>
+              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal} onSaveName={handleSaveName}/>
             </Stack>
           </RadioGroup>
         );
@@ -239,7 +258,7 @@ const CleanDataWidget = () => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption, modalOpen]);
+  }, [selectedOption, modalOpen, stopwordsName]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">

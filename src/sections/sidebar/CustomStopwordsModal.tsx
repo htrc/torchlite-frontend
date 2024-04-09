@@ -17,7 +17,7 @@ const style = {
     }
   };
 
-function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => void }) {
+function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onClose: () => void, onSaveName: (name: string) => void }) {
     const [stopwordsName, setStopwordsName] = useState("");
     const [filePath, setFilePath] = useState("");
     const [url, setUrl] = useState('');
@@ -25,7 +25,7 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setStopwordsName(event.target.value);
-      console.log(stopwordsName);
+      //console.log(stopwordsName);
     }
 
     const isValidURL  = (value: string) => {
@@ -66,7 +66,7 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-    const handleSave = () => {
+    /*const handleSave = () => {
       if (url !== '') {
         //handle URL upload
         console.log('URL: ', url);
@@ -78,7 +78,13 @@ function CustomStopwordsModal ({open, onClose}: { open: boolean, onClose: () => 
         console.log('No file selected');
       }
       handleClose()
-    }
+    }*/
+
+    const handleSave = () => {
+      onSaveName(stopwordsName); // Pass the name to the parent component
+      //onClose(); // Close the modal
+      handleClose();
+  };
 
     const handleClear = () => {
       setStopwordsName("");
