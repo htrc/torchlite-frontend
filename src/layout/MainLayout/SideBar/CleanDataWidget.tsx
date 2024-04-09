@@ -16,7 +16,7 @@ interface IMockState {
 }
 
 //stopwords dropdown
- const stopwordsOptions = [
+ const defaultStopwordsOptions = [
    { value: 'English', label: 'English' },
    { value: 'French', label: 'French' },
    { value: 'German', label: 'German' },
@@ -63,6 +63,7 @@ const CleanDataWidget = () => {
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
   //const [selectedValue, setSelectedValue] = useState('default');
+  const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
   const [selectedOption, setSelectedOption] = useState(''); 
   const [modalOpen, setModalOpen] = useState(false);
   const [stopwordsName, setStopwordsName] = useState('');
@@ -114,7 +115,7 @@ const handleSaveName = (name: string) => {
   // Check if the name is not already in the list of options
   if (!stopwordsOptions.some(option => option.label === name)) {
     // Add the new name to the list of options
-    setSelectedOption(prevOptions => [
+    setStopwordsOptions(prevOptions => [
       ...prevOptions,
       { value: name, label: name }
     ]);
@@ -139,19 +140,24 @@ const handleSaveName = (name: string) => {
     element.click();
     document.body.removeChild(element);
   };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
   };
+
   const handleRadioChange = (event: any) => {
     setSelectedValue(event.target.value);
   };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
   };
+
   useEffect(() => {
     console.log(fileName);
   }, [fileName]);
+
   const childItem = useCallback((type: any) => {
     switch (type.label) {
       case 'Apply Stopwords':
