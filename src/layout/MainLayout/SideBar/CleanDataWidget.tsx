@@ -183,23 +183,20 @@ const handleSaveName = (name: string) => {
             </FormControl>         
             </Stack>
             <Stack>
-              <button
-                style={{
-                  color: theme.palette.common.black/*'#1e98d7'*/,
-                  backgroundColor: theme.palette.background.default,
-                  textAlign: 'left',
-                  lineHeight: 'normal',
-                  cursor: selectedOption !== '' ? 'pointer' : 'default',
+             { selectedOption !== stopwordsName && //want to only show this if the selectedOption === defaultStopwordsOptions
+              <CustomButton 
+                variant='outlined'
+                sx={{
+                  height: '21px',
+                  padding: '2px',
                   marginTop: '10px',
-                  width: '220px',
-                  border: '.5px solid',
-                  borderRadius: '5px'
+                  textTransform: 'none'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption === ''} 
+                disabled={selectedOption === ''}
               >
                 Download selected list (optional)
-              </button>
+              </CustomButton>}
             </Stack>
             <Stack>
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
@@ -219,9 +216,7 @@ const handleSaveName = (name: string) => {
                   marginTop: '20px',
                   textTransform: 'none'
                 }}
-                //onClick={handleButtonClick}
                 onClick={handleUploadClick}
-                //disabled={selectedOption !== ''}
               >
                 Or upload a custom list
               </CustomButton>}
