@@ -167,8 +167,13 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
                       <Button variant="contained" color="secondary" onClick={handleClose} sx={{ minWidth: '100px', marginRight: '8px'}}>
                         Cancel
                       </Button>
-                      <Button variant="contained" color="primary" sx={{ minWidth: '100px' }} onClick={handleSave}>
-                        Save
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        sx={{ minWidth: '100px'}} 
+                        onClick={handleSave} 
+                        disabled={(filePath === "" && url === "")}>
+                          Save
                       </Button>
                     </Grid>
                   </Grid>                
