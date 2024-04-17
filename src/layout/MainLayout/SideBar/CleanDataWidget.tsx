@@ -6,6 +6,8 @@ import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
+import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+
 interface IMockState {
   label: string;
   checked: boolean;
@@ -13,8 +15,8 @@ interface IMockState {
   description: string;
 }
 
-//stopwords
- const stopwordsOptions = [
+//stopwords dropdown
+ const defaultStopwordsOptions = [
    { value: 'English', label: 'English' },
    { value: 'French', label: 'French' },
    { value: 'German', label: 'German' },
@@ -54,18 +56,34 @@ const dataTypes = [
   { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
 ];
 const animatedComponents = makeAnimated();
+
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
-  const [selectedValue, setSelectedValue] = useState('default');
+  //const [selectedValue, setSelectedValue] = useState('default');
+  const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
+  const [selectedOption, setSelectedOption] = useState(''); 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [stopwordsName, setStopwordsName] = useState('');
 
-  const handleButtonClick = () => {
+
+  //old handler for the upload stopwords button
+  /*const handleButtonClick = () => {
     setSelectedValue('upload');
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };*/
+
+  //modal handlers for the custom stopwords upload button
+  const handleUploadClick = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const handleClearButton = () => {
@@ -81,15 +99,31 @@ const CleanDataWidget = () => {
     setSelectedOption('');
   }
 
-  //stopwords
-  const [selectedOption, setSelectedOption] = useState(''); 
-
-
-  const handleSelectChange = (event: SelectChangeEvent) => {
+  //previous handleSelectChange
+  /*const handleSelectChange = (event: SelectChangeEvent) => {
     setSelectedOption(event.target.value);
-  };
+  };*/
 
-  //stopwords
+  //stopwords selection change
+  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedOption(event.target.value as string);
+};
+
+//stopwords -- saving user selection
+const handleSaveName = (name: string) => {
+  setStopwordsName(name); // Update state with the saved name
+  // Check if the name is not already in the list of options
+  if (!stopwordsOptions.some(option => option.label === name)) {
+    // Add the new name to the list of options
+    setStopwordsOptions(prevOptions => [
+      ...prevOptions,
+      { value: name, label: name }
+    ]);
+}
+  setSelectedOption(name);
+};
+
+  //stopwords update check
   useEffect(() => {
     console.log("Selected Option State:", selectedOption);
   }, [selectedOption]);
@@ -106,19 +140,24 @@ const CleanDataWidget = () => {
     element.click();
     document.body.removeChild(element);
   };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
   };
+
   const handleRadioChange = (event: any) => {
     setSelectedValue(event.target.value);
   };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
   };
+
   useEffect(() => {
     console.log(fileName);
   }, [fileName]);
+
   const childItem = useCallback((type: any) => {
     switch (type.label) {
       case 'Apply Stopwords':
@@ -144,23 +183,20 @@ const CleanDataWidget = () => {
             </FormControl>         
             </Stack>
             <Stack>
-              <button
-                style={{
-                  color: theme.palette.common.black/*'#1e98d7'*/,
-                  backgroundColor: theme.palette.background.default,
-                  textAlign: 'left',
-                  lineHeight: 'normal',
-                  cursor: selectedOption !== '' ? 'pointer' : 'default',
+             { selectedOption !== stopwordsName && //want to only show this if the selectedOption === defaultStopwordsOptions
+              <CustomButton 
+                variant='outlined'
+                sx={{
+                  height: '21px',
+                  padding: '2px',
                   marginTop: '10px',
-                  width: '220px',
-                  border: '.5px solid',
-                  borderRadius: '5px'
+                  textTransform: 'none'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption === ''} 
+                disabled={selectedOption === ''}
               >
                 Download selected list (optional)
-              </button>
+              </CustomButton>}
             </Stack>
             <Stack>
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
@@ -180,11 +216,11 @@ const CleanDataWidget = () => {
                   marginTop: '20px',
                   textTransform: 'none'
                 }}
-                onClick={handleButtonClick}
-                //disabled={selectedOption !== ''}
+                onClick={handleUploadClick}
               >
                 Or upload a custom list
               </CustomButton>}
+              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal} onSaveName={handleSaveName}/>
             </Stack>
           </RadioGroup>
         );
@@ -223,7 +259,7 @@ const CleanDataWidget = () => {
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption]);
+  }, [selectedOption, modalOpen, stopwordsName]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
