@@ -67,6 +67,7 @@ const CleanDataWidget = () => {
   const [selectedOption, setSelectedOption] = useState(''); 
   const [modalOpen, setModalOpen] = useState(false);
   const [stopwordsName, setStopwordsName] = useState('');
+  const [applyStopwordsChecked, setApplyStopwordsChecked] = useState(false);
 
 
   //old handler for the upload stopwords button
@@ -150,9 +151,28 @@ const handleSaveName = (name: string) => {
     setSelectedValue(event.target.value);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  /*const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
-  };
+  };*/
+
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const { value } = event.target;
+  setTypeGroup((prev) =>
+    prev.map((type) => {
+      if (type.label === value) {
+        // Toggle the checked state of the clicked checkbox
+        return { ...type, checked };
+      }
+      return type;
+    })
+  );
+  // If the changed checkbox is "Apply stopwords", update its checked state separately
+  if (value === 'Apply Stopwords') {
+    setApplyStopwordsChecked(checked);
+    // If unchecked, clear the selectedOption state
+    if (!checked) setSelectedOption('');
+  }
+};
 
   useEffect(() => {
     console.log(fileName);
@@ -167,7 +187,8 @@ const handleSaveName = (name: string) => {
             <FormControl>
               <InputLabel>Choose a list</InputLabel>  
               <MUISelect
-                value={selectedOption}
+                //value={selectedOption}
+                value={applyStopwordsChecked ? selectedOption : ''}
                 onChange={handleSelectChange}
                 style={{
                   minWidth: '200px',
@@ -310,6 +331,7 @@ const handleSaveName = (name: string) => {
               textAlign: 'center',
               textTransform: 'none'
             }}
+            disabled={selectedOption === ""}
           >
             Apply cleaning
           </CustomButton>
