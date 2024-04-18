@@ -7,6 +7,8 @@ import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
 import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+import { iteratorSymbol } from 'immer/dist/internal';
+import { type } from 'os';
 
 interface IMockState {
   label: string;
@@ -40,6 +42,7 @@ const filterSpeech = [
   { label: 'NNS: Noun, plural', value: 'NNS' },
   { label: 'NNPS: Proper noun, singular', value: 'NNPS' }
 ];
+
 const dataTypes = [
   { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
   { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
@@ -166,13 +169,23 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
       return type;
     })
   );
-  // If the changed checkbox is "Apply stopwords", update its checked state separately
+  // If the changed checkbox is "Apply stopwords" or "Ignore case", update their checked states separately
   if (value === 'Apply Stopwords') {
     setApplyStopwordsChecked(checked);
     // If unchecked, clear the selectedOption state
     if (!checked) setSelectedOption('');
+  } else if (value === 'Ignore case') {
+    // Update the state of the "Ignore case" checkbox
+    setTypeGroup(prev =>
+      prev.map(type =>
+        type.label === 'Ignore case' ? { ...type, checked } : type
+      )
+    );
   }
 };
+
+// Determine whether to enable the button based on the states of "Apply Stopwords" and "Ignore case" checkboxes
+const isButtonEnabled = selectedOption !== "" || typeGroup.find(item => item.label === 'Ignore case')?.checked;
 
   useEffect(() => {
     console.log(fileName);
@@ -331,7 +344,7 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
               textAlign: 'center',
               textTransform: 'none'
             }}
-            disabled={selectedOption === ""}
+            disabled={!isButtonEnabled}/*{selectedOption === ""}*/
           >
             Apply cleaning
           </CustomButton>
