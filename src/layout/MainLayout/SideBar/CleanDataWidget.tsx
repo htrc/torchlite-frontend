@@ -7,8 +7,6 @@ import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
 import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
-import { iteratorSymbol } from 'immer/dist/internal';
-import { type } from 'os';
 
 interface IMockState {
   label: string;
@@ -174,18 +172,39 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
     setApplyStopwordsChecked(checked);
     // If unchecked, clear the selectedOption state
     if (!checked) setSelectedOption('');
-  } else if (value === 'Ignore case') {
+    //not sure if this ignore case is needed in the future with real data or not
+  } /*else if (value === 'Ignore case') {
     // Update the state of the "Ignore case" checkbox
     setTypeGroup(prev =>
       prev.map(type =>
         type.label === 'Ignore case' ? { ...type, checked } : type
       )
     );
-  }
+  }*/
 };
 
-// Determine whether to enable the button based on the states of "Apply Stopwords" and "Ignore case" checkboxes
-const isButtonEnabled = selectedOption !== "" || typeGroup.find(item => item.label === 'Ignore case')?.checked;
+
+const handleSubItemChange = (subLabel: string, checked: boolean) => { //cannot get this method to uncheck all subItems if the Page Features box is unchecked...
+  setTypeGroup((prev) =>
+    prev.map((type) => {
+      if (type.label === 'Page Features') {
+        const updatedValue = type.value.map((item: any) =>
+          item.subLabel === subLabel ? { ...item, checked } : item
+        );
+        return { ...type, value: updatedValue };
+      }
+      return type;
+    })
+  );
+};
+
+// Determine whether to enable the button based on the states of "Apply Stopwords", "Ignore case" checkboxes, and "Page features" sublabels
+const isButtonEnabled = (
+  selectedOption !== "" || 
+  typeGroup.find(item => item.label === 'Ignore case')?.checked || 
+  (typeGroup.find(item => item.label === 'Page Features')?.checked &&
+  typeGroup.find(item => item.label === 'Page Features')?.value.some(subItem => subItem.checked))
+);
 
   useEffect(() => {
     console.log(fileName);
@@ -267,7 +286,7 @@ const isButtonEnabled = selectedOption !== "" || typeGroup.find(item => item.lab
               <FormControlLabel
                 key={item.subLabel}
                 value={item.subLabel}
-                control={<Checkbox color="secondary" />}
+                control={<Checkbox color="secondary" checked={item.checked} onChange={(event) => handleSubItemChange(item.subLabel, event.target.checked)} />}
                 label={item.subLabel}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
