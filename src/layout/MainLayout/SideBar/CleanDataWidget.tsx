@@ -183,11 +183,15 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
   }*/
 };
 
-
-const handleSubItemChange = (subLabel: string, checked: boolean) => { //cannot get this method to uncheck all subItems if the Page Features box is unchecked...
-  setTypeGroup((prev) =>
-    prev.map((type) => {
-      if (type.label === 'Page Features') {
+const handleSubItemChange = (subLabel: string, checked: boolean) => {
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Page Features' && !checked) {
+        // If the "Page Features" box is unchecked, uncheck all sub-items
+        const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+        return { ...type, value: updatedValue };
+      } else if (type.label === 'Page Features' && checked) {
+        // If the "Page Features" box is checked, only update the sub-item that triggered the change
         const updatedValue = type.value.map((item: any) =>
           item.subLabel === subLabel ? { ...item, checked } : item
         );
