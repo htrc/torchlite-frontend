@@ -7,7 +7,6 @@ import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
 import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
-import { feature } from 'topojson-client';
 
 interface IMockState {
   label: string;
