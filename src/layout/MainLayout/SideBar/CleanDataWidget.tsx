@@ -62,6 +62,7 @@ const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
+  const featuresRef = useRef(null);
   const [fileName, setFileName] = useState(null);
   //const [selectedValue, setSelectedValue] = useState('default');
   const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
@@ -181,6 +182,9 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
       )
     );
   }*/
+  if (value === 'Page Features') {
+    handleSubItemChange(featuresRef,checked);
+  }
 };
 
 const handleSubItemChange = (subLabel: string, checked: boolean) => {
@@ -290,7 +294,7 @@ const isButtonEnabled = (
               <FormControlLabel
                 key={item.subLabel}
                 value={item.subLabel}
-                control={<Checkbox color="secondary" checked={item.checked} onChange={(event) => handleSubItemChange(item.subLabel, event.target.checked)} />}
+                control={<Checkbox color="secondary" ref={featuresRef} checked={item.checked} onChange={(event) => handleSubItemChange(item.subLabel, event.target.checked)} />}
                 label={item.subLabel}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
