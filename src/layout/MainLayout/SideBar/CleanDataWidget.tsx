@@ -95,7 +95,11 @@ const CleanDataWidget = () => {
       prevTypeGroup.map((item) => ({
         ...item,
         checked: false,
-        value: item.label === 'Apply Stopwords' ? null : item.value // Reset specific values if needed
+        value: item.label === 'Apply Stopwords' ? null :(item.label === 'Page Features' ? [
+          { subLabel: 'Remove headers', checked: false },
+          { subLabel: 'Remove footers', checked: false },
+          { subLabel: 'Remove body', checked: false }
+        ] : item.value )// Reset specific values if needed
       }))
     );
     // Reset other state variables if needed
