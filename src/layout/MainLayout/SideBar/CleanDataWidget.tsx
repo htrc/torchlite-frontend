@@ -55,8 +55,9 @@ const dataTypes = [
     ],
     description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
+  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }
 ];
+
 const animatedComponents = makeAnimated();
 
 const CleanDataWidget = () => {
@@ -70,6 +71,7 @@ const CleanDataWidget = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [stopwordsName, setStopwordsName] = useState('');
   const [applyStopwordsChecked, setApplyStopwordsChecked] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
 
   //old handler for the upload stopwords button
@@ -95,7 +97,7 @@ const CleanDataWidget = () => {
       prevTypeGroup.map((item) => ({
         ...item,
         checked: false,
-        value: item.label === 'Apply Stopwords' ? null :(item.label === 'Page Features' ? [
+        value: item.label === 'Apply Stopwords' ? null : (item.label === 'Page Features' ? [
           { subLabel: 'Remove headers', checked: false },
           { subLabel: 'Remove footers', checked: false },
           { subLabel: 'Remove body', checked: false }
@@ -105,11 +107,6 @@ const CleanDataWidget = () => {
     // Reset other state variables if needed
     setSelectedOption('');
   }
-
-  //previous handleSelectChange
-  /*const handleSelectChange = (event: SelectChangeEvent) => {
-    setSelectedOption(event.target.value);
-  };*/
 
   //stopwords selection change
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -178,17 +175,19 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
     // If unchecked, clear the selectedOption state
     if (!checked) setSelectedOption('');
     //not sure if this ignore case is needed in the future with real data or not
-  } /*else if (value === 'Ignore case') {
+  } 
+    if (value === 'Ignore case') {
     // Update the state of the "Ignore case" checkbox
     setTypeGroup(prev =>
       prev.map(type =>
         type.label === 'Ignore case' ? { ...type, checked } : type
       )
     );
-  }*/
-  if (value === 'Page Features') {
-    handleSubItemChange(value,checked);
   }
+  if (value === 'Page Features') {
+    handleSubItemChange(value, checked);
+  }
+  
 };
 
 const handleSubItemChange = (subLabel: string, checked: boolean) => {
@@ -197,25 +196,48 @@ const handleSubItemChange = (subLabel: string, checked: boolean) => {
       if (type.label === 'Page Features' && !checked) {
         // If the "Page Features" box is unchecked, uncheck all sub-items
         const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+        console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
         return { ...type, value: updatedValue };
       } else if (type.label === 'Page Features' && checked) {
         // If the "Page Features" box is checked, only update the sub-item that triggered the change
         const updatedValue = type.value.map((item: any) =>
           item.subLabel === subLabel ? { ...item, checked } : item
         );
+        console.log("Returning updatedValue for checked 'Page Features' box:", updatedValue);
         return { ...type, value: updatedValue };
+      }
+      console.log("Returning unchanged type:", type);
+      return type;
+    })
+  );
+};
+
+
+const handleFilterChange = (selectedFilterOptions) => {
+  // Extracting the values from the selected options
+  const selectedValues = selectedFilterOptions.map(option => option.value);
+
+  // Updating the state with the selected values
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Filter by parts-of-speech') {
+        console.log("Selected values:", selectedValues);
+        return { ...type, value: selectedValues };
       }
       return type;
     })
   );
 };
 
-// Determine whether to enable the button based on the states of "Apply Stopwords", "Ignore case" checkboxes, and "Page features" sublabels
+
+// Determine whether to enable the button based on the states of "Apply Stopwords", "Ignore case" checkboxes, "Page features" sublabels, and "Filter by parts-of-speech"
 const isButtonEnabled = (
   selectedOption !== "" || 
   typeGroup.find(item => item.label === 'Ignore case')?.checked || 
   (typeGroup.find(item => item.label === 'Page Features')?.checked &&
-  typeGroup.find(item => item.label === 'Page Features')?.value.some(subItem => subItem.checked))
+  typeGroup.find(item => item.label === 'Page Features')?.value.some(subItem => subItem.checked)) || 
+  (typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.checked &&
+  typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.value.length > 0)
 );
 
   useEffect(() => {
@@ -318,6 +340,7 @@ const isButtonEnabled = (
                 className="basic-multi-select"
                 classNamePrefix="select"
                 {...(theme.palette.mode === 'dark' ? { styles: colourStyles } : {})}
+                onChange={handleFilterChange}
               />
             </FormControl>
           </Stack>
