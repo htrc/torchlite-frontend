@@ -100,11 +100,13 @@ const CleanDataWidget = () => {
           { subLabel: 'Remove headers', checked: false },
           { subLabel: 'Remove footers', checked: false },
           { subLabel: 'Remove body', checked: false }
-        ] : item.value )// Reset specific values if needed
+        ] : item.label === 'Filter by parts-of-speech' ? []
+         : item.value )// Reset specific values if needed
       }))
     );
     // Reset other state variables if needed
     setSelectedOption('');
+    setSelectedFilters([]);
   }
 
   //stopwords selection change
@@ -186,7 +188,10 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
   if (value === 'Page Features') {
     handleSubItemChange(value, checked);
   }
-  
+  if (value === 'Filter by parts-of-speech') {
+    //adding this just for now to keep track of the POS filter value
+    console.log(typeGroup)
+  }
 };
 
 const handleSubItemChange = (subLabel: string, checked: boolean) => {
