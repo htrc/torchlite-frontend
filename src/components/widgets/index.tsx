@@ -6,13 +6,15 @@ import { CircularProgress, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
 import { DashboardState } from 'types/torchlite';
 import WidgetTitle from './WidgetTitle';
+import {WordCloudTag} from './WordCloud';
 
 type WidgetProps = {
   dashboardState: DashboardState;
   widgetType: string;
   isDetailsPage?: boolean;
 };
-
+//5a3c5caf-f0f5-4c48-924b-de0527c2d0c6 25 volumes
+//5589e455-85ed-40a8-af50-2d298b3f6554 2 volumes
 const fetchWidgetData = (dashboardId: string, widgetType: string) => `/api/dashboards/${dashboardId}/widgets/${widgetType}/data`;
 const fetchData = async (dashboardState: DashboardState, widgetType: string) => {
   try {
@@ -70,6 +72,9 @@ const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
           )}
           {widgetType === WidgetType.PublicationDateTimeline && (
             <PublicationTimeLineChart data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
+          )}
+          {widgetType === WidgetType.SimpleTagCloud && (
+            <WordCloudTag data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
           )}
         </>
       )}

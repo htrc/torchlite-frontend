@@ -1,6 +1,7 @@
 export const WidgetType = {
   MappingContributorData: 'MappingContributorData',
-  PublicationDateTimeline: 'PublicationDateTimeline'
+  PublicationDateTimeline: 'PublicationDateTimeline',
+  SimpleTagCloud: 'SimpleTagCloud'
 };
 
 export const WidgetInfoLinks: any = {
@@ -18,7 +19,8 @@ export const WidgetInfoLinks: any = {
 
 export const WidgetTitles: any = {
   MappingContributorData: 'Mapping Contributor Data',
-  PublicationDateTimeline: 'Publication Date Timeline'
+  PublicationDateTimeline: 'Publication Date Timeline',
+  SimpleTagCloud: 'SimpleTagCloud'
 };
 
 export const TableColumns: any = {
