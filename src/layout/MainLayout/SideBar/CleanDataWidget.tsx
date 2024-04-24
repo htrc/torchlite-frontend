@@ -161,11 +161,25 @@ const handleSaveName = (name: string) => {
 
 const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
   const { value } = event.target;
-  setTypeGroup((prev) =>
+  /*setTypeGroup((prev) =>
     prev.map((type) => {
       if (type.label === value) {
         // Toggle the checked state of the clicked checkbox
         return { ...type, checked };
+      }
+      return type;
+    })
+  );*/
+  setTypeGroup(prev =>
+    prev.map((type) => {
+      if (type.label === value) {
+        // Toggle the checked state of the clicked checkbox
+        let updatedType = { ...type, checked };
+        if (!checked && type.label === 'Filter by parts-of-speech') {
+          // Clear the value array when unchecked
+          updatedType = { ...updatedType, value: [] };
+        }
+        return updatedType;
       }
       return type;
     })
@@ -190,6 +204,7 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
   }
   if (value === 'Filter by parts-of-speech') {
     //adding this just for now to keep track of the POS filter value
+
     console.log(typeGroup)
   }
 };
@@ -217,7 +232,7 @@ const handleSubItemChange = (subLabel: string, checked: boolean) => {
 };
 
 
-const handleFilterChange = (selectedFilterOptions) => {
+const handleFilterChange = (selectedFilterOptions) => { //I think this function needs to keep track of not only the selectedFilterOptions, but also the checked parameter for this dataType as well
   // Extracting the values from the selected options
   const selectedValues = selectedFilterOptions.map(option => option.value);
 
@@ -228,6 +243,7 @@ const handleFilterChange = (selectedFilterOptions) => {
         console.log("Selected values:", selectedValues);
         return { ...type, value: selectedValues };
       }
+
       return type;
     })
   );
