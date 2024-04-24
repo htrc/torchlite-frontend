@@ -179,6 +179,7 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
           // Clear the value array when unchecked
           updatedType = { ...updatedType, value: [] };
         }
+        console.log("This is what has changed: ", updatedType)
         return updatedType;
       }
       return type;
@@ -201,11 +202,6 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
   }
   if (value === 'Page Features') {
     handleSubItemChange(value, checked);
-  }
-  if (value === 'Filter by parts-of-speech') {
-    //adding this just for now to keep track of the POS filter value
-
-    console.log(typeGroup)
   }
 };
 
