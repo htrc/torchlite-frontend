@@ -161,15 +161,6 @@ const handleSaveName = (name: string) => {
 
 const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
   const { value } = event.target;
-  /*setTypeGroup((prev) =>
-    prev.map((type) => {
-      if (type.label === value) {
-        // Toggle the checked state of the clicked checkbox
-        return { ...type, checked };
-      }
-      return type;
-    })
-  );*/
   setTypeGroup(prev =>
     prev.map((type) => {
       if (type.label === value) {
@@ -228,8 +219,7 @@ const handleSubItemChange = (subLabel: string, checked: boolean) => {
 };
 
 
-const handleFilterChange = (selectedFilterOptions) => { //I think this function needs to keep track of not only the selectedFilterOptions, but also the checked parameter for this dataType as well
-  // Extracting the values from the selected options
+const handleFilterChange = (selectedFilterOptions) => {
   const selectedValues = selectedFilterOptions.map(option => option.value);
 
   // Updating the state with the selected values
@@ -414,7 +404,7 @@ const isButtonEnabled = (
               textAlign: 'center',
               textTransform: 'none'
             }}
-            disabled={!isButtonEnabled}/*{selectedOption === ""}*/
+            disabled={!isButtonEnabled}
           >
             Apply cleaning
           </CustomButton>
