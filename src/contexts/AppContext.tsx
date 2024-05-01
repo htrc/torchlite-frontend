@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import qs from 'qs';
 
 // types
-import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetSummary } from 'types/torchlite';
+import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -27,7 +27,7 @@ type AppProviderProps = {
 function AppProvider({ children }: AppProviderProps) {
   const [widgetState, setWidgetState] = useState<any>({});
   const [dashboardState, setDashboardState] = useState<DashboardState>();
-  const [availableWorksets, setAvailableWorksets] = useState<WorksetSummary[]>();
+  const [availableWorksets, setAvailableWorksets] = useState<WorksetList>();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const { status } = useSession();
@@ -42,7 +42,7 @@ function AppProvider({ children }: AppProviderProps) {
           appliedFilters: any = {};
 
         // Get worksets
-        const worksets: WorksetSummary[] = await getAvailableWorksets();
+        const worksets: WorksetList = await getAvailableWorksets();
         setAvailableWorksets(worksets);
 
         // Get dashboard state

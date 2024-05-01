@@ -27,9 +27,9 @@ const WorksetWidget = () => {
   const { dashboardState, availableWorksets, onChangeDashboardState } = useDashboardState();
 
   // const { worksets } = useSelector((state) => state.dashboard);
-  const [type, setType] = useState<string>('all');
+  const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
-  const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets || []);
+  const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
@@ -51,33 +51,35 @@ const WorksetWidget = () => {
   };
 
   useEffect(() => {
-    if (type === 'all' || type === 'A') {
-      setWorksetData(availableWorksets || []);
+    if (type === 'public') {
+      setWorksetData(availableWorksets?.public || []);
+    } else if (type === 'featured') {
+      setWorksetData(availableWorksets?.featured || []);
     } else {
       setWorksetData([]);
     }
   }, [type, availableWorksets]);
 
   useEffect(() => {
-    if (availableWorksets) {
+    if (worksetData) {
       if (dashboardState?.worksetId) {
-        const filtered = availableWorksets.filter((workset) => workset.id === dashboardState?.worksetId);
+        const filtered = worksetData.filter((workset) => workset.id === dashboardState?.worksetId);
         if (filtered && filtered.length > 0) {
           setSelected(filtered[0]);
         }
       }
-      setWorksetData(availableWorksets);
+      setWorksetData(worksetData);
     }
-  }, [availableWorksets, dashboardState?.worksetId]);
+  }, [worksetData, dashboardState?.worksetId]);
 
   return (
     <>
       <Stack sx={{ margin: theme.spacing(1) }} spacing={2}>
         <FormControl sx={{ minWidth: 120 }}>
           <Select value={type} color="secondary" onChange={handleChange}>
-            <MenuItem value={'all'}>All Worksets</MenuItem>
-            <MenuItem value={'A'}>Recommended Worksets</MenuItem>
-            <MenuItem value={'B'}>My Worksets</MenuItem>
+            <MenuItem value={'featured'}>Recommended Worksets</MenuItem>
+            <MenuItem value={'public'}>All Worksets</MenuItem>
+            <MenuItem value={'user'}>My Worksets</MenuItem>
           </Select>
         </FormControl>
         <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>

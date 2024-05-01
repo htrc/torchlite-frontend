@@ -29,6 +29,11 @@ export type WorksetInfo = WorksetSummary & {
   volumes: VolumeMetadata[]; // list of volume metadata for each volume in the workset
 };
 
+export type WorksetList = {
+  public?: WorksetSummary[],
+  featured?: WorksetSummary[]
+};
+
 export type FilterSettings = {
   titles?: string[];
   pubDates?: number[];
@@ -98,7 +103,7 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
 export type DashboardContextProps = {
   dashboardState?: DashboardState;
   widgetState: any;
-  availableWorksets?: WorksetSummary[];
+  availableWorksets?: WorksetList;
   onChangeDashboardState: (e: DashboardStatePatch) => void;
   onChangeWidgetState: (e: any) => void;
 };
