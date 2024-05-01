@@ -20,7 +20,7 @@ export const WidgetInfoLinks: any = {
 export const WidgetTitles: any = {
   MappingContributorData: 'Mapping Contributor Data',
   PublicationDateTimeline: 'Publication Date Timeline',
-  SimpleTagCloud: 'SimpleTagCloud'
+  SimpleTagCloud: 'Simple Tag Cloud'
 };
 
 export const TableColumns: any = {
@@ -62,6 +62,18 @@ export const TableColumns: any = {
       accessor: 'count',
       className: 'cell-center'
     }
+  ],
+  SimpleTagCloud: [
+    {
+      Header: 'Token',
+      accessor: 0,
+      className: 'cell-center'
+    },
+    {
+      Header: 'Count',
+      accessor: 1,
+      className: 'cell-center'
+    }
   ]
 };
 
@@ -81,5 +93,6 @@ export const CSVHeaders: any = {
 
 export const TableHeader: any = {
   MappingContributorData: 'Contributor Data',
-  PublicationDateTimeline: 'Timeline Data'
+  PublicationDateTimeline: 'Timeline Data',
+  SimpleTagCloud: 'Tag Cloud Data'
 };

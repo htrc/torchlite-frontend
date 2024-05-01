@@ -21,7 +21,6 @@ import {fetchWidgetData} from './../../widgets'
 import WordCloud from 'react-d3-cloud';
 import { WordCloudChart } from './WordCloudChart'
 import './WordCloud.module.css';
-//import WordCloud from 'react-d3-cloud';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 const BUCKET_PADDING = 1;
@@ -38,20 +37,30 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   const [wCloud, setwordCloudData] = useState([]);
   //console.log("cloudData");
   //console.log(data);
-  
-      useEffect(() => {
-        // Convert the data object into an array, sort it, and take the top 100
-        //const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 100);
-      
-        const newWordCloudData = data.map(entry => ({
-          text: entry[0],
-          value: entry[1],
-        }));
-      
-        setwordCloudData(newWordCloudData);
-      }, [data]);
 
-      console.log("wCloud data before passing to WordCloudChart:",wCloud);
+  const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement> | undefined) => {
+    setAnchorEl(event?.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  useEffect(() => {
+    // Convert the data object into an array, sort it, and take the top 100
+    //const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 100);
+  
+    const newWordCloudData = data.map(entry => ({
+      text: entry[0],
+      value: entry[1],
+    }));
+  
+    setwordCloudData(newWordCloudData);
+  }, [data]);
+
+  console.log("wCloud data before passing to WordCloudChart:",wCloud);
 
   return (
     <>
@@ -88,14 +97,14 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
           > 
             <MenuItem onClick={() => downloadData('png')}>PNG image</MenuItem>
             <MenuItem onClick={() => downloadData('svg')}>SVG image</MenuItem>
-            <CSVLink
+            {/*<CSVLink
               data={chartDataHistogram}
               filename={`Timeline_Data${new Date().toISOString().split('T')[0]}.csv`}
               headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
-            </CSVLink>
+          </CSVLink>*/}
           </Menu>
         </Stack> 
       )}
@@ -103,7 +112,6 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
       <Box sx={{ height: '400px', position: 'relative' }} ref={chartWrapper}>
         
         <>
-        <Typography> Word Cloud </Typography> 
         <WordCloudChart data={wCloud}></WordCloudChart> 
         </>
         
