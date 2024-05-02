@@ -6,6 +6,7 @@ import { CircularProgress, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
 import { DashboardState } from 'types/torchlite';
 import WidgetTitle from './WidgetTitle';
+import { Summary } from './Summary';
 
 type WidgetProps = {
   dashboardState: DashboardState;
@@ -70,6 +71,9 @@ const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
           )}
           {widgetType === WidgetType.PublicationDateTimeline && (
             <PublicationTimeLineChart data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
+          )}
+          {widgetType === WidgetType.Summary && (
+            <Summary data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
           )}
         </>
       )}
