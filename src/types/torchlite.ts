@@ -57,10 +57,11 @@ export type DashboardSummary = {
   owner?: string; // the dashboard owner (or undefined if anonymous)
   // title: string; // the dashboard title
   // description?: string; // (optional) the dashboard description
-  worksetId: string; // the selected workset id
+  worksetId: string; // the selected workset id in ef api
   filters: FilterSettings; // the filter selections for the dashboard
   widgets: Widget[]; // the widgets selected for the dashboard
   isShared: boolean; // whether the dashboard has been shared or not
+  importedId: string; // the selected workset id in registry api
 };
 
 export type DashboardState = DashboardSummary & {
@@ -68,14 +69,16 @@ export type DashboardState = DashboardSummary & {
 };
 
 export type DashboardStatePatch = {
-  worksetId?: string;
+//  worksetId?: string;
+  importedId?: string
   filters?: FilterSettings;
   widgets?: Widget[];
   isShared?: boolean;
 };
 
 export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
-  worksetId: z.string().optional(),
+//  worksetId: z.string().optional(),
+  importedId: z.string().optional(),
   filters: z
     .object({
       titles: z.string().array().optional(),

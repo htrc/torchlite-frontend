@@ -37,14 +37,21 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: WorksetSummary) => {
+//    console.log("dashboardState:")
+//    console.log(dashboardState)
+//    console.log(dashboardState?.worksetId)
     if (prop.id !== dashboardState?.worksetId) {
+//      console.log(router.pathname)
+//      console.log(prop)
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }
       });
+//      console.log("HERE")
       setSelected(prop);
       onChangeDashboardState({
-        worksetId: prop.id,
+//        worksetId: prop.id,
+        importedId: prop.id,
         filters: {}
       });
     }
