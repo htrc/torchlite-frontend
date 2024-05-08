@@ -31,6 +31,7 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   const inputRef = useRef(null);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
+  const { onChangeWidgetState } = useDashboardState();
 
   //const dimensions = useResizeObserver(inputRef);
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,7 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   //console.log(data);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
+  const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement> | undefined) => {
     setAnchorEl(event?.currentTarget);
@@ -51,7 +53,6 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   useEffect(() => {
     // Convert the data object into an array, sort it, and take the top 100
     //const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 100);
-
     const newWordCloudData = data.map(entry => ({
       text: entry[0],
       value: entry[1],
@@ -60,7 +61,42 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
     setwordCloudData(newWordCloudData);
   }, [data]);
 
-  console.log("wCloud data before passing to WordCloudChart:",wCloud);
+  useEffect(() => {
+    onChangeWidgetState({
+      widgetType: widgetType,
+      data: wCloud
+    })
+  },[widgetType, wCloud])
+
+//  console.log("wCloud data before passing to WordCloudChart:",wCloud);
+
+  const downloadData = (format: string) => {
+    const svg = chartWrapper.current.querySelector('svg');
+    const svgData = new XMLSerializer().serializeToString(svg);
+    if (format === 'svg') {
+      const blobSVG = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      saveAs(blobSVG, 'chart.svg');
+    } else if (format === 'png') {
+      const canvas = document.createElement('canvas');
+      canvas.width = svg.width.baseVal.value;
+      canvas.height = svg.height.baseVal.value;
+
+      const ctx = canvas.getContext('2d');
+      const DOMURL = window.URL || window.webkitURL || window;
+      const img = new Image();
+
+      img.onload = function () {
+        ctx.drawImage(img, 0, 0);
+        const png = canvas.toDataURL('image/png');
+        saveAs(png, 'chart.png');
+      };
+
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = DOMURL.createObjectURL(svgBlob);
+      img.src = url;
+    }
+    handleClose();
+  };
 
   return (
     <>
@@ -98,8 +134,8 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
             <MenuItem onClick={() => downloadData('png')}>PNG image</MenuItem>
             <MenuItem onClick={() => downloadData('svg')}>SVG image</MenuItem>
             <CSVLink
-              data={data}
-              filename={`Timeline_Data${new Date().toISOString().split('T')[0]}.csv`}
+              data={wCloud}
+              filename={`Word_Cloud_Data${new Date().toISOString().split('T')[0]}.csv`}
               headers={CSVHeaders[widgetType]}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >

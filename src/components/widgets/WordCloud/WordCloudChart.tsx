@@ -13,8 +13,8 @@ interface IWordCloudChartProps {
 }
 
 export function WordCloudChart(props: IWordCloudChartProps) {
-  console.log("WordCloudChart mounting");
-  console.log("Received data in WordCloudChart:", props.data);
+//  console.log("WordCloudChart mounting");
+//  console.log("Received data in WordCloudChart:", props.data);
   const [data, setData] = useState(undefined as unknown as WordData[]);
   //console.log("cloudtop10",data);
   const [max, setMax] = useState(600);
@@ -22,7 +22,7 @@ export function WordCloudChart(props: IWordCloudChartProps) {
     const values = props.data.map((r) => {
       return r.value;
     });
-    console.log('props.data', props.data);
+//    console.log('props.data', props.data);
     setMax(Math.max(...values));
     setData(props.data);
   }, [props.data]);

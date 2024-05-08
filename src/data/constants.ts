@@ -65,13 +65,13 @@ export const TableColumns: any = {
   ],
   SimpleTagCloud: [
     {
-      Header: 'Token',
-      accessor: 0,
+      Header: 'Word',
+      accessor: 'text',
       className: 'cell-center'
     },
     {
       Header: 'Count',
-      accessor: 1,
+      accessor: 'value',
       className: 'cell-center'
     }
   ]
@@ -90,8 +90,8 @@ export const CSVHeaders: any = {
     { label: 'Count', key: 'count' }
   ],
   SimpleTagCloud: [
-    { label: 'Token', key: 0 },
-    { label: 'Count', key: 1 }
+    { label: 'Word', key: 'text' },
+    { label: 'Count', key: 'value' }
   ]
 };
 
