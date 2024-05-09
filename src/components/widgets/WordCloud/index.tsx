@@ -20,7 +20,7 @@ import { volumeCSVHeaders } from 'data/react-table';
 import {fetchWidgetData} from './../../widgets'
 import WordCloud from 'react-d3-cloud';
 import { WordCloudChart } from './WordCloudChart'
-import './WordCloud.module.css';
+import './wordCloud.module.css';
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 const BUCKET_PADDING = 1;
@@ -66,7 +66,7 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
       widgetType: widgetType,
       data: wCloud
     })
-  },[widgetType, wCloud])
+  }, [widgetType, wCloud])
 
 //  console.log("wCloud data before passing to WordCloudChart:",wCloud);
 
