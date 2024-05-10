@@ -238,28 +238,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   };  
 
   return (
-    <MainCard
-      content={false}
-      sx={{
-        padding: theme.spacing(4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative'
-      }}>
-
-      {isDetailsPage ? (
-        <Typography variant="h3" sx={{ color: '#1e98d7' }}>
-          Summary
-        </Typography>
-      ) : (
-        <NextLink href="/widget-details/summary">
-          <Typography variant="h3" sx={{ color: '#1e98d7', cursor: 'pointer' }}>
-          Summary
-          </Typography>
-        </NextLink>
-      )}
-
+    <>
       {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
@@ -298,67 +277,50 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
           </Menu>
         </Stack>
       )}
-      
-
       <Box sx={{ width: '100%', marginTop: '50px' }} ref={chartWrapper}>
-      <div id="input-container">
-        <p>This corpus has 4 documents with <b>{ totalWords }</b> total words and <b>{ uniqueWords }</b> unique word forms. </p>
+        <div id="input-container">
+          <p>This corpus has 4 documents with <b>{ totalWords }</b> total words and <b>{ uniqueWords }</b> unique word forms. </p>
 
-        <div>
-        <h4>Document Length</h4>  
-        <div style={{ display: 'flex' }}>
-      <div style={{ width: '70%' }}>
-        <p>
-          Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{longestDoc}; </span><br />
-          Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{shortestDoc}; </span>
-        </p>
-      </div>
-      <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="App">
-          <LineGraph data={lengthGraph} />
+          <div>
+            <h4>Document Length</h4>  
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: '70%' }}>
+                <p>
+                  Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{longestDoc}; </span><br />
+                  Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{shortestDoc}; </span>
+                </p>
+              </div>
+              <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="App">
+                  <LineGraph data={lengthGraph} />
+                </div>
+              </div>
+            </div>
+              
+
+            <h4>Vocabulary Density</h4>
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: '70%' }}>
+                <p>
+                  Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{highestDensityDoc}; </span><br />
+                  Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{lowestDensityDoc}; </span>
+                </p>
+              </div>
+              <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="App">
+                  <LineGraph data={densityGraph} />
+                </div>
+              </div>
+            </div>
+
+            {/* <h4>Readability Index</h4>
+            <p>
+              Highest: {mostReadableDoc}; <br></br>
+              {leastReadableDoc}; 
+            </p> */}
+          </div>
         </div>
-      </div>
-    </div>
-        
-
-        <h4>Vocabulary Density</h4>
-        <div style={{ display: 'flex' }}>
-      <div style={{ width: '70%' }}>
-        <p>
-          Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{highestDensityDoc}; </span><br />
-          Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{lowestDensityDoc}; </span>
-        </p>
-      </div>
-      <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="App">
-          <LineGraph data={densityGraph} />
-        </div>
-      </div>
-    </div>
-
-        {/* <h4>Readability Index</h4>
-        <p>
-          Highest: {mostReadableDoc}; <br></br>
-          {leastReadableDoc}; 
-        </p> */}
-      </div>
-      </div>
       </Box>
-      <br/>
-
-      {isDetailsPage ? (
-        <Box sx={{ marginTop: '2rem' }}>
-        <Grid container spacing={3}>
-          <Grid item md={1}></Grid>
-          <Grid item xs={12} md={7}>
-           
-
-          </Grid>
-        </Grid>
-        </Box>
-      ) : (
-        <div/>
-      )}
-    </MainCard>
+    </>
   );
 };
