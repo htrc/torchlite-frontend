@@ -20,7 +20,7 @@ import LineGraph from './lineGraph';
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 const BUCKET_PADDING = 1;
 
-export const Summary = ({ data, widgetType, detailPage = false }) => { 
+export const Summary = ({ data, widgetType, isDetailsPage = false }) => { 
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
@@ -248,7 +248,7 @@ export const Summary = ({ data, widgetType, detailPage = false }) => {
         position: 'relative'
       }}>
 
-      {detailPage ? (
+      {isDetailsPage ? (
         <Typography variant="h3" sx={{ color: '#1e98d7' }}>
           Summary
         </Typography>
@@ -260,7 +260,7 @@ export const Summary = ({ data, widgetType, detailPage = false }) => {
         </NextLink>
       )}
 
-      {detailPage && (
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{
@@ -346,7 +346,7 @@ export const Summary = ({ data, widgetType, detailPage = false }) => {
       </Box>
       <br/>
 
-      {detailPage ? (
+      {isDetailsPage ? (
         <Box sx={{ marginTop: '2rem' }}>
         <Grid container spacing={3}>
           <Grid item md={1}></Grid>
