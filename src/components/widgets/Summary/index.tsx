@@ -21,6 +21,8 @@ const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 const BUCKET_PADDING = 1;
 
 export const Summary = ({ data, widgetType, isDetailsPage = false }) => { 
+  console.log("SUMMARY");
+  console.log(data);
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
@@ -44,17 +46,17 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   const [perVolDict, setPerVolDict] = useState({});
   //const worksetId = '6424aa97330000a001a5dc9b';
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Fetch data from the API when the component mounts
     fetchDataFromAPI();
-  }, []);
+  }, []);*/
 
-  const lineData = {
+  /*const lineData = {
     'Bilder vom Erzählen : Gedichte': 7274,
     'Highlights of ...': 7422,
     'The Law times reports': 1381366,
     'The cruise of the Marchesa to Kamschatka & New Guinea.': 231986,
-  };
+  };*/
 
   
   const [totalWords, setTotalWords] = useState([]);
@@ -77,7 +79,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   const [densityData, setdensityData] = useState([]);
     
     
-  const fetchDataFromAPI = async () => {
+  /*const fetchDataFromAPI = async () => {
     try {
       
       const response = await fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${data}/volumes?pos=false&fields=features.pages.tokenCount,features.pages.body.tokensCount,htid,metadata.title`);
@@ -163,7 +165,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
         /* if (!document_lengths[volume.metadata.title] || typeof document_lengths[volume.metadata.title] !== 'object') {
           document_lengths[volume.metadata.title] = {};
         } */
-        document_lengths[volume.metadata.title] = individualVol
+        /*document_lengths[volume.metadata.title] = individualVol
         console.log("document_lengths", document_lengths);
 
         document_words[volume.metadata.title] = individualVol
@@ -223,7 +225,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
  */
       
       
-      setPerVolDict(loacalPerVolDict);
+      /*setPerVolDict(loacalPerVolDict);
 
       const documents = Object.entries(document_lengths);
       const vocabs = Object.entries(vocab_density);
@@ -235,7 +237,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };  
+  };*/  
 
   return (
     <>
@@ -279,20 +281,20 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
       )}
       <Box sx={{ width: '100%', marginTop: '50px' }} ref={chartWrapper}>
         <div id="input-container">
-          <p>This corpus has 4 documents with <b>{ totalWords }</b> total words and <b>{ uniqueWords }</b> unique word forms. </p>
+          <p>This corpus has { data?.worksetSize } documents with <b>{ data?.totalWords }</b> total words and <b>{ data?.uniqueWords }</b> unique word forms. </p>
 
           <div>
             <h4>Document Length</h4>  
             <div style={{ display: 'flex' }}>
               <div style={{ width: '70%' }}>
                 <p>
-                  Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{longestDoc}; </span><br />
-                  Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{shortestDoc}; </span>
+                  Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.longestDoc}; </span><br />
+                  Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.shortestDoc}; </span>
                 </p>
               </div>
               <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="App">
-                  <LineGraph data={lengthGraph} />
+                  <LineGraph data={data?.lengthGraph} />
                 </div>
               </div>
             </div>
@@ -302,13 +304,13 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
             <div style={{ display: 'flex' }}>
               <div style={{ width: '70%' }}>
                 <p>
-                  Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{highestDensityDoc}; </span><br />
-                  Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{lowestDensityDoc}; </span>
+                  Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.highestDensityDoc}; </span><br />
+                  Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.lowestDensityDoc}; </span>
                 </p>
               </div>
               <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="App">
-                  <LineGraph data={densityGraph} />
+                  <LineGraph data={data?.densityGraph} />
                 </div>
               </div>
             </div>
