@@ -110,7 +110,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Repository Dispatch
         if: github.event.inputs.environment == ''
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         env:
           HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
         with:
@@ -120,14 +120,15 @@ jobs:
           client-payload: >-
             {
               "image": "${{ fromJSON(steps.meta.outputs.json).tags[0] }}",
-              "commit_msg": "[${{ github.head_ref || github.ref_name }}]: ${{ env.HEAD_COMMIT_MESSAGE }}",
+              "commit_msg": ${{ env.HEAD_COMMIT_MESSAGE }},
               "repository": "${{ github.event.repository.name }}",
               "environment": "${{ github.event.inputs.environment }}",
-              "ref": "${{ github.head_ref || github.ref_name }}"
+              "ref": "${{ github.head_ref || github.ref_name }}",
+              "actor": "${{ github.triggering_actor }}"
             }
       - name: Manual Repository Dispatch
         if: github.event.inputs.environment != ''
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         env:
           HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
         with:
@@ -137,8 +138,9 @@ jobs:
           client-payload: >-
             {
               "image": "${{ fromJSON(steps.meta.outputs.json).tags[0] }}",
-              "commit_msg": "[${{ github.head_ref || github.ref_name }}]: Manual deployment by ${{ github.triggering_actor }}",
+              "commit_msg": ${{ env.HEAD_COMMIT_MESSAGE }},
               "repository": "${{ github.event.repository.name }}",
               "environment": "${{ github.event.inputs.environment }}",
-              "ref": "${{ github.head_ref || github.ref_name }}"
+              "ref": "${{ github.head_ref || github.ref_name }}",
+              "actor": "${{ github.triggering_actor }}"
             }
