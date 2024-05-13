@@ -62,6 +62,23 @@ export const TableColumns: any = {
       accessor: 'count',
       className: 'cell-center'
     }
+  ],
+  Summary: [
+    {
+      Header: 'Title',
+      accessor: 'title',
+      className: 'cell-center'
+    },
+    {
+      Header: 'Length',
+      accessor: 'length',
+      className: 'cell-center'
+    },
+    {
+      Header: 'Density',
+      accessor: 'density',
+      className: 'cell-center'
+    }
   ]
 };
 
@@ -76,10 +93,16 @@ export const CSVHeaders: any = {
   PublicationDateTimeline: [
     { label: 'Publication Date', key: 'year' },
     { label: 'Count', key: 'count' }
+  ],
+  Summary: [
+    { label: 'Title', key: 'title' },
+    { label: 'Length', key: 'length' },
+    { label: 'Density', key: 'density' }
   ]
 };
 
 export const TableHeader: any = {
   MappingContributorData: 'Contributor Data',
-  PublicationDateTimeline: 'Timeline Data'
+  PublicationDateTimeline: 'Timeline Data',
+  Summary: 'Summary Data'
 };

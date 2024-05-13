@@ -15,6 +15,8 @@ import { CSVLink } from 'react-csv';
 import DataTable from 'components/DataTable';
 import { volumeColumns, volumeCSVHeaders } from 'data/react-table';
 import LineGraph from './lineGraph';
+import useDashboardState from 'hooks/useDashboardState';
+import { CSVHeaders } from 'data/constants';
 
 
 const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
@@ -28,6 +30,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   const axesRef = useRef(null);
   const chartWrapper = useRef();
   const dimensions = useResizeObserver(chartWrapper);
+  const { onChangeWidgetState } = useDashboardState();
 
   const [storedVolumeData, setStoredVolumeData] = useState([]);
 
@@ -41,6 +44,30 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const chartDataHistogram = useMemo(() => {
+    console.log("BUILDING HISTOGRAM")
+    if (data.lengthGraph) {
+      var output_array = [];
+      for (const [key, value] of Object.entries(data.lengthGraph)) {
+        output_array.push({ 'title': key, 'length': value, 'density': data.densityGraph[key] })
+      }
+      console.log(output_array);
+      return output_array;
+    }
+    else {
+      return [];
+    }
+  }, [data]);
+
+  useEffect(() => {
+    console.log("DATA")
+    console.log(chartDataHistogram)
+    onChangeWidgetState({
+      widgetType: widgetType,
+      data: chartDataHistogram
+    });
+  }, [chartDataHistogram, widgetType]);
 
   const [matchingWords, setMatchingWords] = useState([]);
   const [perVolDict, setPerVolDict] = useState({});
@@ -239,6 +266,42 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
     }
   };*/  
 
+  const downloadData = (format: string) => {
+    const container = document.getElementById('input-container');
+    let yOffset = 0;
+    const rightMargin = 10;
+
+    const svg = chartWrapper.current.querySelector('div#input-container');
+    const svgData = new XMLSerializer().serializeToString(svg);
+    if (format === 'svg') {
+      const blobSVG = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      saveAs(blobSVG, 'chart.svg');
+    } else if (format === 'png') {
+      const canvas = document.createElement('canvas');
+
+      const ctx = canvas.getContext('2d');
+      const DOMURL = window.URL || window.webkitURL || window;
+      const img = new Image();
+
+      img.onload = function () {
+        console.log("HERE")
+//        canvas.width = img.width;
+//        canvas.height = img.height;
+//        ctx.drawImage(img, 0, 0);
+//        const png = canvas.toDataURL('image/png');
+//        saveAs(png, 'chart.png');
+      };
+      img.addEventListener("error", (event) => {
+        console.log(event)
+      });
+
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = DOMURL.createObjectURL(svgBlob);
+      img.src = url;
+    }
+    handleClose();
+  };
+
   return (
     <>
       {isDetailsPage && (
@@ -275,7 +338,14 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
           >
             <MenuItem onClick={() => downloadData('png')}>PNG image</MenuItem>
             <MenuItem onClick={() => downloadData('svg')}>SVG image</MenuItem>
-            <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
+            <CSVLink
+              data={chartDataHistogram}
+              filename={`Summary_Data${new Date().toISOString().split('T')[0]}.csv`}
+              headers={CSVHeaders[widgetType]}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <MenuItem onClick={() => downloadData('csv')}>CSV data</MenuItem>
+            </CSVLink>
           </Menu>
         </Stack>
       )}
