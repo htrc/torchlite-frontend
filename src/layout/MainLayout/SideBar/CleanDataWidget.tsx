@@ -6,6 +6,8 @@ import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
+import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+
 interface IMockState {
   label: string;
   checked: boolean;
@@ -13,8 +15,8 @@ interface IMockState {
   description: string;
 }
 
-//stopwords
- const stopwordsOptions = [
+//stopwords dropdown
+ const defaultStopwordsOptions = [
    { value: 'English', label: 'English' },
    { value: 'French', label: 'French' },
    { value: 'German', label: 'German' },
@@ -38,6 +40,7 @@ const filterSpeech = [
   { label: 'NNS: Noun, plural', value: 'NNS' },
   { label: 'NNPS: Proper noun, singular', value: 'NNPS' }
 ];
+
 const dataTypes = [
   { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
   { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
@@ -51,21 +54,40 @@ const dataTypes = [
     ],
     description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
+  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }
 ];
+
 const animatedComponents = makeAnimated();
+
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
-  const [selectedValue, setSelectedValue] = useState('default');
+  //const [selectedValue, setSelectedValue] = useState('default');
+  const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
+  const [selectedOption, setSelectedOption] = useState(''); 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [stopwordsName, setStopwordsName] = useState('');
+  const [applyStopwordsChecked, setApplyStopwordsChecked] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
-  const handleButtonClick = () => {
+
+  //old handler for the upload stopwords button
+  /*const handleButtonClick = () => {
     setSelectedValue('upload');
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };*/
+
+  //modal handlers for the custom stopwords upload button
+  const handleUploadClick = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const handleClearButton = () => {
@@ -74,22 +96,39 @@ const CleanDataWidget = () => {
       prevTypeGroup.map((item) => ({
         ...item,
         checked: false,
-        value: item.label === 'Apply Stopwords' ? null : item.value // Reset specific values if needed
+        value: item.label === 'Apply Stopwords' ? null : (item.label === 'Page Features' ? [
+          { subLabel: 'Remove headers', checked: false },
+          { subLabel: 'Remove footers', checked: false },
+          { subLabel: 'Remove body', checked: false }
+        ] : item.label === 'Filter by parts-of-speech' ? []
+         : item.value )// Reset specific values if needed
       }))
     );
     // Reset other state variables if needed
     setSelectedOption('');
+    setSelectedFilters([]);
   }
 
-  //stopwords
-  const [selectedOption, setSelectedOption] = useState(''); 
+  //stopwords selection change
+  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedOption(event.target.value as string);
+};
 
+//stopwords -- saving user selection
+const handleSaveName = (name: string) => {
+  setStopwordsName(name); // Update state with the saved name
+  // Check if the name is not already in the list of options
+  if (!stopwordsOptions.some(option => option.label === name)) {
+    // Add the new name to the list of options
+    setStopwordsOptions(prevOptions => [
+      ...prevOptions,
+      { value: name, label: name }
+    ]);
+}
+  setSelectedOption(name);
+};
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSelectedOption(event.target.value);
-  };
-
-  //stopwords
+  //stopwords update check
   useEffect(() => {
     console.log("Selected Option State:", selectedOption);
   }, [selectedOption]);
@@ -106,19 +145,111 @@ const CleanDataWidget = () => {
     element.click();
     document.body.removeChild(element);
   };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
   };
+
   const handleRadioChange = (event: any) => {
     setSelectedValue(event.target.value);
   };
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+
+  /*const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
-  };
+  };*/
+
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const { value } = event.target;
+  setTypeGroup(prev =>
+    prev.map((type) => {
+      if (type.label === value) {
+        // Toggle the checked state of the clicked checkbox
+        let updatedType = { ...type, checked };
+        if (!checked && type.label === 'Filter by parts-of-speech') {
+          // Clear the value array when unchecked
+          updatedType = { ...updatedType, value: [] };
+        }
+        console.log("This is what has changed: ", updatedType)
+        return updatedType;
+      }
+      return type;
+    })
+  );
+  // If the changed checkbox is "Apply stopwords" or "Ignore case", update their checked states separately
+  if (value === 'Apply Stopwords') {
+    setApplyStopwordsChecked(checked);
+    // If unchecked, clear the selectedOption state
+    if (!checked) setSelectedOption('');
+    //not sure if this ignore case is needed in the future with real data or not
+  } 
+    if (value === 'Ignore case') {
+    // Update the state of the "Ignore case" checkbox
+    setTypeGroup(prev =>
+      prev.map(type =>
+        type.label === 'Ignore case' ? { ...type, checked } : type
+      )
+    );
+  }
+  if (value === 'Page Features') {
+    handleSubItemChange(value, checked);
+  }
+};
+
+const handleSubItemChange = (subLabel: string, checked: boolean) => {
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Page Features' && !checked) {
+        // If the "Page Features" box is unchecked, uncheck all sub-items
+        const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+        console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
+        return { ...type, value: updatedValue };
+      } else if (type.label === 'Page Features' && checked) {
+        // If the "Page Features" box is checked, only update the sub-item that triggered the change
+        const updatedValue = type.value.map((item: any) =>
+          item.subLabel === subLabel ? { ...item, checked } : item
+        );
+        console.log("Returning updatedValue for checked 'Page Features' box:", updatedValue);
+        return { ...type, value: updatedValue };
+      }
+      console.log("Returning unchanged type:", type);
+      return type;
+    })
+  );
+};
+
+
+const handleFilterChange = (selectedFilterOptions) => {
+  const selectedValues = selectedFilterOptions.map(option => option.value);
+
+  // Updating the state with the selected values
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Filter by parts-of-speech') {
+        console.log("Selected values:", selectedValues);
+        return { ...type, value: selectedValues };
+      }
+
+      return type;
+    })
+  );
+};
+
+
+// Determine whether to enable the button based on the states of "Apply Stopwords", "Ignore case" checkboxes, "Page features" sublabels, and "Filter by parts-of-speech"
+const isButtonEnabled = (
+  selectedOption !== "" || 
+  typeGroup.find(item => item.label === 'Ignore case')?.checked || 
+  (typeGroup.find(item => item.label === 'Page Features')?.checked &&
+  typeGroup.find(item => item.label === 'Page Features')?.value.some(subItem => subItem.checked)) || 
+  (typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.checked &&
+  typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.value.length > 0)
+);
+
   useEffect(() => {
     console.log(fileName);
   }, [fileName]);
+
   const childItem = useCallback((type: any) => {
     switch (type.label) {
       case 'Apply Stopwords':
@@ -128,7 +259,8 @@ const CleanDataWidget = () => {
             <FormControl>
               <InputLabel>Choose a list</InputLabel>  
               <MUISelect
-                value={selectedOption}
+                //value={selectedOption}
+                value={applyStopwordsChecked ? selectedOption : ''}
                 onChange={handleSelectChange}
                 style={{
                   minWidth: '200px',
@@ -144,23 +276,20 @@ const CleanDataWidget = () => {
             </FormControl>         
             </Stack>
             <Stack>
-              <button
-                style={{
-                  color: theme.palette.common.black/*'#1e98d7'*/,
-                  backgroundColor: theme.palette.background.default,
-                  textAlign: 'left',
-                  lineHeight: 'normal',
-                  cursor: selectedOption !== '' ? 'pointer' : 'default',
+             { selectedOption !== stopwordsName && //want to only show this if the selectedOption === defaultStopwordsOptions
+              <CustomButton 
+                variant='outlined'
+                sx={{
+                  height: '21px',
+                  padding: '2px',
                   marginTop: '10px',
-                  width: '220px',
-                  border: '.5px solid',
-                  borderRadius: '5px'
+                  textTransform: 'none'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption === ''} 
+                disabled={selectedOption === ''}
               >
                 Download selected list (optional)
-              </button>
+              </CustomButton>}
             </Stack>
             <Stack>
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
@@ -180,11 +309,11 @@ const CleanDataWidget = () => {
                   marginTop: '20px',
                   textTransform: 'none'
                 }}
-                onClick={handleButtonClick}
-                //disabled={selectedOption !== ''}
+                onClick={handleUploadClick}
               >
                 Or upload a custom list
               </CustomButton>}
+              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal} onSaveName={handleSaveName}/>
             </Stack>
           </RadioGroup>
         );
@@ -197,7 +326,7 @@ const CleanDataWidget = () => {
               <FormControlLabel
                 key={item.subLabel}
                 value={item.subLabel}
-                control={<Checkbox color="secondary" />}
+                control={<Checkbox color="secondary" checked={item.checked} onChange={(event) => handleSubItemChange(item.subLabel, event.target.checked)} />}
                 label={item.subLabel}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
@@ -217,13 +346,14 @@ const CleanDataWidget = () => {
                 className="basic-multi-select"
                 classNamePrefix="select"
                 {...(theme.palette.mode === 'dark' ? { styles: colourStyles } : {})}
+                onChange={handleFilterChange}
               />
             </FormControl>
           </Stack>
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption]);
+  }, [selectedOption, modalOpen, stopwordsName]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
@@ -274,6 +404,7 @@ const CleanDataWidget = () => {
               textAlign: 'center',
               textTransform: 'none'
             }}
+            disabled={!isButtonEnabled}
           >
             Apply cleaning
           </CustomButton>

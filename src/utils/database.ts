@@ -8,14 +8,17 @@ export async function getSessionAuthInfo(sessionId: string): Promise<AuthInfo> {
 }
 
 export async function setSessionAuthInfo(sessionId: string, authInfo: AuthInfo) {
+  console.debug('DB: Saving auth info for session', sessionId);
   await redis.set(`sessions:${sessionId}`, JSON.stringify(authInfo));
 }
 
 export async function setSessionExpiration(sessionId: string, expiresAtMs: number) {
+  console.debug('DB: Setting session expiration for session', sessionId, 'on', new Date(expiresAtMs));
   await redis.pexpireat(`sessions:${sessionId}`, expiresAtMs);
 }
 
 export async function deleteSession(sessionId: string) {
+  console.debug('DB: Deleting session', sessionId);
   await redis.del(`sessions:${sessionId}`);
 }
 
