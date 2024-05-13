@@ -4,7 +4,6 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import { JWT } from 'next-auth/jwt';
 import axios, { AxiosError } from 'axios';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import redis from 'lib/redis';
 import { AuthInfo } from 'types/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSession, getSessionAuthInfo, setSessionAuthInfo, setSessionExpiration } from 'utils/database';
@@ -19,7 +18,7 @@ async function doFinalSignoutHandshake(token: JWT) {
   if (token.provider == keycloak.id) {
     try {
       const authInfo: AuthInfo = await getSessionAuthInfo(token.sessionId);
-      await redis.del(`sessions:${token.sessionId}`);
+      await deleteSession(token.sessionId);
       await axios.get(`${keycloak.options!.issuer}/protocol/openid-connect/logout`, { params: { id_token_hint: authInfo.idToken } });
     } catch (e: any) {
       console.debug('Unable to perform post-logout handshake', (e as AxiosError)?.code || e);
@@ -33,9 +32,9 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     let authInfo: AuthInfo = await getSessionAuthInfo(token.sessionId);
 
-    if (now > authInfo.refreshTokenExpires) throw new Error('refreshAccessToken: Refresh token is expired!');
+    if (now > authInfo.refreshTokenExpires) throw new Error(`refreshAccessToken: Refresh token is expired for session ${token.sessionId}!`);
 
-    console.debug('Refreshing expired access token...');
+    console.debug('Refreshing expired access token for session', token.sessionId);
 
     const params = new URLSearchParams({
       client_id: keycloak.options!.clientId,
@@ -107,7 +106,7 @@ export const authOptions: NextAuthOptions = {
 
         await setSessionAuthInfo(sessionId, authInfo);
 
-        console.debug('Created new session', sessionId);
+        console.debug('Created new session', sessionId, 'with expiration', new Date(token.accessTokenExpires));
 
         return token;
       }
