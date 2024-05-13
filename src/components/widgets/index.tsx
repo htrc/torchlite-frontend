@@ -73,9 +73,9 @@ const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
           {widgetType === WidgetType.PublicationDateTimeline && (
             <PublicationTimeLineChart data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
           )}
-          {widgetType === WidgetType.SimpleTagCloud && (
-            <WordCloudTag data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />
-          )}
+          {/*{widgetType === WidgetType.SimpleTagCloud && (*/}
+          {/*  <WordCloudTag data={data} widgetType={widgetType} isDetailsPage={isDetailsPage} />*/}
+          {/*)}*/}
         </>
       )}
     </MainCard>
