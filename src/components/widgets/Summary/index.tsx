@@ -71,7 +71,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
 
   const [matchingWords, setMatchingWords] = useState([]);
   const [perVolDict, setPerVolDict] = useState({});
-  //const worksetId = '6424aa97330000a001a5dc9b';
+  const worksetId = '6424aa97330000a001a5dc9b';
 
   /*useEffect(() => {
     // Fetch data from the API when the component mounts
@@ -109,7 +109,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   /*const fetchDataFromAPI = async () => {
     try {
       
-      const response = await fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${data}/volumes?pos=false&fields=features.pages.tokenCount,features.pages.body.tokensCount,htid,metadata.title`);
+      const response = await fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${worksetId}/volumes?pos=false&fields=features.pages.tokenCount,features.pages.body.tokensCount,htid,metadata.title`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -125,7 +125,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
        };
 
       const updatedset = (token_dict, unique_word_forms, volumeid) => {
-        if (token_dict) {
+        if (token_dict) {q
           
           for (const [token, count] of Object.entries(token_dict)) {
             const lowercaseToken = token.toLowerCase();
@@ -354,35 +354,44 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
           <p>This corpus has { data?.worksetSize } documents with <b>{ data?.totalWords }</b> total words and <b>{ data?.uniqueWords }</b> unique word forms. </p>
 
           <div>
-            <h4>Document Length</h4>  
-            <div style={{ display: 'flex' }}>
-              <div style={{ width: '70%' }}>
-                <p>
-                  Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.longestDoc}; </span><br />
-                  Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.shortestDoc}; </span>
-                </p>
-              </div>
-              <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ width: '70%' }}>
+              <h4>Document Length</h4>  
+            </div>
+            <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="App">
                   <LineGraph data={data?.lengthGraph} />
                 </div>
-              </div>
+            </div>
+          </div>
+            <div style={{ display: 'flex', width: '100%' }}>
+                <p>
+                  Longest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.longestDoc}; </span><br />
+                  Shortest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.shortestDoc}; </span>
+                </p>          
             </div>
               
 
-            <h4>Vocabulary Density</h4>
-            <div style={{ display: 'flex' }}>
+
+            <div style={{ display: 'flex'}}>
               <div style={{ width: '70%' }}>
-                <p>
-                  Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.highestDensityDoc}; </span><br />
-                  Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.lowestDensityDoc}; </span>
-                </p>
+              <h4>Vocabulary Density</h4>
               </div>
               <div style={{ width: '30%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="App">
                   <LineGraph data={data?.densityGraph} />
                 </div>
               </div>
+            </div>
+            <div style={{ display: 'flex' }}>
+              
+                <p>
+                  Highest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.highestDensityDoc}; </span><br />
+                  Lowest: <span style={{ color: 'blue', fontSize: '14px' }}>{data?.lowestDensityDoc}; </span>
+                </p>
+              
+              
+              
             </div>
 
             {/* <h4>Readability Index</h4>
