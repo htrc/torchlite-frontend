@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { Box, Menu, MenuItem, Stack, Typography, useTheme, Grid } from '@mui/material';
 import CustomSlider from 'components/CustomSlider';
 import useResizeObserver from 'hooks/useResizeObserver';
-import { useDispatch, useSelector } from 'store';
+import { useSelector } from 'store';
 import NextLink from 'next/link';
 import MainCard from 'components/MainCard';
 import React from 'react'; 
@@ -24,13 +24,8 @@ const BUCKET_PADDING = 1;
 
 export const Summary = ({ data, widgetType, isDetailsPage = false }) => { 
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const axesRef = useRef(null);
   const chartWrapper = useRef();
-  const dimensions = useResizeObserver(chartWrapper);
   const { onChangeWidgetState } = useDashboardState();
-
-  const [storedVolumeData, setStoredVolumeData] = useState([]);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -62,29 +57,6 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
       data: chartDataHistogram
     });
   }, [chartDataHistogram, widgetType]);
-
-  const [matchingWords, setMatchingWords] = useState([]);
-  const [perVolDict, setPerVolDict] = useState({});
-
-  
-  const [totalWords, setTotalWords] = useState([]);
-  const [uniqueWords, setUniqueWords] = useState([]);
-
-  const [longestDoc, setLongestDoc] = useState([]);
-  const [shortestDoc, setShortestDoc] = useState([]);
-  const [highestDensityDoc, setHighestDensityDoc] = useState([]);
-  const [lowestDensityDoc, setLowestDensityDoc] = useState([]);
-  const [mostReadableDoc, setMostReadableDoc] = useState([]);
-  const [leastReadableDoc, setLeastReadableDoc] = useState([]);
-
-  const [documentLengths, setdocumentLengths] = useState([]);
-  const [vocabDensity, setvocabDensity] = useState([]);
-
-  const [lengthGraph, setLengthGraph] = useState([]);
-  const [densityGraph, setDensityGraph] = useState([]);
-
-  const [documentData, setdocumentData] = useState([]);
-  const [densityData, setdensityData] = useState([]);
 
   const downloadData = (format: string) => {
     const container = document.getElementById('input-container');
