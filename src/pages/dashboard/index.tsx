@@ -19,7 +19,6 @@ const DashboardDefault = ({ csrfToken }: any) => {
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
             {dashboardState?.widgets?.map((widget, index) => {
-              console.log("Widget:", widget);
               if (widget.type in WidgetType) {
                 return (
                   <Grid item xs={12} md={6} key={index}>

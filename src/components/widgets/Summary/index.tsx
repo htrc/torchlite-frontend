@@ -23,8 +23,6 @@ const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 };
 const BUCKET_PADDING = 1;
 
 export const Summary = ({ data, widgetType, isDetailsPage = false }) => { 
-  console.log("SUMMARY");
-  console.log(data);
   const theme = useTheme();
   const dispatch = useDispatch();
   const axesRef = useRef(null);
@@ -46,13 +44,11 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   };
 
   const chartDataHistogram = useMemo(() => {
-    console.log("BUILDING HISTOGRAM")
     if (data.lengthGraph) {
       var output_array = [];
       for (const [key, value] of Object.entries(data.lengthGraph)) {
         output_array.push({ 'title': key, 'length': value, 'density': data.densityGraph[key] })
       }
-      console.log(output_array);
       return output_array;
     }
     else {
@@ -61,8 +57,6 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
   }, [data]);
 
   useEffect(() => {
-    console.log("DATA")
-    console.log(chartDataHistogram)
     onChangeWidgetState({
       widgetType: widgetType,
       data: chartDataHistogram
@@ -71,19 +65,6 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
 
   const [matchingWords, setMatchingWords] = useState([]);
   const [perVolDict, setPerVolDict] = useState({});
-  //const worksetId = '6424aa97330000a001a5dc9b';
-
-  /*useEffect(() => {
-    // Fetch data from the API when the component mounts
-    fetchDataFromAPI();
-  }, []);*/
-
-  /*const lineData = {
-    'Bilder vom Erzählen : Gedichte': 7274,
-    'Highlights of ...': 7422,
-    'The Law times reports': 1381366,
-    'The cruise of the Marchesa to Kamschatka & New Guinea.': 231986,
-  };*/
 
   
   const [totalWords, setTotalWords] = useState([]);
@@ -104,167 +85,6 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
 
   const [documentData, setdocumentData] = useState([]);
   const [densityData, setdensityData] = useState([]);
-    
-    
-  /*const fetchDataFromAPI = async () => {
-    try {
-      
-      const response = await fetch(`https://tools.htrc.illinois.edu/ef-api/worksets/${data}/volumes?pos=false&fields=features.pages.tokenCount,features.pages.body.tokensCount,htid,metadata.title`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-
-      const updateDict = (tokenDict, resultsDict) => {  
-        if (tokenDict) {
-          for (const [token, count] of Object.entries(tokenDict)) {
-            const lowercaseToken = token.toLowerCase();
-            resultsDict[lowercaseToken] = (resultsDict[lowercaseToken] || 0) + count;
-          }
-        }
-       };
-
-      const updatedset = (token_dict, unique_word_forms, volumeid) => {
-        if (token_dict) {
-          
-          for (const [token, count] of Object.entries(token_dict)) {
-            const lowercaseToken = token.toLowerCase();
-            
-            if (unique_word_forms[volumeid]) {
-              unique_word_forms[volumeid].add(lowercaseToken);
-            } else {
-              // If the volume identifier doesn't exist, create a new set with the token
-              unique_word_forms[volumeid] = new Set([lowercaseToken]);
-            }
-          }
-        }
-      };
-
-      const calculate_readability = (num_words) => {
-      const avg_words_per_sentence = 15  
-      const avg_syllables_per_word = 1.2  
-
-      let num_sentences = num_words / avg_words_per_sentence
-      let num_syllables = num_words * avg_syllables_per_word
-
-      readability_score = 0.39 * (num_words / num_sentences) + 11.8 * (num_syllables / num_words) - 15.59
-      return readability_score
-      };
-    
-      let total = 0;
-      let totalunique = 0;
-      const loacalPerVolDict = {};
-      const per_vol_set = {}
-      const frequentWords = {};
-
-      let document_lengths = {}
-      let document_words = {}
-      let vocab_density = {}
-      let readability_score = {}
-      let read_score = 0
-
-      for (const volume of data.data) {
-        let individualVol = 0;
-        let individualUni = 0;
-          
-        loacalPerVolDict[volume.htid] = {}
-        per_vol_set[volume.htid] = {}
-           
-        for (const page of volume.features.pages) {
-          const body = page.body;
-          if (body.tokensCount !== null) {
-              updateDict(body.tokensCount,loacalPerVolDict[volume.htid]);
-              updatedset(body.tokensCount, per_vol_set[volume.htid], volume.htid)
-          }
-          
-          total += page.tokenCount;
-          individualVol += page.tokenCount;
-        }
-        
-        
-        const volumeId = volume.htid; 
-        
-        individualUni = per_vol_set[volumeId] ? per_vol_set[volumeId][volumeId].size : 0;
-        
-        totalunique += individualUni
-
-
-        /* if (!document_lengths[volume.metadata.title] || typeof document_lengths[volume.metadata.title] !== 'object') {
-          document_lengths[volume.metadata.title] = {};
-        } */
-        /*document_lengths[volume.metadata.title] = individualVol
-        console.log("document_lengths", document_lengths);
-
-        document_words[volume.metadata.title] = individualVol
-        console.log("document_words", document_words);
- 
-        vocab_density[volume.metadata.title] = (individualVol / individualUni) / 100 
-        console.log("vocab_density", vocab_density);
-    
-        read_score = calculate_readability(individualVol)
-        //readability_score[volume.metadata.title] = read_score;
-
-        console.log("readability_score", readability_score);
-
-        console.log('Volume name:', volume.metadata.title)
-        console.log('Total words:', individualVol) 
-        console.log('Total Unique:', individualUni)
-      } 
- 
-      setLengthGraph(document_lengths);
-      setDensityGraph(vocab_density);
-
-      setdocumentLengths(document_lengths);
-      
-      setTotalWords(total);
-      setUniqueWords(totalunique); 
-      // Find the longest document 
-      let sortedDocuments = Object.keys(document_lengths).sort((a, b) => document_lengths[b] - document_lengths[a]);
-      let limitedDocuments = sortedDocuments.slice(0, 5);
-      const longestDocumentsString = limitedDocuments.map(doc => `${doc} (${document_lengths[doc]})`).join(';  ');
-      setLongestDoc(longestDocumentsString);
-
-      // Find the shortest document
-      sortedDocuments = Object.keys(document_lengths).sort((a, b) => document_lengths[a] - document_lengths[b]);
-      limitedDocuments = sortedDocuments.slice(0, 5);
-      const shortestDocumentsString = limitedDocuments.map(doc => `${doc} (${document_lengths[doc]})`).join(';  ');
-      setShortestDoc(shortestDocumentsString);
-
-      // Find the document with the highest vocabulary density
-      sortedDocuments = Object.keys(vocab_density).sort((a, b) => vocab_density[b] - vocab_density[a]);
-      limitedDocuments = sortedDocuments.slice(0, 5);
-      const highestDense = limitedDocuments.map(doc => `${doc} (${vocab_density[doc]})`).join(';  ');
-      setHighestDensityDoc(highestDense);
-
-      // Find the document with the lowest vocabulary density
-      sortedDocuments = Object.keys(vocab_density).sort((a, b) => vocab_density[a] - vocab_density[b]);
-      limitedDocuments = sortedDocuments.slice(0, 5);
-      const lowestDense = limitedDocuments.map(doc => `${doc} (${vocab_density[doc]})`).join(';  ');
-      setLowestDensityDoc(lowestDense);
-
-      /* // Find the document with the highest readability score
-      const highestReadabilityDocument = Object.keys(readability_score).reduce((a, b) => readability_score[a] > readabilityScore[b] ? a : b);
-      const highestReadability = readability_score[highestReadabilityDocument];
-
-      // Find the document with the lowest readability score
-      const lowestReadabilityDocument = Object.keys(readability_score).reduce((a, b) => readability_score[a] < readabilityScore[b] ? a : b);
-      const lowestReadability = readability_score[lowestReadabilityDocument];
- */
-      
-      
-      /*setPerVolDict(loacalPerVolDict);
-
-      const documents = Object.entries(document_lengths);
-      const vocabs = Object.entries(vocab_density);
-
-      setdocumentData(documents);
-      // Check the type
-      console.log("pooj",typeof documentData);
-      setvocabDensity(vocabs);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };*/  
 
   const downloadData = (format: string) => {
     const container = document.getElementById('input-container');
@@ -284,16 +104,15 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
       const img = new Image();
 
       img.onload = function () {
-        console.log("HERE")
-//        canvas.width = img.width;
-//        canvas.height = img.height;
-//        ctx.drawImage(img, 0, 0);
-//        const png = canvas.toDataURL('image/png');
-//        saveAs(png, 'chart.png');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const png = canvas.toDataURL('image/png');
+        saveAs(png, 'chart.png');
       };
-      img.addEventListener("error", (event) => {
+      /*img.addEventListener("error", (event) => {
         console.log(event)
-      });
+      });*/
 
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const url = DOMURL.createObjectURL(svgBlob);

@@ -11,8 +11,6 @@ const LineGraph: React.FC<LineGraphProps> = ({ data }) => {
 
   useEffect(() => {
     if (data && typeof data === "object") {
-      console.log("LINE GRAPH DATA")
-      console.log(data)
       if (!svgRef.current) return;
 
       const svg = d3.select(svgRef.current);
