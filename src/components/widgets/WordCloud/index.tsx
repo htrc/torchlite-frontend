@@ -33,11 +33,8 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   const dimensions = useResizeObserver(chartWrapper);
   const { onChangeWidgetState } = useDashboardState();
 
-  //const dimensions = useResizeObserver(inputRef);
   const [loading, setLoading] = useState(true);
   const [wCloud, setwordCloudData] = useState([]);
-  //console.log("cloudData");
-  //console.log(data);
 
   const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
   const open = Boolean(anchorEl);
@@ -52,7 +49,6 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   
   useEffect(() => {
     // Convert the data object into an array, sort it, and take the top 100
-    //const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 100);
     const newWordCloudData = data.map(entry => ({
       text: entry[0],
       value: entry[1],
@@ -67,8 +63,6 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
       data: wCloud
     })
   }, [widgetType, wCloud])
-
-//  console.log("wCloud data before passing to WordCloudChart:",wCloud);
 
   const downloadData = (format: string) => {
     const svg = chartWrapper.current.querySelector('svg');
