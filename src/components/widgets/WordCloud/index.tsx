@@ -94,7 +94,7 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
 
   return (
     <>
-    {isDetailsPage && (
+      {isDetailsPage && (
         <Stack direction="row" justifyContent="flex-end" sx={{ position: 'absolute', right: '2rem' }}>
           <IconButton
             sx={{
@@ -125,7 +125,7 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
               horizontal: 'right'
             }}
           > 
-            <MenuItem onClick={() => downloadData('png')}>PNG image</MenuItem>
+            <MenuItem disabled={true} onClick={() => downloadData('png')}>PNG image</MenuItem>
             <MenuItem onClick={() => downloadData('svg')}>SVG image</MenuItem>
             <CSVLink
               data={wCloud}
