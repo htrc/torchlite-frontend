@@ -1,7 +1,8 @@
 export const WidgetType = {
   MappingContributorData: 'MappingContributorData',
   PublicationDateTimeline: 'PublicationDateTimeline',
-  Summary: 'Summary'
+  Summary: 'Summary',
+  SimpleTagCloud: 'SimpleTagCloud'
 };
 
 export const WidgetInfoLinks: any = {
@@ -20,7 +21,8 @@ export const WidgetInfoLinks: any = {
 export const WidgetTitles: any = {
   MappingContributorData: 'Mapping Contributor Data',
   PublicationDateTimeline: 'Publication Date Timeline',
-  Summary: 'Summary'
+  Summary: 'Summary',
+  SimpleTagCloud: 'Simple Word Cloud'
 };
 
 export const TableColumns: any = {
@@ -79,6 +81,18 @@ export const TableColumns: any = {
       accessor: 'density',
       className: 'cell-center'
     }
+  ],
+  SimpleTagCloud: [
+    {
+      Header: 'Word',
+      accessor: 'text',
+      className: 'cell-center'
+    },
+    {
+      Header: 'Count',
+      accessor: 'value',
+      className: 'cell-center'
+    }
   ]
 };
 
@@ -98,11 +112,16 @@ export const CSVHeaders: any = {
     { label: 'Title', key: 'title' },
     { label: 'Length', key: 'length' },
     { label: 'Density', key: 'density' }
+  ],
+  SimpleTagCloud: [
+    { label: 'Word', key: 'text' },
+    { label: 'Count', key: 'value' }
   ]
 };
 
 export const TableHeader: any = {
   MappingContributorData: 'Contributor Data',
   PublicationDateTimeline: 'Timeline Data',
-  Summary: 'Summary Data'
+  Summary: 'Summary Data',
+  SimpleTagCloud: 'Word Cloud Data'
 };

@@ -18,8 +18,8 @@ const DashboardDefault = ({ csrfToken }: any) => {
         <Box>
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
-            {dashboardState?.widgets?.map((widget, index) => {
-              if (widget.type in WidgetType) {
+            {Array.from(new Map(dashboardState?.widgets?.map(obj => [`${obj.type}`, obj])).values())?.map((widget, index) => {
+              if (widget.type in WidgetType && dashboardState) {
                 return (
                   <Grid item xs={12} md={6} key={index}>
                     <Widget dashboardState={dashboardState} widgetType={widget.type} />
