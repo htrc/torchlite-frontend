@@ -49,9 +49,9 @@ export const WordCloudTag = ({ data, widgetType, isDetailsPage = false }) => {
   
   useEffect(() => {
     // Convert the data object into an array, sort it, and take the top 100
-    const newWordCloudData = data.map(entry => ({
-      text: entry[0],
-      value: entry[1],
+    const newWordCloudData = Object.keys(data).map(entry => ({
+      text: entry,
+      value: data[entry]
     }));
 
     setwordCloudData(newWordCloudData);
