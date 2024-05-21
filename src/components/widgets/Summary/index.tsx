@@ -42,7 +42,7 @@ export const Summary = ({ data, widgetType, isDetailsPage = false }) => {
     if (data.lengthGraph) {
       var output_array = [];
       for (const [key, value] of Object.entries(data.lengthGraph)) {
-        output_array.push({ 'title': key, 'length': value, 'density': data.densityGraph[key] })
+        output_array.push({ 'title': value.title, 'length': value.value, 'density': data.densityGraph[key].value })
       }
       return output_array;
     }
