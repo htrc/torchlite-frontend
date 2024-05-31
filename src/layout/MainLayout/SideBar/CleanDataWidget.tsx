@@ -199,25 +199,26 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
 const handleSubItemChange = (subLabel: string, checked: boolean) => {
   setTypeGroup(prev =>
     prev.map(type => {
-      if (type.label === 'Page Features' && !checked) {
-        // If the "Page Features" box is unchecked, uncheck all sub-items
-        const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
-        console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
-        return { ...type, value: updatedValue };
-      } else if (type.label === 'Page Features' && checked) {
-        // If the "Page Features" box is checked, only update the sub-item that triggered the change
-        const updatedValue = type.value.map((item: any) =>
-          item.subLabel === subLabel ? { ...item, checked } : item
-        );
-        console.log("Returning updatedValue for checked 'Page Features' box:", updatedValue);
-        return { ...type, value: updatedValue };
+      if (type.label === 'Page Features') {
+        if (!checked && subLabel === 'Page Features') {
+          // If the "Page Features" parent box is unchecked, uncheck all sub-items
+          const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+          console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
+          return { ...type, value: updatedValue };
+        } else {
+          // Only update the specific sub-item that triggered the change
+          const updatedValue = type.value.map((item: any) =>
+            item.subLabel === subLabel ? { ...item, checked } : item
+          );
+          console.log("Returning updatedValue for sub-item change:", updatedValue);
+          return { ...type, value: updatedValue };
+        }
       }
       console.log("Returning unchanged type:", type);
       return type;
     })
   );
 };
-
 
 const handleFilterChange = (selectedFilterOptions) => {
   const selectedValues = selectedFilterOptions.map(option => option.value);
