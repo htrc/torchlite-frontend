@@ -93,6 +93,8 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
       setUrlError("");
   };
 
+  const isSaveEnabled = stopwordsName.trim() !== "" && (filePath.trim() !== "" || (url.trim() !== "" && urlError === ""));
+
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={style}>
@@ -172,7 +174,7 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
                         color="primary" 
                         sx={{ minWidth: '100px'}} 
                         onClick={handleSave} 
-                        disabled={(filePath === "" && url === "")}>
+                        disabled={!isSaveEnabled}>
                           Save
                       </Button>
                     </Grid>
