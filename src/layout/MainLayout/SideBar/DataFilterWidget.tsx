@@ -12,6 +12,16 @@ import genreData from 'data/genreData';
 import { IFilterKey } from 'types/dashboard';
 import { colourStyles } from 'styles/react-select';
 import useDashboardState from 'hooks/useDashboardState';
+import sourceInstitutionData from 'data/sourceInstitutionData';
+import languageData from 'data/languageData';
+import accessTypeData from 'data/accessTypeData';
+
+enum Filters {
+  Language,
+  SourceInstitution,
+  Genre,
+  AccessType
+}
 
 const animatedComponents = makeAnimated();
 const convertFromUrl = (originalData: any) => {
@@ -63,12 +73,28 @@ const DataFilterWidget = () => {
     });
   };
 
-  const getNameMatchingShortname = (name: any) => {
-    for (const key in genreData) {
-      if (genreData.hasOwnProperty(key)) {
-        const genre = genreData[key];
-        if (genre.name === name) {
-          return genre.shortname;
+  const getNameMatchingShortname = (name: any, filterValue: Filters) => {
+    let dataToSearch;
+    switch(filterValue) {
+      case Filters.Genre:
+        dataToSearch = genreData
+        break;
+      case Filters.Language:
+        dataToSearch = languageData
+        break;
+      case Filters.SourceInstitution:
+        dataToSearch = sourceInstitutionData
+        break;
+      case Filters.AccessType:
+        dataToSearch = accessTypeData
+        break;
+    }
+
+    for (const key in dataToSearch) {
+      if (dataToSearch.hasOwnProperty(key)) {
+        const filterVal = dataToSearch[key];
+        if (filterVal.name === name) {
+          return filterVal.shortname;
         }
       }
     }
@@ -85,7 +111,7 @@ const DataFilterWidget = () => {
       .sort()
       .map((pubDate) => ({ value: pubDate, label: pubDate?.toString(), key: 'pubDate' }));
     //const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
-    const genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
+    let genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
       .filter((genre) => genre !== undefined)
       .sort()
       .map((genre) => ({ value: genre, label: genre, key: 'genre' }));
@@ -122,16 +148,41 @@ const DataFilterWidget = () => {
       .filter((sourceInstitution) => sourceInstitution !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'sourceInstitution' }));
+
+    if (accessRights.length) {
+      for (let i = 0; i < accessRights.length; i++) {
+        let value = accessRights[i].value;
+        let label = getNameMatchingShortname(value, Filters.AccessType);
+        accessRights[i].label = label;
+      }
+    }
+
+    if (languages.length) {
+      for (let i = 0; i < languages.length; i++) {
+        let value = languages[i].value;
+        let label = getNameMatchingShortname(value, Filters.Language);
+        languages[i].label = label;
+      }
+    }
+    
+    if (sourceInstitutions.length) {
+      for (let i = 0; i < sourceInstitutions.length; i++) {
+        let value = sourceInstitutions[i].value;
+        let label = getNameMatchingShortname(value, Filters.SourceInstitution);
+        sourceInstitutions[i].label = label;
+      }
+    }
+
     if (genres.length) {
       for (let i = 0; i < genres.length; i++) {
         let value = genres[i].value;
-        let label = getNameMatchingShortname(value);
-        if (label == null) {
-          label = genres[i].label;
-        }
+        let label = getNameMatchingShortname(value, Filters.Genre);
         genres[i].label = label;
       }
     }
+    genres = genres.filter(genre => !genre.value.startsWith("urn"));
+
+
     const filterGroupData = {
       titles,
       pubDates,
