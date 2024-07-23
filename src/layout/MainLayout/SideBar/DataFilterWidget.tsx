@@ -15,12 +15,14 @@ import useDashboardState from 'hooks/useDashboardState';
 import sourceInstitutionData from 'data/sourceInstitutionData';
 import languageData from 'data/languageData';
 import accessTypeData from 'data/accessTypeData';
+import resourceTypeData from 'data/resourceTypeData';
 
 enum Filters {
   Language,
   SourceInstitution,
   Genre,
-  AccessType
+  AccessType,
+  ResourceType
 }
 
 const animatedComponents = makeAnimated();
@@ -87,6 +89,8 @@ const DataFilterWidget = () => {
         break;
       case Filters.AccessType:
         dataToSearch = accessTypeData
+      case Filters.ResourceType:
+        dataToSearch = resourceTypeData
         break;
     }
 
@@ -115,7 +119,7 @@ const DataFilterWidget = () => {
       .filter((genre) => genre !== undefined)
       .sort()
       .map((genre) => ({ value: genre, label: genre, key: 'genre' }));
-    const typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
+    let typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
       .filter((type) => type !== undefined)
       .sort()
       .map((type) => ({ value: type, label: type, key: 'typeOfResource' }));
@@ -170,6 +174,14 @@ const DataFilterWidget = () => {
         let value = sourceInstitutions[i].value;
         let label = getNameMatchingShortname(value, Filters.SourceInstitution);
         sourceInstitutions[i].label = label;
+      }
+    }
+
+    if (typesOfResources.length) {
+      for (let i = 0; i < typesOfResources.length; i++) {
+        let value = typesOfResources[i].value;
+        let label = getNameMatchingShortname(value, Filters.ResourceType);
+        typesOfResources[i].label = label;
       }
     }
 
