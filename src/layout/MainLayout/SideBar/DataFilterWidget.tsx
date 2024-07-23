@@ -89,6 +89,7 @@ const DataFilterWidget = () => {
         break;
       case Filters.AccessType:
         dataToSearch = accessTypeData
+        break;
       case Filters.ResourceType:
         dataToSearch = resourceTypeData
         break;
