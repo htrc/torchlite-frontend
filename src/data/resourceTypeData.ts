@@ -1,104 +1,29 @@
-const resourceTypeData: any = {
-  "1": {
-    "name": "http://www.loc.gov/mads/rdf/v1#NameTitle",
-    "shortname": "Name/Title Type"
-  },
-  "2": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Work",
-    "shortname": "Work"
-  },
-  "3": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Text",
-    "shortname": "Text"
-  },
-  "4": {
-    "name": "http://id.loc.gov/ontologies/bibframe/NotatedMusic",
-    "shortname": "Notated music"
-  },
-  "5": {
-    "name": "http://www.loc.gov/mads/rdf/v1#Title",
-    "shortname": "Title Type"
-  },
-  "6": {
-    "name": "http://www.loc.gov/mads/rdf/v1#ComplexSubject",
-    "shortname": "Complex Subject Type"
-  },
-  "7": {
-    "name": "http://id.loc.gov/ontologies/bibframe/MixedMaterial",
-    "shortname": "Mixed material"
-  },
-  "8": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Audio",
-    "shortname": "Audio"
-  },
-  "9": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Cartography",
-    "shortname": "Cartography"
-  },
-  "10": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Topic",
-    "shortname": "Topic"
-  },
-  "11": {
-    "name": "http://id.loc.gov/ontologies/bibframe/StillImage",
-    "shortname": "Still image"
-  },
-  "12": {
-    "name": "http://www.loc.gov/mads/rdf/v1#Topic",
-    "shortname": "Topic Type"
-  },
-  "13": {
-    "name": "http://www.loc.gov/mads/rdf/v1#Geographic",
-    "shortname": "Geographic Authority"
-  },
-  "14": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Place",
-    "shortname": "Place"
-  },
-  "15": {
-    "name": "http://www.loc.gov/mads/rdf/v1#Name",
-    "shortname": "Name Type"
-  },
-  "16": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Agent",
-    "shortname": "Agent"
-  },
-  "17": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Person",
-    "shortname": "Person"
-  },
-  "18": {
-    "name": "http://id.loc.gov/ontologies/bibframe/MovingImage",
-    "shortname": "Moving image"
-  },
-  "19": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Jurisdiction",
-    "shortname": "Jurisdiction"
-  },
-  "20": {
-    "name": "http://www.loc.gov/mads/rdf/v1#CorporateName",
-    "shortname": "Corporate Name Type"
-  },
-  "21": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Organization",
-    "shortname": "Organization"
-  },
-  "22": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Family",
-    "shortname": "Family"
-  },
-  "23": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Meeting",
-    "shortname": "Meeting"
-  },
-  "24": {
-    "name": "http://www.loc.gov/mads/rdf/v1#ConferenceName",
-    "shortname": "Conference Name Type"
-  },
-  "25": {
-    "name": "http://id.loc.gov/ontologies/bibframe/Object",
-    "shortname": "Three-dimensional object"
-  }
+const resourceTypeData = {
+  "http://www.loc.gov/mads/rdf/v1#NameTitle": "Name/Title Type",
+  "http://id.loc.gov/ontologies/bibframe/Work": "Work",
+  "http://id.loc.gov/ontologies/bibframe/Text": "Text",
+  "http://id.loc.gov/ontologies/bibframe/NotatedMusic": "Notated music",
+  "http://www.loc.gov/mads/rdf/v1#Title": "Title Type",
+  "http://www.loc.gov/mads/rdf/v1#ComplexSubject": "Complex Subject Type",
+  "http://id.loc.gov/ontologies/bibframe/MixedMaterial": "Mixed material",
+  "http://id.loc.gov/ontologies/bibframe/Audio": "Audio",
+  "http://id.loc.gov/ontologies/bibframe/Cartography": "Cartography",
+  "http://id.loc.gov/ontologies/bibframe/Topic": "Topic",
+  "http://id.loc.gov/ontologies/bibframe/StillImage": "Still image",
+  "http://www.loc.gov/mads/rdf/v1#Topic": "Topic Type",
+  "http://www.loc.gov/mads/rdf/v1#Geographic": "Geographic Authority",
+  "http://id.loc.gov/ontologies/bibframe/Place": "Place",
+  "http://www.loc.gov/mads/rdf/v1#Name": "Name Type",
+  "http://id.loc.gov/ontologies/bibframe/Agent": "Agent",
+  "http://id.loc.gov/ontologies/bibframe/Person": "Person",
+  "http://id.loc.gov/ontologies/bibframe/MovingImage": "Moving image",
+  "http://id.loc.gov/ontologies/bibframe/Jurisdiction": "Jurisdiction",
+  "http://www.loc.gov/mads/rdf/v1#CorporateName": "Corporate Name Type",
+  "http://id.loc.gov/ontologies/bibframe/Organization": "Organization",
+  "http://id.loc.gov/ontologies/bibframe/Family": "Family",
+  "http://id.loc.gov/ontologies/bibframe/Meeting": "Meeting",
+  "http://www.loc.gov/mads/rdf/v1#ConferenceName": "Conference Name Type",
+  "http://id.loc.gov/ontologies/bibframe/Object": "Three-dimensional object"
 };
 
 export default resourceTypeData;
