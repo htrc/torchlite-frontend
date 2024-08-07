@@ -1,0 +1,41 @@
+  .bar {
+    fill: steelblue;
+  }
+
+  .scatter-dot {
+    fill: steelblue;
+    stroke: #fff;
+  }
+
+  .scatter-dot:hover {
+    fill: red;
+  }
+
+  .callout {
+    fill: #fff;
+    stroke: gray;
+    stroke-width: 1px;
+  }
+
+  .callout-text {
+    font-family: sans-serif;
+    font-size: 12px;
+  }
+
+  /* Styles for the axis labels */
+  .axis-label {
+    font-family: sans-serif;
+    font-size: 12px;
+  } 
+ 
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: .2rem;
+    background: #313639;
+    color: #f9f9f9;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    font-size: .7rem;
+   }
