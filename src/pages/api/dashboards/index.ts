@@ -11,13 +11,9 @@ import { pickRandom } from 'utils/helpers';
 const torchliteUid: string = '95164779-1fc9-4592-9c74-7a014407f46d';
 
 async function cloneDashboard(dashboardId: string, headers: any, headersGet: any = headers): Promise<DashboardSummary> {
-//  console.log(dashboardId)
   const { worksetId, filters, widgets, importedId } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headersGet
   });
-//  console.log(worksetId)
-//  console.log(importedId)
-//  console.log(typeof importedId)
 
   return await axios.post<DashboardSummary>(
     `/dashboards/`,
@@ -43,22 +39,15 @@ async function getFeaturedDashboardClone(headers: any): Promise<[DashboardSummar
     dashboardSummary = await cloneDashboard(featuredDashboardId, headers);
   } else {
     // no featured dashboard cookie set - retrieve the list of featured dashboards
-//    console.log("GETTING TORCHLITE USER DASHBOARDS")
     const featuredDashboards = await axios.get<DashboardSummary[]>(`/dashboards/`, {
       headers: headers,
       params: { owner: torchliteUid }
     });
-//    console.log("Featured Dashboards")
-//    console.log(featuredDashboards)
     if (featuredDashboards) {
       // ...and pick a random one
       dashboardSummary = pickRandom(featuredDashboards);
-//      console.log("Dashboard Summary 1")
-//      console.log(dashboardSummary)
       featuredDashboardId = dashboardSummary.id;
       dashboardSummary = await cloneDashboard(featuredDashboardId, headers);
-//      console.log("Dashboard Summary 2")
-//      console.log(dashboardSummary)
     } else throw Error('No featured dashboards available!');
   }
 
@@ -100,8 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!dashboardSummary)
       // the user doesn't have any dashboards (probably first time logging in)
       [dashboardSummary, featuredDashboardId] = await getFeaturedDashboardClone(headers);
-//    console.log("GETTING WORKSET METADATA FOR")
-//    console.log(dashboardSummary)
 
     const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
       headers: headers

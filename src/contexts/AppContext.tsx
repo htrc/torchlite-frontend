@@ -46,21 +46,14 @@ function AppProvider({ children }: AppProviderProps) {
         setAvailableWorksets(worksets);
 
         // Get dashboard state
-        const dashboardId = undefined;//sessionStorage.getItem('dashboard_id');
+        const dashboardId = sessionStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
-//        console.log("status")
-//        console.log(status)
         if (status === 'unauthenticated') {
-//          console.log(dashboardId)
           if (dashboardId) {
-//            console.log("A")
             dashboardState = await getDashboardState(dashboardId);
           } else {
-//            console.log("B")
             const dashboards = await getAvailableDashboards();
-//            console.log("B1")
             dashboardState = dashboards[0];
-//            console.log("B2")
           }
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
@@ -89,13 +82,12 @@ function AppProvider({ children }: AppProviderProps) {
             }
           }
           await updateDashboardState(dashboardState.id, {
-//            worksetId: selectedWorksetId,
             importedId: selectedWorksetId,
             filters: appliedFilters
           });
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
-          selectedWorksetId = dashboardState.worksetId;
+          selectedWorksetId = dashboardState.importedId;
           appliedFilters = dashboardState.filters;
           router.push({
             pathname: router.pathname,
@@ -108,7 +100,6 @@ function AppProvider({ children }: AppProviderProps) {
         }
         setDashboardState(dashboardState);
       } catch (error) {
-//        console.log("ERROR IN INITIALIZING APP")
         console.error(error);
       } finally {
         setLoading(false);
@@ -138,22 +129,16 @@ function AppProvider({ children }: AppProviderProps) {
   }, [router.pathname]);
 
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
-//    console.log("changing dashboard state")
-//    console.log(dashboardState)
     try {
       if (dashboardState) {
-//        console.log("about to update dashboard state")
         setLoading(true);
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
-//        console.log("setting new dashboard state")
         setDashboardState(updatedState);
       }
     } catch (error) {
-//      console.log("b")
       console.error(error);
     } finally {
-//      console.log("c")
       setLoading(false);
     }
   };
