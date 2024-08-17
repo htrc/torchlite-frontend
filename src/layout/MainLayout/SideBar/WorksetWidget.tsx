@@ -20,6 +20,7 @@ import {
 import CustomTableRow from 'components/CustomTableRow';
 import { WorksetSummary } from 'types/torchlite';
 import useDashboardState from 'hooks/useDashboardState';
+import { useSession } from 'next-auth/react';
 
 const WorksetWidget = () => {
   const theme = useTheme();
@@ -30,6 +31,9 @@ const WorksetWidget = () => {
   const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
   const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
+  const { status } = useSession();
+  console.log("STATUS");
+  console.log(status);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
@@ -63,6 +67,7 @@ const WorksetWidget = () => {
     } else if (type === 'featured') {
       setWorksetData(availableWorksets?.featured || []);
     } else {
+      console.log(availableWorksets);
       setWorksetData([]);
     }
   }, [type, availableWorksets]);
