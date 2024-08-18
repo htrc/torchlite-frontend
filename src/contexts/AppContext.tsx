@@ -30,7 +30,7 @@ function AppProvider({ children }: AppProviderProps) {
   const [availableWorksets, setAvailableWorksets] = useState<WorksetList>();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const initApp = async () => {
@@ -42,7 +42,11 @@ function AppProvider({ children }: AppProviderProps) {
           appliedFilters: any = {};
 
         // Get worksets
-        const worksets: WorksetList = await getAvailableWorksets();
+        let worksets: WorksetList = await getAvailableWorksets();
+        if (status === 'authenticated' && session.user.email && availableWorksets?.public) {
+          const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
+          worksets.user = availableWorksets.public.filter((workset) => workset.author == workset_creator)
+        }
         setAvailableWorksets(worksets);
 
         // Get dashboard state

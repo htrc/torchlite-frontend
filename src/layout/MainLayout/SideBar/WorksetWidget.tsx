@@ -20,7 +20,6 @@ import {
 import CustomTableRow from 'components/CustomTableRow';
 import { WorksetSummary } from 'types/torchlite';
 import useDashboardState from 'hooks/useDashboardState';
-import { useSession } from 'next-auth/react';
 
 const WorksetWidget = () => {
   const theme = useTheme();
@@ -31,10 +30,6 @@ const WorksetWidget = () => {
   const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
   const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
-  const { data: session, status } = useSession();
-  console.log("STATUS");
-  console.log(status);
-  console.log(session);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
@@ -63,15 +58,14 @@ const WorksetWidget = () => {
   };
 
   useEffect(() => {
-    if (type === 'public') {
-      setWorksetData(availableWorksets?.public || []);
-    } else if (type === 'featured') {
+    if (type === 'featured') {
       setWorksetData(availableWorksets?.featured || []);
+    } else if (type === 'user') {
+      setWorksetData(availableWorksets?.user || []);
     } else {
-      console.log(availableWorksets);
-      setWorksetData([]);
+      setWorksetData(availableWorksets?.public || []);
     }
-  }, [type, availableWorksets]);
+  }, [type, availableWorksets, status]);
 
   useEffect(() => {
     if (worksetData) {
@@ -91,8 +85,8 @@ const WorksetWidget = () => {
         <FormControl sx={{ minWidth: 120 }}>
           <Select value={type} color="secondary" onChange={handleChange}>
             <MenuItem value={'featured'}>Recommended Worksets</MenuItem>
-            <MenuItem value={'public'}>All Worksets</MenuItem>
             <MenuItem value={'user'}>My Worksets</MenuItem>
+            <MenuItem value={'public'}>All Worksets</MenuItem>
           </Select>
         </FormControl>
         <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>

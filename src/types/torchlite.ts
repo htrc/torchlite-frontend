@@ -31,7 +31,8 @@ export type WorksetInfo = WorksetSummary & {
 
 export type WorksetList = {
   public?: WorksetSummary[],
-  featured?: WorksetSummary[]
+  featured?: WorksetSummary[],
+  user?: WorksetSummary[]
 };
 
 export type FilterSettings = {
