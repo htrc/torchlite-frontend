@@ -31,9 +31,10 @@ const WorksetWidget = () => {
   const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
   const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   console.log("STATUS");
   console.log(status);
+  console.log(session);
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const { value } = event.target;
