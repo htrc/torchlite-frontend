@@ -49,11 +49,11 @@ function AppProvider({ children }: AppProviderProps) {
         console.log(worksets);
         console.log("STATUS");
         console.log(status);
-        if (status === 'authenticated' && session.user.email && availableWorksets?.public) {
+        if (status === 'authenticated' && session.user.email && worksets?.public) {
           const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
           console.log("WORKSET CREATOR");
           console.log(workset_creator);
-          worksets.user = availableWorksets.public.filter((workset) => workset.author == workset_creator)
+          worksets.user = worksets.public.filter((workset) => workset.author == workset_creator)
           console.log("USER WORKSETS");
           console.log(worksets.user);
         }
