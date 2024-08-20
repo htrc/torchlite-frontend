@@ -43,6 +43,12 @@ function AppProvider({ children }: AppProviderProps) {
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
+        console.log("USER EMAIL");
+        console.log(session?.user?.email);
+        console.log("PUBLIC WORKSETS");
+        console.log(availableWorksets?.public);
+        console.log("STATUS");
+        console.log(status);
         if (status === 'authenticated' && session.user.email && availableWorksets?.public) {
           const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
           console.log("WORKSET CREATOR");
