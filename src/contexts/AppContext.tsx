@@ -45,8 +45,8 @@ function AppProvider({ children }: AppProviderProps) {
         let worksets: WorksetList = await getAvailableWorksets();
         console.log("USER EMAIL");
         console.log(session?.user?.email);
-        console.log("PUBLIC WORKSETS");
-        console.log(availableWorksets?.public);
+        console.log("WORKSETS");
+        console.log(worksets);
         console.log("STATUS");
         console.log(status);
         if (status === 'authenticated' && session.user.email && availableWorksets?.public) {
