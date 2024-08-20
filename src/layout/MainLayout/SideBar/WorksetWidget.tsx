@@ -65,7 +65,7 @@ const WorksetWidget = () => {
     } else {
       setWorksetData(availableWorksets?.public || []);
     }
-  }, [type, availableWorksets, status]);
+  }, [type, availableWorksets]);
 
   useEffect(() => {
     if (worksetData) {
