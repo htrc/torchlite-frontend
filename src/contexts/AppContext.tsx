@@ -43,19 +43,12 @@ function AppProvider({ children }: AppProviderProps) {
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
-        console.log("USER EMAIL");
-        console.log(session?.user?.email);
-        console.log("WORKSETS");
-        console.log(worksets);
-        console.log("STATUS");
-        console.log(status);
+        if (status === 'authenticated' && worksets?.public) {
+          worksets.public = worksets.public.filter((workset) => workset.numVolumes < 1000)
+        }
         if (status === 'authenticated' && session.user.email && worksets?.public) {
           const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
-          console.log("WORKSET CREATOR");
-          console.log(workset_creator);
           worksets.user = worksets.public.filter((workset) => workset.author == workset_creator)
-          console.log("USER WORKSETS");
-          console.log(worksets.user);
         }
         setAvailableWorksets(worksets);
 
