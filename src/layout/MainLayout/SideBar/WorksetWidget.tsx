@@ -52,8 +52,10 @@ const WorksetWidget = () => {
 
   useEffect(() => {
     if (type === 'all' || type === 'A') {
+      console.log("What")
       setWorksetData(availableWorksets || []);
     } else {
+      console.log("Why")
       setWorksetData([]);
     }
   }, [type, availableWorksets]);

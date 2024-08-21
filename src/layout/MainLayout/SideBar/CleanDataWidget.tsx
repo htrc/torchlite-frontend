@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
+import { Box, Typography, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
@@ -43,7 +43,7 @@ const filterSpeech = [
 
 const dataTypes = [
   { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
-  { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
+  /* { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
   {
     label: 'Page Features',
     checked: false,
@@ -54,7 +54,7 @@ const dataTypes = [
     ],
     description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }
+  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech } */
 ];
 
 const animatedComponents = makeAnimated();
@@ -277,8 +277,7 @@ const isButtonEnabled = (
             </FormControl>         
             </Stack>
             <Stack>
-             { selectedOption !== stopwordsName && //want to only show this if the selectedOption === defaultStopwordsOptions
-              <CustomButton 
+             <CustomButton 
                 variant='outlined'
                 sx={{
                   height: '21px',
@@ -287,10 +286,10 @@ const isButtonEnabled = (
                   textTransform: 'none'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption === ''}
+                disabled={!selectedOption}
               >
                 Download selected list (optional)
-              </CustomButton>}
+              </CustomButton>
             </Stack>
             <Stack>
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
@@ -361,13 +360,15 @@ const isButtonEnabled = (
         <FormGroup aria-label="position">
           {typeGroup.map((item: IMockState) => (
             <Box key={item.label} sx={{ position: 'relative' }}>
-              <FormControlLabel
+              
+              <Typography>{item.label}</Typography>
+              {/* <FormControlLabel
                 value={item.label}
                 control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
                 label={item.label}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
-              />
+              /> */}
               <BootstrapTooltip title={item.description}>
                 <Box
                   component="img"
@@ -384,7 +385,7 @@ const isButtonEnabled = (
                   src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
                 />
               </BootstrapTooltip>
-              {item.checked && childItem(item)}
+              {childItem(item)}
             </Box>
           ))}
         </FormGroup>

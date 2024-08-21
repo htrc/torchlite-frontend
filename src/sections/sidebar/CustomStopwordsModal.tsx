@@ -43,11 +43,15 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
     }
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+      
       const file = event.target.files && event.target.files[0];
+      
       if (file) {
         setFilePath(file.name);
         // Do something with the file, like saving it or processing it
       }
+
+      event.target.value = '';
     }
 
     const handleClose = () => {
@@ -59,7 +63,9 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
   };
 
     const handleUploadButtonClick = () => {
+      
       if(fileInputRef.current) {
+        
         fileInputRef.current.click();
       }
     }
@@ -112,7 +118,7 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
                 />
                 <Divider sx={{my:2}} />
                 <Typography id="upload-options-title" variant="h5" component="h3" sx={{ mb: 2 }}>
-                  Choose how you would like to upload your stopword list (.txt files only)
+                  Choose how you would like to upload your stopword list (.txt and .csv files only)
                 </Typography>
                 <Grid container alignItems="center">
                   <Grid item xs={6}>
