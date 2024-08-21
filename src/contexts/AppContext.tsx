@@ -43,7 +43,7 @@ function AppProvider({ children }: AppProviderProps) {
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
-        if (status === 'authenticated' && worksets?.public) {
+        if (worksets?.public) {
           worksets.public = worksets.public.filter((workset) => workset.numVolumes < 1000)
         }
         if (status === 'authenticated' && session.user.email && worksets?.public) {
