@@ -26,7 +26,6 @@ const WorksetWidget = () => {
   const router = useRouter();
   const { dashboardState, availableWorksets, onChangeDashboardState } = useDashboardState();
 
-  // const { worksets } = useSelector((state) => state.dashboard);
   const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
   const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
@@ -37,20 +36,13 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: WorksetSummary) => {
-//    console.log("dashboardState:")
-//    console.log(dashboardState)
-//    console.log(dashboardState?.worksetId)
     if (prop.id !== dashboardState?.worksetId) {
-//      console.log(router.pathname)
-//      console.log(prop)
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }
       });
-//      console.log("HERE")
       setSelected(prop);
       onChangeDashboardState({
-//        worksetId: prop.id,
         importedId: prop.id,
         filters: {}
       });
