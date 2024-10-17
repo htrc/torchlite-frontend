@@ -18,9 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = await getServerSession(req, res, authOptions);
     if (session) {
       const authInfo: AuthInfo = await getSessionAuthInfo(session.sessionId);
+      console.log(authInfo.accessToken);
       headers = {
         Authorization: `Bearer ${authInfo.accessToken}`
       };
+      console.log(headers);
     }
 
     const worksets = await axios.get<WorksetSummary[]>(`/worksets/`, {
