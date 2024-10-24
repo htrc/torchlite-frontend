@@ -6,7 +6,7 @@
 //const withTM = require('next-transpile-modules')(['@babel/preset-react']);
 
 module.exports = {
-  transpilePackages: ['@babel/preset-react'],
+  transpilePackages: ['@babel/preset-react','rc-util'],
   reactStrictMode: false,
   output: 'standalone',
   images: {
