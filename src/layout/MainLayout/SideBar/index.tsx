@@ -12,7 +12,6 @@ const SideBar = () => {
   const { dashboardState } = useDashboardState();
   const [isWorksetExpanded, setWorksetExpanded] = useState(!!dashboardState?.worksetId);
   const [isFilterExpanded, setFilterExpanded] = useState(hasFilters(dashboardState?.filters));
-
   useEffect(() => {
     setFilterExpanded(hasFilters(dashboardState?.filters));
     // eslint-disable-next-line react-hooks/exhaustive-deps

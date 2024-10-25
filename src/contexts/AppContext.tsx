@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import qs from 'qs';
 
 // types
-import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList } from 'types/torchlite';
+import { DashboardContextProps, DashboardState, DashboardStatePatch, DataCleaningSettings, WorksetList } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -38,8 +38,10 @@ function AppProvider({ children }: AppProviderProps) {
         // Get workset and filter from router query
         const { worksetId } = router.query;
         const filters: any = qs.parse(router.query.filters as string, { comma: true });
+        const dataClean = router.query.datacleaning as DataCleaningSettings;
         let selectedWorksetId: string,
-          appliedFilters: any = {};
+          appliedFilters: any = {},
+          dataCleaning: DataCleaningSettings;
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
@@ -88,20 +90,25 @@ function AppProvider({ children }: AppProviderProps) {
               }
             }
           }
+          dataCleaning = dataClean
+
           await updateDashboardState(dashboardState.id, {
             importedId: selectedWorksetId,
-            filters: appliedFilters
+            filters: appliedFilters,
+            datacleaning: dataCleaning
           });
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
           selectedWorksetId = dashboardState.importedId;
           appliedFilters = dashboardState.filters;
+          dataCleaning = dashboardState.datacleaning;
           router.push({
             pathname: router.pathname,
             query: {
               ...router.query,
               worksetId: selectedWorksetId,
-              filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+              filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false }),
+              datacleaning: qs.stringify(dataCleaning, { arrayFormat: 'comma', encode: false })
             }
           });
         }
@@ -123,12 +130,14 @@ function AppProvider({ children }: AppProviderProps) {
     if (dashboardState) {
       const selectedWorksetId = dashboardState.worksetId;
       const appliedFilters = dashboardState.filters;
+      const dataCleaning = dashboardState.datacleaning;
       router.push({
         pathname: router.pathname,
         query: {
           ...router.query,
           worksetId: selectedWorksetId,
-          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false }),
+          datacleaning: qs.stringify(dataCleaning, { arrayFormat: 'comma', encode: false })
         }
       });
     }

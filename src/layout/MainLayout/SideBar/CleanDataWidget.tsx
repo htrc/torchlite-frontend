@@ -112,6 +112,15 @@ const CleanDataWidget = () => {
   //stopwords selection change
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, datacleaning: event.target.value as string }
+    });
+
+    onChangeDashboardState({
+      datacleaning: event.target.value as string
+    });
 };
 
 //stopwords -- saving user selection
@@ -136,7 +145,7 @@ const handleSaveName = (name: string) => {
   const handleDownload = () => {
     const fname = 'example.txt';
     const fileContent = 'This is an example file content.';
-
+    //text file with each line is key in stopwords or csv with single row or best is send back txt
     const element = document.createElement('a');
     const file = new Blob([fileContent], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
@@ -145,6 +154,7 @@ const handleSaveName = (name: string) => {
     element.click();
     document.body.removeChild(element);
   };
+  //@router.get("/{dashboard_id}/stopwords", description=““)
 
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
