@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
+import { Box, Typography, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
@@ -43,7 +43,7 @@ const filterSpeech = [
 
 const dataTypes = [
   { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
-  { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
+  /*{ label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
   {
     label: 'Page Features',
     checked: false,
@@ -54,7 +54,7 @@ const dataTypes = [
     ],
     description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }
+  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }*/
 ];
 
 const animatedComponents = makeAnimated();
@@ -199,25 +199,26 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boole
 const handleSubItemChange = (subLabel: string, checked: boolean) => {
   setTypeGroup(prev =>
     prev.map(type => {
-      if (type.label === 'Page Features' && !checked) {
-        // If the "Page Features" box is unchecked, uncheck all sub-items
-        const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
-        console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
-        return { ...type, value: updatedValue };
-      } else if (type.label === 'Page Features' && checked) {
-        // If the "Page Features" box is checked, only update the sub-item that triggered the change
-        const updatedValue = type.value.map((item: any) =>
-          item.subLabel === subLabel ? { ...item, checked } : item
-        );
-        console.log("Returning updatedValue for checked 'Page Features' box:", updatedValue);
-        return { ...type, value: updatedValue };
+      if (type.label === 'Page Features') {
+        if (!checked && subLabel === 'Page Features') {
+          // If the "Page Features" parent box is unchecked, uncheck all sub-items
+          const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+          console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
+          return { ...type, value: updatedValue };
+        } else {
+          // Only update the specific sub-item that triggered the change
+          const updatedValue = type.value.map((item: any) =>
+            item.subLabel === subLabel ? { ...item, checked } : item
+          );
+          console.log("Returning updatedValue for sub-item change:", updatedValue);
+          return { ...type, value: updatedValue };
+        }
       }
       console.log("Returning unchanged type:", type);
       return type;
     })
   );
 };
-
 
 const handleFilterChange = (selectedFilterOptions) => {
   const selectedValues = selectedFilterOptions.map(option => option.value);
@@ -260,7 +261,7 @@ const isButtonEnabled = (
               <InputLabel>Choose a list</InputLabel>  
               <MUISelect
                 //value={selectedOption}
-                value={applyStopwordsChecked ? selectedOption : ''}
+                value={selectedOption}
                 onChange={handleSelectChange}
                 style={{
                   minWidth: '200px',
@@ -276,7 +277,6 @@ const isButtonEnabled = (
             </FormControl>         
             </Stack>
             <Stack>
-             { selectedOption !== stopwordsName && //want to only show this if the selectedOption === defaultStopwordsOptions
               <CustomButton 
                 variant='outlined'
                 sx={{
@@ -286,16 +286,16 @@ const isButtonEnabled = (
                   textTransform: 'none'
                 }}
                 onClick={handleDownload}
-                disabled={selectedOption === ''}
+                disabled={!selectedOption}
               >
                 Download selected list (optional)
-              </CustomButton>}
+              </CustomButton>
             </Stack>
             <Stack>
               {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
               {fileName}
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-              {selectedOption === '' && 
+               
               <CustomButton
                 variant="contained"
                 sx={{
@@ -312,7 +312,7 @@ const isButtonEnabled = (
                 onClick={handleUploadClick}
               >
                 Or upload a custom list
-              </CustomButton>}
+              </CustomButton>
               <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal} onSaveName={handleSaveName}/>
             </Stack>
           </RadioGroup>
@@ -360,13 +360,15 @@ const isButtonEnabled = (
         <FormGroup aria-label="position">
           {typeGroup.map((item: IMockState) => (
             <Box key={item.label} sx={{ position: 'relative' }}>
-              <FormControlLabel
+              <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', marginBottom: 1.5}}>
+              <Typography>{item.label}</Typography>
+              {/*<FormControlLabel
                 value={item.label}
                 control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
                 label={item.label}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
-              />
+              />*/}
               <BootstrapTooltip title={item.description}>
                 <Box
                   component="img"
@@ -376,6 +378,7 @@ const isButtonEnabled = (
                     maxHeight: { xs: 15, md: 15 },
                     maxWidth: { xs: 15, md: 15 },
                     // position: 'absolute',
+                    marginLeft: 1,
                     top: '10px',
                     right: '10px'
                   }}
@@ -383,7 +386,8 @@ const isButtonEnabled = (
                   src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
                 />
               </BootstrapTooltip>
-              {item.checked && childItem(item)}
+              </Box>
+              {childItem(item)}
             </Box>
           ))}
         </FormGroup>

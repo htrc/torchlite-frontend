@@ -11,7 +11,7 @@ import { pickRandom } from 'utils/helpers';
 const torchliteUid: string = '95164779-1fc9-4592-9c74-7a014407f46d';
 
 async function cloneDashboard(dashboardId: string, headers: any, headersGet: any = headers): Promise<DashboardSummary> {
-  const { worksetId, filters, widgets } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
+  const { worksetId, filters, widgets, importedId } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headersGet
   });
 
@@ -20,7 +20,8 @@ async function cloneDashboard(dashboardId: string, headers: any, headersGet: any
     {
       worksetId: worksetId,
       filters: filters,
-      widgets: widgets
+      widgets: widgets,
+      importedId: importedId
     },
     {
       headers: headers
@@ -89,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // the user doesn't have any dashboards (probably first time logging in)
       [dashboardSummary, featuredDashboardId] = await getFeaturedDashboardClone(headers);
 
-    const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.worksetId}/metadata`, {
+    const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
       headers: headers
     });
 
