@@ -6,7 +6,7 @@
 //const withTM = require('next-transpile-modules')(['@babel/preset-react']);
 
 module.exports = {
-  transpilePackages: ['@babel/preset-react','rc-util','@ant-design/icons-svg'],
+  transpilePackages: ['@babel/preset-react','rc-util','@ant-design/icons-svg','d3-scale-chromatic','react-d3-cloud'],
   reactStrictMode: false,
   output: 'standalone',
   images: {
