@@ -11,7 +11,7 @@ async function getDashboard(dashboardId: string, headers: any): Promise<Dashboar
   const dashboardSummary = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headers
   });
-  const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.worksetId}/metadata`, {
+  const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
     headers: headers
   });
 

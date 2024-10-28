@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import qs from 'qs';
 
 // types
-import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetSummary } from 'types/torchlite';
+import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -27,10 +27,10 @@ type AppProviderProps = {
 function AppProvider({ children }: AppProviderProps) {
   const [widgetState, setWidgetState] = useState<any>({});
   const [dashboardState, setDashboardState] = useState<DashboardState>();
-  const [availableWorksets, setAvailableWorksets] = useState<WorksetSummary[]>();
+  const [availableWorksets, setAvailableWorksets] = useState<WorksetList>();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const initApp = async () => {
@@ -42,13 +42,19 @@ function AppProvider({ children }: AppProviderProps) {
           appliedFilters: any = {};
 
         // Get worksets
-        const worksets: WorksetSummary[] = await getAvailableWorksets();
+        let worksets: WorksetList = await getAvailableWorksets();
+        if (worksets?.public) {
+          worksets.public = worksets.public.filter((workset) => workset.numVolumes < 1000)
+        }
+        if (status === 'authenticated' && session.user.email && worksets?.public) {
+          const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
+          worksets.user = worksets.public.filter((workset) => workset.author == workset_creator)
+        }
         setAvailableWorksets(worksets);
 
         // Get dashboard state
         const dashboardId = sessionStorage.getItem('dashboard_id');
         let dashboardState: DashboardState;
-
         if (status === 'unauthenticated') {
           if (dashboardId) {
             dashboardState = await getDashboardState(dashboardId);
@@ -83,12 +89,12 @@ function AppProvider({ children }: AppProviderProps) {
             }
           }
           await updateDashboardState(dashboardState.id, {
-            worksetId: selectedWorksetId,
+            importedId: selectedWorksetId,
             filters: appliedFilters
           });
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
-          selectedWorksetId = dashboardState.worksetId;
+          selectedWorksetId = dashboardState.importedId;
           appliedFilters = dashboardState.filters;
           router.push({
             pathname: router.pathname,
