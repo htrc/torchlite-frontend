@@ -2,8 +2,13 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
+interface LineGraphPropChildren {
+  title: string,
+  value: number
+}
+
 interface LineGraphProps {
-  data: Record<string, number>;
+  data: Record<string, LineGraphPropChildren>;
 }
 
 const LineGraph: React.FC<LineGraphProps> = ({ data }) => {
@@ -15,13 +20,13 @@ const LineGraph: React.FC<LineGraphProps> = ({ data }) => {
 
       const svg = d3.select(svgRef.current);
 
-      // Extract data for x-axis (titles) and y-axis (values)
-      const titles = Object.keys(data);
+      // Extract data for x-axis (htids) and y-axis (values)
+      const htids = Object.keys(data);
       const values = Object.values(data);
 
       // Create scales for x and y axes
-      const xScale = d3.scaleBand().domain(titles).range([0, 50]).padding(0.1);
-      const yScale = d3.scaleLinear().domain([0, d3.max(values) || 1]).range([50, 0]);
+      const xScale = d3.scaleBand().domain(htids).range([0, 50]).padding(0.1);
+      const yScale = d3.scaleLinear().domain([0, d3.max(values.map(htid => htid.value)) || 1]).range([50, 0]);
 
       // Draw x-axis without labels
       svg
@@ -37,7 +42,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data }) => {
       // Draw the line
       svg
         .append('path')
-        .datum(values.map((d, i) => ({ title: titles[i], value: d })))
+        .datum(values.map((d, i) => ({ title: htids[i], value: d.value })))
         .attr('fill', 'none')
         .attr('stroke', 'blue')
         .attr('stroke-width', 2)

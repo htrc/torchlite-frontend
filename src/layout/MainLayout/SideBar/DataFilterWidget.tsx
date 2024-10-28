@@ -12,6 +12,18 @@ import genreData from 'data/genreData';
 import { IFilterKey } from 'types/dashboard';
 import { colourStyles } from 'styles/react-select';
 import useDashboardState from 'hooks/useDashboardState';
+import sourceInstitutionData from 'data/sourceInstitutionData';
+import languageData from 'data/languageData';
+import accessTypeData from 'data/accessTypeData';
+import resourceTypeData from 'data/resourceTypeData';
+
+enum Filters {
+  Language,
+  SourceInstitution,
+  Genre,
+  AccessType,
+  ResourceType
+}
 
 const animatedComponents = makeAnimated();
 const convertFromUrl = (originalData: any) => {
@@ -19,14 +31,66 @@ const convertFromUrl = (originalData: any) => {
   for (const key in originalData) {
     if (originalData.hasOwnProperty(key)) {
       const valueArray = Array.isArray(originalData[key]) ? originalData[key] : [originalData[key]];
+      let filterCondition = Filters.Genre;
+      
+      filterCondition = updateCondition(key, filterCondition);
+      
       transformedData[key] = valueArray.map((item: any) => ({
         value: item,
-        label: item,
+        label: updateFilters(item, filterCondition),
         key
       }));
     }
   }
   return transformedData;
+
+  function updateCondition(key: string, filterCondition: Filters) {
+    switch (key) {
+      case 'genres':
+        filterCondition = Filters.Genre;
+        break;
+      case 'languages':
+        filterCondition = Filters.Language;
+        break;
+      case 'sourceInstitutions':
+        filterCondition = Filters.SourceInstitution;
+        break;
+      case 'accessRights':
+        filterCondition = Filters.AccessType;
+        break;
+      case 'resourceTypes':
+        filterCondition = Filters.ResourceType;
+        break;
+    }
+    return filterCondition;
+  }
+};
+
+const updateFilters = (name: any, filterValue: Filters) => {
+  let dataToSearch;
+  switch (filterValue) {
+    case Filters.Genre:
+      dataToSearch = genreData;
+      break;
+    case Filters.Language:
+      dataToSearch = languageData;
+      break;
+    case Filters.SourceInstitution:
+      dataToSearch = sourceInstitutionData;
+      break;
+    case Filters.AccessType:
+      dataToSearch = accessTypeData;
+      break;
+    case Filters.ResourceType:
+      dataToSearch = resourceTypeData;
+      break;
+  }
+
+  if (dataToSearch.hasOwnProperty(name)) {
+    const filterVal = dataToSearch[name];
+    return filterVal;
+  }
+  return null;
 };
 
 const DataFilterWidget = () => {
@@ -58,22 +122,19 @@ const DataFilterWidget = () => {
     }, {});
 
     updateFiltersRoute(transformed);
+
     onChangeDashboardState({
       filters: transformed
     });
   };
 
-  const getNameMatchingShortname = (name: any) => {
-    for (const key in genreData) {
-      if (genreData.hasOwnProperty(key)) {
-        const genre = genreData[key];
-        if (genre.name === name) {
-          return genre.shortname;
-        }
-      }
+  /* const updateValues = (data: any, mapping:any, key: any) => {
+    if (data[key]) {
+      data[key] = data[key].map(value => mapping[value] || value);
     }
-    return null; // If no matching object is found
-  };
+  } */
+
+  
 
   const getFilterByData = (timeLineData: any) => {
     const titles = [...new Set(timeLineData.flatMap((obj: any) => obj.title))]
@@ -85,11 +146,11 @@ const DataFilterWidget = () => {
       .sort()
       .map((pubDate) => ({ value: pubDate, label: pubDate?.toString(), key: 'pubDate' }));
     //const genres = [...new Set(timeLineData.map(obj => obj.metadata.genre))].filter(genre => genre !== undefined).map(genre => ({ value: genre, label: genre, key: 'genre' }));
-    const genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
+    let genres = [...new Set(timeLineData.flatMap((obj: any) => obj.genre))]
       .filter((genre) => genre !== undefined)
       .sort()
       .map((genre) => ({ value: genre, label: genre, key: 'genre' }));
-    const typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
+    let typesOfResources = [...new Set(timeLineData.flatMap((obj: any) => obj.typeOfResource))]
       .filter((type) => type !== undefined)
       .sort()
       .map((type) => ({ value: type, label: type, key: 'typeOfResource' }));
@@ -105,7 +166,7 @@ const DataFilterWidget = () => {
       .filter((publisher) => publisher !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'publisher' }));
-    const accessRights = [...new Set(timeLineData.flatMap((obj: any) => obj.accessRights))]
+    let accessRights = [...new Set(timeLineData.flatMap((obj: any) => obj.accessRights))]
       .filter((accessRights) => accessRights !== undefined)
       .sort()
       .map((accessRights) => ({ value: accessRights, label: accessRights, key: 'accessRights' }));
@@ -113,25 +174,62 @@ const DataFilterWidget = () => {
       .filter((pubPlace) => pubPlace !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'pubPlace' }));
-    const languages = [...new Set(timeLineData.flatMap((obj: any) => obj.language))]
+    let languages = [...new Set(timeLineData.flatMap((obj: any) => obj.language))]
       .filter((language) => language !== undefined)
       .sort()
       .map((language) => ({ value: language, label: language, key: 'language' }));
 
-    const sourceInstitutions = [...new Set(timeLineData.flatMap((obj: any) => obj.sourceInstitution))]
+    let sourceInstitutions = [...new Set(timeLineData.flatMap((obj: any) => obj.sourceInstitution))]
       .filter((sourceInstitution) => sourceInstitution !== undefined)
       .sort()
       .map((name) => ({ value: name, label: name, key: 'sourceInstitution' }));
+
+    
+    if (accessRights.length) {
+      for (let i = 0; i < accessRights.length; i++) {
+        let value = accessRights[i].value;
+        let label = updateFilters(value, Filters.AccessType);
+        accessRights[i].label = label;
+      }
+    }
+
+    if (languages.length) {
+      for (let i = 0; i < languages.length; i++) {
+        let value = languages[i].value;
+        let label = updateFilters(value, Filters.Language);
+        languages[i].label = label;
+      }
+    }
+    
+    if (sourceInstitutions.length) {
+      for (let i = 0; i < sourceInstitutions.length; i++) {
+        let value = sourceInstitutions[i].value;
+        let label = updateFilters(value, Filters.SourceInstitution);
+        sourceInstitutions[i].label = label;
+      }
+    }
+
+    if (typesOfResources.length) {
+      for (let i = 0; i < typesOfResources.length; i++) {
+        let value = typesOfResources[i].value;
+        let label = updateFilters(value, Filters.ResourceType);
+        typesOfResources[i].label = label;
+      }
+    }
+
     if (genres.length) {
       for (let i = 0; i < genres.length; i++) {
         let value = genres[i].value;
-        let label = getNameMatchingShortname(value);
-        if (label == null) {
-          label = genres[i].label;
-        }
+        let label = updateFilters(value, Filters.Genre);
         genres[i].label = label;
       }
     }
+    genres = genres.filter(genre => genre.label !== null && !genre.value.startsWith("urn"));
+    accessRights = accessRights.filter(accRight => accRight.label !== null);
+    typesOfResources = typesOfResources.filter(typeRes => typeRes.label !== null);
+    languages = languages.filter(lang => lang.label !== null);
+    sourceInstitutions = sourceInstitutions.filter(sourceInst => sourceInst.label !== null);
+
     const filterGroupData = {
       titles,
       pubDates,
