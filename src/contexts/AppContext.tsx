@@ -46,10 +46,10 @@ function AppProvider({ children }: AppProviderProps) {
         if (worksets?.public) {
           worksets.public = worksets.public.filter((workset) => workset.numVolumes < 1000)
         }
-        if (status === 'authenticated' && session.user.email && worksets?.public) {
+/*        if (status === 'authenticated' && session.user.email && worksets?.public) {
           const workset_creator = session.user.email.substring(0,session.user.email?.indexOf('@'))
           worksets.user = worksets.public.filter((workset) => workset.author == workset_creator)
-        }
+        }*/
         setAvailableWorksets(worksets);
 
         // Get dashboard state
