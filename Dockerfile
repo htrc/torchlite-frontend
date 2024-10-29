@@ -4,7 +4,7 @@ WORKDIR /app
 
 #ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 #RUN apk add --no-cache dumb-init bash gawk
 RUN apt-get update && apt-get -y install dumb-init bash gawk sqlite3
@@ -20,7 +20,7 @@ USER node
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 
 ENTRYPOINT ["./env.sh", "/usr/bin/dumb-init", "--"]
 CMD ["node", "server.js"]
