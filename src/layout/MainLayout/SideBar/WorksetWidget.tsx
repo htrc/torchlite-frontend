@@ -77,8 +77,8 @@ const WorksetWidget = () => {
         <FormControl sx={{ minWidth: 120 }}>
           <Select value={type} color="secondary" onChange={handleChange}>
             <MenuItem value={'featured'}>Recommended Worksets</MenuItem>
-            <MenuItem value={'user'}>My Worksets</MenuItem>
             <MenuItem value={'public'}>All Worksets</MenuItem>
+            <MenuItem value={'user'} disabled={availableWorksets?.user?.length ? false : true}>My Worksets</MenuItem>
           </Select>
         </FormControl>
         <TableContainer component={Paper} sx={{ maxWidth: '100%' }}>
