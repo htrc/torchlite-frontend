@@ -1,17 +1,29 @@
 // @ts-nocheck
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack, RadioGroup, Radio, useTheme } from '@mui/material';
+import { Box, Typography, Checkbox, FormControl, FormControlLabel, FormHelperText, FormGroup, Stack, RadioGroup, Radio, useTheme, MenuItem, InputLabel, Select as MUISelect, SelectChangeEvent  } from '@mui/material';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
+import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+
 interface IMockState {
   label: string;
   checked: boolean;
   value: any;
   description: string;
 }
+
+//stopwords dropdown
+ const defaultStopwordsOptions = [
+   { value: 'English', label: 'English' },
+   { value: 'French', label: 'French' },
+   { value: 'German', label: 'German' },
+   { value: 'Spanish', label: 'Spanish' },
+  // Add other options as needed
+ ];
+
 const filterSpeech = [
   { label: 'CC: Coordinating conjunction', value: 'CC' },
   { label: 'CD: Cardinal number', value: 'CD' },
@@ -28,9 +40,10 @@ const filterSpeech = [
   { label: 'NNS: Noun, plural', value: 'NNS' },
   { label: 'NNPS: Proper noun, singular', value: 'NNPS' }
 ];
+
 const dataTypes = [
   { label: 'Apply Stopwords', checked: false, value: null, description: 'Remove common words from analysis' },
-  { label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
+  /*{ label: 'Ignore case', checked: false, value: null, description: 'Read all letters as lowercase' },
   {
     label: 'Page Features',
     checked: false,
@@ -41,22 +54,85 @@ const dataTypes = [
     ],
     description: 'Exclude volume sections from analysis'
   },
-  { label: 'Filter by parts-of-speech', checked: false, value: '', description: 'Include specific parts-of-speech' }
+  { label: 'Filter by parts-of-speech', checked: false, value: [], description: 'Include specific parts-of-speech', options: filterSpeech }*/
 ];
+
 const animatedComponents = makeAnimated();
+
 const CleanDataWidget = () => {
   const theme = useTheme();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
-  const [selectedValue, setSelectedValue] = useState('default');
+  //const [selectedValue, setSelectedValue] = useState('default');
+  const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
+  const [selectedOption, setSelectedOption] = useState(''); 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [stopwordsName, setStopwordsName] = useState('');
+  const [applyStopwordsChecked, setApplyStopwordsChecked] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
-  const handleButtonClick = () => {
+
+  //old handler for the upload stopwords button
+  /*const handleButtonClick = () => {
     setSelectedValue('upload');
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };*/
+
+  //modal handlers for the custom stopwords upload button
+  const handleUploadClick = () => {
+    setModalOpen(true);
   };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleClearButton = () => {
+    // Reset checkboxes and radios to their original state
+    setTypeGroup((prevTypeGroup) =>
+      prevTypeGroup.map((item) => ({
+        ...item,
+        checked: false,
+        value: item.label === 'Apply Stopwords' ? null : (item.label === 'Page Features' ? [
+          { subLabel: 'Remove headers', checked: false },
+          { subLabel: 'Remove footers', checked: false },
+          { subLabel: 'Remove body', checked: false }
+        ] : item.label === 'Filter by parts-of-speech' ? []
+         : item.value )// Reset specific values if needed
+      }))
+    );
+    // Reset other state variables if needed
+    setSelectedOption('');
+    setSelectedFilters([]);
+  }
+
+  //stopwords selection change
+  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedOption(event.target.value as string);
+};
+
+//stopwords -- saving user selection
+const handleSaveName = (name: string) => {
+  setStopwordsName(name); // Update state with the saved name
+  // Check if the name is not already in the list of options
+  if (!stopwordsOptions.some(option => option.label === name)) {
+    // Add the new name to the list of options
+    setStopwordsOptions(prevOptions => [
+      ...prevOptions,
+      { value: name, label: name }
+    ]);
+}
+  setSelectedOption(name);
+};
+
+  //stopwords update check
+  useEffect(() => {
+    console.log("Selected Option State:", selectedOption);
+  }, [selectedOption]);
+  
   const handleDownload = () => {
     const fname = 'example.txt';
     const fileContent = 'This is an example file content.';
@@ -69,42 +145,157 @@ const CleanDataWidget = () => {
     element.click();
     document.body.removeChild(element);
   };
+
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
   };
+
   const handleRadioChange = (event: any) => {
     setSelectedValue(event.target.value);
   };
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+
+  /*const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     setTypeGroup((prev) => prev.map((type) => (type.label === event.target.value ? { ...type, checked } : type)));
-  };
+  };*/
+
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const { value } = event.target;
+  setTypeGroup(prev =>
+    prev.map((type) => {
+      if (type.label === value) {
+        // Toggle the checked state of the clicked checkbox
+        let updatedType = { ...type, checked };
+        if (!checked && type.label === 'Filter by parts-of-speech') {
+          // Clear the value array when unchecked
+          updatedType = { ...updatedType, value: [] };
+        }
+        console.log("This is what has changed: ", updatedType)
+        return updatedType;
+      }
+      return type;
+    })
+  );
+  // If the changed checkbox is "Apply stopwords" or "Ignore case", update their checked states separately
+  if (value === 'Apply Stopwords') {
+    setApplyStopwordsChecked(checked);
+    // If unchecked, clear the selectedOption state
+    if (!checked) setSelectedOption('');
+    //not sure if this ignore case is needed in the future with real data or not
+  } 
+    if (value === 'Ignore case') {
+    // Update the state of the "Ignore case" checkbox
+    setTypeGroup(prev =>
+      prev.map(type =>
+        type.label === 'Ignore case' ? { ...type, checked } : type
+      )
+    );
+  }
+  if (value === 'Page Features') {
+    handleSubItemChange(value, checked);
+  }
+};
+
+const handleSubItemChange = (subLabel: string, checked: boolean) => {
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Page Features') {
+        if (!checked && subLabel === 'Page Features') {
+          // If the "Page Features" parent box is unchecked, uncheck all sub-items
+          const updatedValue = type.value.map((item: any) => ({ ...item, checked: false }));
+          console.log("Returning updatedValue for unchecked 'Page Features' box:", updatedValue);
+          return { ...type, value: updatedValue };
+        } else {
+          // Only update the specific sub-item that triggered the change
+          const updatedValue = type.value.map((item: any) =>
+            item.subLabel === subLabel ? { ...item, checked } : item
+          );
+          console.log("Returning updatedValue for sub-item change:", updatedValue);
+          return { ...type, value: updatedValue };
+        }
+      }
+      console.log("Returning unchanged type:", type);
+      return type;
+    })
+  );
+};
+
+const handleFilterChange = (selectedFilterOptions) => {
+  const selectedValues = selectedFilterOptions.map(option => option.value);
+
+  // Updating the state with the selected values
+  setTypeGroup(prev =>
+    prev.map(type => {
+      if (type.label === 'Filter by parts-of-speech') {
+        console.log("Selected values:", selectedValues);
+        return { ...type, value: selectedValues };
+      }
+
+      return type;
+    })
+  );
+};
+
+
+// Determine whether to enable the button based on the states of "Apply Stopwords", "Ignore case" checkboxes, "Page features" sublabels, and "Filter by parts-of-speech"
+const isButtonEnabled = (
+  selectedOption !== "" || 
+  typeGroup.find(item => item.label === 'Ignore case')?.checked || 
+  (typeGroup.find(item => item.label === 'Page Features')?.checked &&
+  typeGroup.find(item => item.label === 'Page Features')?.value.some(subItem => subItem.checked)) || 
+  (typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.checked &&
+  typeGroup.find(item => item.label === 'Filter by parts-of-speech')?.value.length > 0)
+);
+
   useEffect(() => {
     console.log(fileName);
   }, [fileName]);
+
   const childItem = useCallback((type: any) => {
     switch (type.label) {
       case 'Apply Stopwords':
         return (
           <RadioGroup aria-label="size" name="radio-buttons-group" sx={{ ml: 3 }} defaultValue="default">
-            <Stack direction="row" alignItems="center">
-              <FormControlLabel value="default" control={<Radio color="secondary" />} label="Use default" />
-              <a
+            <Stack direction="row" alignItems="left">   
+            <FormControl>
+              <InputLabel>Choose a list</InputLabel>  
+              <MUISelect
+                //value={selectedOption}
+                value={selectedOption}
+                onChange={handleSelectChange}
                 style={{
-                  color: theme.palette.primary[700]/*'#1e98d7'*/,
-                  textAlign: 'center',
-                  lineHeight: 'normal',
-                  cursor: 'pointer'
+                  minWidth: '200px',
+                  borderColor: theme.palette.primary[700],
                 }}
-                onClick={handleDownload}
               >
-                Download default list
-              </a>
+                {stopwordsOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </MUISelect>
+            </FormControl>         
             </Stack>
             <Stack>
-              <FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />
+              <CustomButton 
+                variant='outlined'
+                sx={{
+                  height: '21px',
+                  padding: '2px',
+                  marginTop: '10px',
+                  textTransform: 'none'
+                }}
+                onClick={handleDownload}
+                disabled={!selectedOption}
+              >
+                Download selected list (optional)
+              </CustomButton>
+            </Stack>
+            <Stack>
+              {/*<FormControlLabel value="upload" control={<Radio color="secondary" />} label="Upload customized list" />*/}
               {fileName}
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+               
               <CustomButton
                 variant="contained"
                 sx={{
@@ -114,12 +305,15 @@ const CleanDataWidget = () => {
                   backgroundColor: theme.palette.primary[700]/*'#1e98d7'*/,
                   color: theme.palette.common.white,
                   textAlign: 'center',
-                  lineHeight: 'normal'
+                  lineHeight: 'normal',
+                  marginTop: '20px',
+                  textTransform: 'none'
                 }}
-                onClick={handleButtonClick}
+                onClick={handleUploadClick}
               >
-                Upload list
+                Or upload a custom list
               </CustomButton>
+              <CustomStopwordsModal open={modalOpen} onClose={handleCloseModal} onSaveName={handleSaveName}/>
             </Stack>
           </RadioGroup>
         );
@@ -132,7 +326,7 @@ const CleanDataWidget = () => {
               <FormControlLabel
                 key={item.subLabel}
                 value={item.subLabel}
-                control={<Checkbox color="secondary" />}
+                control={<Checkbox color="secondary" checked={item.checked} onChange={(event) => handleSubItemChange(item.subLabel, event.target.checked)} />}
                 label={item.subLabel}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
@@ -152,26 +346,29 @@ const CleanDataWidget = () => {
                 className="basic-multi-select"
                 classNamePrefix="select"
                 {...(theme.palette.mode === 'dark' ? { styles: colourStyles } : {})}
+                onChange={handleFilterChange}
               />
             </FormControl>
           </Stack>
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedOption, modalOpen, stopwordsName]);
   return (
     <Stack direction="column" sx={{ padding: '16px' }} justifyContent="space-between">
       <FormControl component="fieldset">
         <FormGroup aria-label="position">
           {typeGroup.map((item: IMockState) => (
             <Box key={item.label} sx={{ position: 'relative' }}>
-              <FormControlLabel
+              <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', marginBottom: 1.5}}>
+              <Typography>{item.label}</Typography>
+              {/*<FormControlLabel
                 value={item.label}
                 control={<Checkbox checked={item.checked} color="secondary" onChange={handleChange} />}
                 label={item.label}
                 labelPlacement="end"
                 sx={{ mr: 1 }}
-              />
+              />*/}
               <BootstrapTooltip title={item.description}>
                 <Box
                   component="img"
@@ -181,6 +378,7 @@ const CleanDataWidget = () => {
                     maxHeight: { xs: 15, md: 15 },
                     maxWidth: { xs: 15, md: 15 },
                     // position: 'absolute',
+                    marginLeft: 1,
                     top: '10px',
                     right: '10px'
                   }}
@@ -188,7 +386,8 @@ const CleanDataWidget = () => {
                   src={theme.palette.mode === 'dark' ? '/images/info_white.png' : '/images/info.png'}
                 />
               </BootstrapTooltip>
-              {item.checked && childItem(item)}
+              </Box>
+              {childItem(item)}
             </Box>
           ))}
         </FormGroup>
@@ -209,6 +408,7 @@ const CleanDataWidget = () => {
               textAlign: 'center',
               textTransform: 'none'
             }}
+            disabled={!isButtonEnabled}
           >
             Apply cleaning
           </CustomButton>
@@ -226,7 +426,7 @@ const CleanDataWidget = () => {
               textAlign: 'center',
               textTransform: 'none'
             }}
-            onClick={() => {}}
+            onClick={handleClearButton}
           >
             Clear cleaning
           </CustomButton>

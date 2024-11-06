@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Box, Grid } from '@mui/material';
 import { NextPageContext } from 'next';
 import { getProviders, getCsrfToken } from 'next-auth/react';
+import { WidgetType } from 'data/constants';
 import Layout from 'layout';
 import Page from 'components/Page';
 import DashboardHeader from 'layout/MainLayout/DashboardHeader';
@@ -17,12 +18,14 @@ const DashboardDefault = ({ csrfToken }: any) => {
         <Box>
           <DashboardHeader csrfToken={csrfToken} />
           <Grid container spacing={3}>
-            {dashboardState?.widgets?.map((widget, index) => {
-              return (
-                <Grid item xs={12} md={6} key={index}>
-                  <Widget dashboardState={dashboardState} widgetType={widget.type} />
-                </Grid>
-              );
+            {Array.from(new Map(dashboardState?.widgets?.map(obj => [`${obj.type}`, obj])).values())?.map((widget, index) => {
+              if (widget.type in WidgetType && dashboardState) {
+                return (
+                  <Grid item xs={12} md={6} key={index}>
+                    <Widget dashboardState={dashboardState} widgetType={widget.type} />
+                  </Grid>
+                );
+              }
             })}
           </Grid>
         </Box>

@@ -46,4 +46,3 @@ export const AxisBottom = ({ xScale, numberOfTicks, pixelsPerTick }: AxisBottomP
     </>
   );
 };
-

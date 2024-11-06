@@ -28,6 +28,19 @@ export async function getWidgetData(dashboardId: any, widgetType: any) {
   return defaultAxios.get(`/api/dashboards/${dashboardId}/widgets/${widgetType}/data`).then((response) => response.data);
 }
 
+export async function getWorksetData(dashboardId: any, dataType: string, filtered: boolean = false) {
+  //console.log("working here")
+
+  //const filterQuery = filtered ? '?filtered=true' : '';
+  return defaultAxios
+    .get(`/api/dashboards/${dashboardId}/${dataType}/${filtered}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error('Error fetching workset data:', error);
+      throw error;
+    });
+}
+
 export async function getIdplist() {
   return defaultAxios
     .get('https://analytics.hathitrust.org/idplist')
