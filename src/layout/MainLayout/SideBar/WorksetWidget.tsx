@@ -71,6 +71,9 @@ const WorksetWidget = () => {
     }
   }, [worksetData, dashboardState?.worksetId]);
 
+  console.log("User Wokrset Length:");
+  console.log(availableWorksets?.user?.length);
+
   return (
     <>
       <Stack sx={{ margin: theme.spacing(1) }} spacing={2}>
