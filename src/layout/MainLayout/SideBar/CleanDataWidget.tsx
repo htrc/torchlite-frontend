@@ -7,6 +7,9 @@ import CustomButton from 'components/Button';
 import { colourStyles } from 'styles/react-select';
 import { BootstrapTooltip } from 'components/BootstrapTooltip';
 import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
+import useDashboardState from 'hooks/useDashboardState';
+import { getStopwordsData } from '../../../../src/services/index';
+import { useRouter } from 'next/router';
 
 interface IMockState {
   label: string;
@@ -61,9 +64,11 @@ const animatedComponents = makeAnimated();
 
 const CleanDataWidget = () => {
   const theme = useTheme();
+  const router = useRouter();
   const [typeGroup, setTypeGroup] = useState<IMockState[]>(dataTypes);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState(null);
+  const { dashboardState, onChangeDashboardState } = useDashboardState();
   //const [selectedValue, setSelectedValue] = useState('default');
   const [stopwordsOptions, setStopwordsOptions] = useState(defaultStopwordsOptions)
   const [selectedOption, setSelectedOption] = useState(''); 
@@ -71,6 +76,9 @@ const CleanDataWidget = () => {
   const [stopwordsName, setStopwordsName] = useState('');
   const [applyStopwordsChecked, setApplyStopwordsChecked] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState([]);
+  
+  // Temp variable to store fetched data
+  let downloadData: any = null;
 
 
   //old handler for the upload stopwords button
@@ -90,6 +98,30 @@ const CleanDataWidget = () => {
     setModalOpen(false);
   };
 
+  const handleApplyButton = (dataCleaning: any) => {
+    console.log("onApplyDataCleaning", dataCleaning)
+    onChangeDashboardState({
+      datacleaning: dataCleaning
+    });
+    console.log(onChangeDashboardState)
+    // Reset checkboxes and radios to their original state
+    /* setTypeGroup((prevTypeGroup) =>
+      prevTypeGroup.map((item) => ({
+        ...item,
+        checked: false,
+        value: item.label === 'Apply Stopwords' ? null : (item.label === 'Page Features' ? [
+          { subLabel: 'Remove headers', checked: false },
+          { subLabel: 'Remove footers', checked: false },
+          { subLabel: 'Remove body', checked: false }
+        ] : item.label === 'Filter by parts-of-speech' ? []
+         : item.value )// Reset specific values if needed
+      }))
+    );
+    // Reset other state variables if needed
+    setSelectedOption('');
+    setSelectedFilters([]); */
+  }
+
   const handleClearButton = () => {
     // Reset checkboxes and radios to their original state
     setTypeGroup((prevTypeGroup) =>
@@ -108,19 +140,24 @@ const CleanDataWidget = () => {
     setSelectedOption('');
     setSelectedFilters([]);
   }
-
+  
   //stopwords selection change
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
-
+    const queryString = {language: event.target.value};
+    
+    console.log("languageoption", queryString)
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, datacleaning: event.target.value as string }
+      query: { ...router.query, datacleaning: queryString}
     });
+    console.log(router.pathname, router.query)
 
     onChangeDashboardState({
-      datacleaning: event.target.value as string
+      datacleaning: {language: event.target.value as string}
+      
     });
+    console.log(onChangeDashboardState)
 };
 
 //stopwords -- saving user selection
@@ -143,16 +180,31 @@ const handleSaveName = (name: string) => {
   }, [selectedOption]);
   
   const handleDownload = () => {
-    const fname = 'example.txt';
-    const fileContent = 'This is an example file content.';
+    const fname = 'stopwords.json';
+    //const fileContent = 'This is an example file content.';
     //text file with each line is key in stopwords or csv with single row or best is send back txt
-    const element = document.createElement('a');
-    const file = new Blob([fileContent], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = fname;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    //const element = document.createElement('a');
+    //const file = new Blob([fileContent], { type: 'text/plain' });
+    //element.href = URL.createObjectURL(file);
+    //element.download = fname;
+    //document.body.appendChild(element);
+    //element.click();
+    //document.body.removeChild(element);
+    //console.log("download",fname);
+    try {      
+      const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
+      const language = "english";
+      console.log("Test Download",dashboardId,language);
+      downloadData = getStopwordsData(dashboardId, language);      
+      if (downloadData) {
+        const blob = new Blob([JSON.stringify(downloadData, null, 2)], { type: 'application/json' });
+        saveAs(blob, fname);
+        downloadData = null; // Clear data after download
+      }
+    } 
+    catch (error) {
+      console.log('Error downloading:', error);
+    }
   };
   //@router.get("/{dashboard_id}/stopwords", description=““)
 
@@ -418,6 +470,7 @@ const isButtonEnabled = (
               textAlign: 'center',
               textTransform: 'none'
             }}
+            onClick={handleApplyButton(selectedOption)}
             disabled={!isButtonEnabled}
           >
             Apply cleaning

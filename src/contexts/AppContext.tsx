@@ -32,6 +32,16 @@ function AppProvider({ children }: AppProviderProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const { data: session, status } = useSession();
 
+  /* const stopwordsData = async (dashboardId: any) => {
+    try {
+      const data = await getStopwordsData(dashboardId, "english");
+      console.log('Fetched Stopwords Data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching stopwords data:', error);
+    }
+  }; */
+
   useEffect(() => {
     const initApp = async () => {
       try {
@@ -42,6 +52,8 @@ function AppProvider({ children }: AppProviderProps) {
         let selectedWorksetId: string,
           appliedFilters: any = {},
           dataCleaning: DataCleaningSettings;
+
+        console.log("Appcontext",dataClean)
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
@@ -91,7 +103,7 @@ function AppProvider({ children }: AppProviderProps) {
             }
           }
           dataCleaning = dataClean
-
+          
           await updateDashboardState(dashboardState.id, {
             importedId: selectedWorksetId,
             filters: appliedFilters,
