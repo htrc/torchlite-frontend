@@ -25,7 +25,7 @@ const Customization = () => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 2, mr: 2 }}>
+    <Box sx={{ flexShrink: 0, ml: 0, mr: 2 }}>
       <IconButton
         color="secondary"
         variant="light"
