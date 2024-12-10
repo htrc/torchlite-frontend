@@ -37,6 +37,11 @@ export async function getStopwordsData(dashboardId: string, language: string) {
   return defaultAxios.get(`/api/dashboards/${dashboardId}/stopwords/${language}`).then((response) => response.data);
 }
 
+export async function uploadStopwordsData(dashboardId: string, formdata: FormData) {
+  console.log(uploadStopwordsData);
+  return defaultAxios.post(`/api/dashboards/${dashboardId}/stopwords`, formdata).then((response) => response.data);
+}
+
 export async function getIdplist() {
   return defaultAxios
     .get('https://analytics.hathitrust.org/idplist')

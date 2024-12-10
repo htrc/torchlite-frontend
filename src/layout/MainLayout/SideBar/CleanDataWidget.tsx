@@ -9,7 +9,9 @@ import { BootstrapTooltip } from 'components/BootstrapTooltip';
 import CustomStopwordsModal from 'sections/sidebar/CustomStopwordsModal';
 import useDashboardState from 'hooks/useDashboardState';
 import { getStopwordsData } from '../../../../src/services/index';
+import { uploadStopwordsData } from '../../../../src/services/index';
 import { useRouter } from 'next/router';
+import qs from 'qs';
 
 interface IMockState {
   label: string;
@@ -101,7 +103,7 @@ const CleanDataWidget = () => {
   const handleApplyButton = (dataCleaning: any) => {
     console.log("onApplyDataCleaning", dataCleaning)
     onChangeDashboardState({
-      datacleaning: dataCleaning
+      datacleaning: {language: dataCleaning as string}
     });
     console.log(onChangeDashboardState)
     // Reset checkboxes and radios to their original state
@@ -139,29 +141,34 @@ const CleanDataWidget = () => {
     // Reset other state variables if needed
     setSelectedOption('');
     setSelectedFilters([]);
+    onChangeDashboardState({
+      datacleaning: {language: selectedOption}
+    });
   }
   
   //stopwords selection change
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
-    const queryString = {language: event.target.value};
+    const queryString = {language: event.target.value as string};
+    //const queryString = qs.stringify({language: event.target.value}, { arrayFormat: 'comma', encode: false });
     
     console.log("languageoption", queryString)
     router.push({
       pathname: router.pathname,
       query: { ...router.query, datacleaning: queryString}
     });
-    console.log(router.pathname, router.query)
+    //console.log(router.pathname, router.query)
 
-    onChangeDashboardState({
+    /* onChangeDashboardState({
       datacleaning: {language: event.target.value as string}
       
     });
-    console.log(onChangeDashboardState)
+    console.log(onChangeDashboardState)  */
 };
 
 //stopwords -- saving user selection
 const handleSaveName = (name: string) => {
+  console.log("pooja do this");
   setStopwordsName(name); // Update state with the saved name
   // Check if the name is not already in the list of options
   if (!stopwordsOptions.some(option => option.label === name)) {
@@ -179,7 +186,7 @@ const handleSaveName = (name: string) => {
     console.log("Selected Option State:", selectedOption);
   }, [selectedOption]);
   
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const fname = 'stopwords.json';
     //const fileContent = 'This is an example file content.';
     //text file with each line is key in stopwords or csv with single row or best is send back txt
@@ -193,9 +200,11 @@ const handleSaveName = (name: string) => {
     //console.log("download",fname);
     try {      
       const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
-      const language = "english";
+      const language = "English";
+      //const dashboardId = dashboardState?.id;
       console.log("Test Download",dashboardId,language);
-      downloadData = getStopwordsData(dashboardId, language);      
+      downloadData = await getStopwordsData(dashboardId, language);
+      console.log("downloadData",downloadData)      
       if (downloadData) {
         const blob = new Blob([JSON.stringify(downloadData, null, 2)], { type: 'application/json' });
         saveAs(blob, fname);
@@ -211,6 +220,19 @@ const handleSaveName = (name: string) => {
   const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFileName(selectedFile.name);
+
+    if (!selectedFile) {
+      return;
+    }
+    console.log("Pooja ucan do this" );
+    const formData = new FormData();
+    formData.append("selectedFile", selectedFile);
+    try {
+      const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
+      const response = uploadStopwordsData(dashboardId, formData);
+    } catch (error) {
+      console.log("Error uploading file: " + error.message);
+    }
   };
 
   const handleRadioChange = (event: any) => {
@@ -470,7 +492,7 @@ const isButtonEnabled = (
               textAlign: 'center',
               textTransform: 'none'
             }}
-            onClick={handleApplyButton(selectedOption)}
+            onClick={() => handleApplyButton(selectedOption)}
             disabled={!isButtonEnabled}
           >
             Apply cleaning

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Box, Typography, Grid, Button, useTheme, TextField, Divider } from '@mui/material';
 
+import { uploadStopwordsData } from '../../../src/services/index';
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -44,8 +45,21 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files && event.target.files[0];
+      console.log("Pooja u can definitely do this");
       if (file) {
-        setFilePath(file.name);
+        setFilePath(file.name);    
+
+        const formData = new FormData();
+        formData.append("selectedFile", file);
+        try {
+            const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
+            for (let [key, value] of formData.entries()) {
+              console.log(key, value);
+            }
+            const response = uploadStopwordsData(dashboardId, formData);
+        } catch (error) {
+        console.log("Error uploading file: ");
+        }
         // Do something with the file, like saving it or processing it
       }
 

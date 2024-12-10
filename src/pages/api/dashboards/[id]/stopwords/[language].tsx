@@ -22,16 +22,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     }
 
-    const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
-    const language = "english";
+    //const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
+    //const language = "english";
 
+    const dashboardId = req.query.id as string;
+    const language = req.query.language as string;
     console.log(dashboardId) 
     console.log("language",language)
     const response = await axios.get(`/dashboards/${dashboardId}/stopwords/${language}`,
       { headers: headers }
     );
-
-    return res.status(200).json(response);
+    console.log(response)
+    return res.status(200).json({stopwords: response});
 
   } catch (error) {
     console.error('Error fetching data from backend:', error);
