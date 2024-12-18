@@ -1,7 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-*.*~
-
 # dependencies
 /node_modules
 /.pnp
@@ -25,10 +23,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
 # local env files
 .env*.local
+/public/__appenv.js
 
 # vercel
 .vercel
@@ -39,4 +37,3 @@ next-env.d.ts
 
 # JetBrains IntelliJ
 /.idea/
-
