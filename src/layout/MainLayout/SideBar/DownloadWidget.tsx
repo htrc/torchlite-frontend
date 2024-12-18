@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Box, FormControl, FormControlLabel, Stack, RadioGroup, Radio, useTheme, Typography, Backdrop, Button } from '@mui/material';
 import CustomButton from 'components/Button';
 import { saveAs } from 'file-saver';
 import useDashboardState from 'hooks/useDashboardState';
 import { getWorksetData } from '../../../../src/services/index';
+import { AppContext } from 'contexts/AppContext'; // Import AppContext
 
 const CleanDataWidget = () => {
   const theme = useTheme();
   const { dashboardState } = useDashboardState();
+  const { widgetLoadingState } = useContext(AppContext); // Access widgetLoadingState from context
   const [selectedValue, setSelectedValue] = useState('full');
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [progress, setProgress] = useState(0); // Track download progress
-  const [cancelDownload, setCancelDownload] = useState(false); // Track cancel state
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const isDownloadingRef = useRef(true); // Ref to track if download is ongoing
 
-  // Temp variable to store fetched data
   let downloadData: any = null;
+
+  // Check if all widgets are loaded by verifying widgetLoadingState
+  const allWidgetsLoaded = Object.values(widgetLoadingState).every((isLoaded) => isLoaded === true);
+
+  console.log("Download button enabled:", allWidgetsLoaded); // Debug log to check button status
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
@@ -22,11 +28,12 @@ const CleanDataWidget = () => {
 
   const onClickDownload = async () => {
     const dashboardId = dashboardState?.id;
-    setLoading(true); // Show loading overlay
-    setProgress(0); // Reset progress to 0
-    setCancelDownload(false); // Reset cancel state
+    setLoading(true);
+    setProgress(0);
+    isDownloadingRef.current = true; // Set ref to true on download start
 
     try {
+      // Fetch the selected data based on user selection
       if (selectedValue === 'full') {
         downloadData = await getWorksetData(dashboardId, 'data', false);
       } else if (selectedValue === 'filtered') {
@@ -35,28 +42,27 @@ const CleanDataWidget = () => {
         downloadData = await getWorksetData(dashboardId, 'metadata', true);
       }
 
-      // Initiate the download if it has not been canceled
-      if (!cancelDownload) {
+      if (isDownloadingRef.current) {
         initiateDownload(downloadData, selectedValue === 'full' ? 'full-data-EF.json' : selectedValue === 'filtered' ? 'filtered-data-EF.json' : 'filtered-metadata-EF.json');
       } else {
         console.log("Download was canceled before it started.");
-        setLoading(false); // Hide loading overlay if canceled
+        setLoading(false);
       }
     } catch (error) {
       console.log('Error downloading:', error);
-      setLoading(false); // Hide loading overlay on error
+      setLoading(false);
     }
   };
 
   const initiateDownload = (data: any, filename: string) => {
     let currentProgress = 0;
     const interval = setInterval(() => {
-      if (cancelDownload) {
+      if (!isDownloadingRef.current) { // Check ref instead of state
         clearInterval(interval);
-        setLoading(false); // Hide loading overlay
-        setProgress(0); // Reset progress
+        setLoading(false);
+        setProgress(0);
         console.log('Download canceled');
-        downloadData = null; // Clear data to prevent file saving
+        downloadData = null;
         return;
       }
 
@@ -65,23 +71,22 @@ const CleanDataWidget = () => {
 
       if (currentProgress >= 100) {
         clearInterval(interval);
-        
-        // Only save the file if the download wasn't canceled
-        if (!cancelDownload && downloadData) {
+
+        if (isDownloadingRef.current && downloadData) {
           const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
           saveAs(blob, filename);
-          downloadData = null; // Clear data after download
+          downloadData = null;
         }
 
-        setLoading(false); // Hide loading overlay
+        setLoading(false);
       }
-    }, 500); // Simulate progress every 500ms
+    }, 500);
   };
 
   const handleCancel = () => {
-    setCancelDownload(true); // Set cancel state to true
-    setLoading(false); // Hide loading overlay
-    downloadData = null; // Clear data to prevent file download
+    isDownloadingRef.current = false; // Set ref to false on cancel
+    setLoading(false);
+    downloadData = null;
   };
 
   return (
@@ -125,13 +130,13 @@ const CleanDataWidget = () => {
               textTransform: 'none',
             }}
             onClick={onClickDownload}
+            disabled={!allWidgetsLoaded} // Disable button if widgets are not fully loaded
           >
             Download
           </CustomButton>
         </Box>
       </Stack>
 
-      {/* Loading Overlay with Rectangular Progress Bar */}
       <Backdrop open={loading} sx={{ color: '#fff', zIndex: theme.zIndex.drawer + 1 }}>
         <Box 
           sx={{ 
@@ -146,7 +151,7 @@ const CleanDataWidget = () => {
           <Typography variant="h6" mb={2} color="textPrimary">Downloading in progress</Typography>
           <Typography variant="body2" mb={2} color="textSecondary">
             Give us a few minutes while we download your data!
-            </Typography>
+          </Typography>
           <Box 
             sx={{
               width: '100%', 
@@ -170,7 +175,7 @@ const CleanDataWidget = () => {
           <Button 
             variant="outlined" 
             color="primary" 
-            onClick={handleCancel} // Call handleCancel when clicked
+            onClick={handleCancel}
             sx={{ mt: 2 }}
           >
             Cancel
