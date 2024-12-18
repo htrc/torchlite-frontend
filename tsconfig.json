@@ -8,22 +8,26 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "baseUrl": ".",
+    "baseUrl": "src",
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    // custom config
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "types": ["node", "webpack-env"],
+    "typeRoots": ["../node_modules/@types", "../@types", "./types"],
     "paths": {
-      "@/*": ["./*"]
+      "@/auth/*": ["pages/api/auth/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "**/*.js"]
 }
