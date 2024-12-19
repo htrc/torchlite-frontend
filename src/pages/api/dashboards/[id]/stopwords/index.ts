@@ -32,9 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     }
 
-    //const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
-    //const language = "english";
-
     const parseForm = async (req: NextApiRequest): Promise<{ fields: any; files: any }> => {
       const form = new Formidable({ 
         multiples: false, 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Box, Typography, Grid, Button, useTheme, TextField, Divider } from '@mui/material';
+import useDashboardState from 'hooks/useDashboardState';
 
 import { uploadStopwordsData } from '../../../src/services/index';
 const style = {
@@ -23,6 +24,7 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
     const [filePath, setFilePath] = useState("");
     const [url, setUrl] = useState('');
     const [urlError, setUrlError] = useState('');
+    const { dashboardState, onChangeDashboardState } = useDashboardState();
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setStopwordsName(event.target.value);
@@ -45,14 +47,13 @@ function CustomStopwordsModal ({open, onClose, onSaveName}: { open: boolean, onC
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files && event.target.files[0];
-      console.log("Pooja u can definitely do this");
       if (file) {
         setFilePath(file.name);    
 
         const formData = new FormData();
         formData.append("selectedFile", file);
         try {
-            const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
+            const dashboardId = dashboardState?.id;
             for (let [key, value] of formData.entries()) {
               console.log(key, value);
             }

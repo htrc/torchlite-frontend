@@ -150,25 +150,16 @@ const CleanDataWidget = () => {
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedOption(event.target.value as string);
     const queryString = {language: event.target.value as string};
-    //const queryString = qs.stringify({language: event.target.value}, { arrayFormat: 'comma', encode: false });
     
     console.log("languageoption", queryString)
     router.push({
       pathname: router.pathname,
       query: { ...router.query, datacleaning: queryString}
     });
-    //console.log(router.pathname, router.query)
-
-    /* onChangeDashboardState({
-      datacleaning: {language: event.target.value as string}
-      
-    });
-    console.log(onChangeDashboardState)  */
 };
 
 //stopwords -- saving user selection
 const handleSaveName = (name: string) => {
-  console.log("pooja do this");
   setStopwordsName(name); // Update state with the saved name
   // Check if the name is not already in the list of options
   if (!stopwordsOptions.some(option => option.label === name)) {
@@ -188,23 +179,12 @@ const handleSaveName = (name: string) => {
   
   const handleDownload = async () => {
     const fname = 'stopwords.json';
-    //const fileContent = 'This is an example file content.';
-    //text file with each line is key in stopwords or csv with single row or best is send back txt
-    //const element = document.createElement('a');
-    //const file = new Blob([fileContent], { type: 'text/plain' });
-    //element.href = URL.createObjectURL(file);
-    //element.download = fname;
-    //document.body.appendChild(element);
-    //element.click();
-    //document.body.removeChild(element);
-    //console.log("download",fname);
     try {      
-      const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
-      const language = "English";
-      //const dashboardId = dashboardState?.id;
-      console.log("Test Download",dashboardId,language);
+      const language = selectedOption;
+      const dashboardId = dashboardState?.id;
+      console.log("Test Download", dashboardId, language);
       downloadData = await getStopwordsData(dashboardId, language);
-      console.log("downloadData",downloadData)      
+            
       if (downloadData) {
         const blob = new Blob([JSON.stringify(downloadData, null, 2)], { type: 'application/json' });
         saveAs(blob, fname);
@@ -223,15 +203,6 @@ const handleSaveName = (name: string) => {
 
     if (!selectedFile) {
       return;
-    }
-    console.log("Pooja ucan do this" );
-    const formData = new FormData();
-    formData.append("selectedFile", selectedFile);
-    try {
-      const dashboardId = "c9398698-632d-4d6e-9dce-b0533f4ebae0";
-      const response = uploadStopwordsData(dashboardId, formData);
-    } catch (error) {
-      console.log("Error uploading file: " + error.message);
     }
   };
 

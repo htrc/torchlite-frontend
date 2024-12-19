@@ -8,7 +8,6 @@ import { getSessionAuthInfo } from 'utils/database';
 import { isValidBody } from 'utils/helpers';
 
 async function getDashboard(dashboardId: string, headers: any): Promise<DashboardState> {
-  console.log("getDashboard");
   const dashboardSummary = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headers
   });
@@ -20,14 +19,10 @@ async function getDashboard(dashboardId: string, headers: any): Promise<Dashboar
 }
 
 async function patchDashboard(dashboardId: string, patch: DashboardStatePatch, headers: any) {
-  console.log("patchDashboard");
-  console.log(headers);
-  console.log(patch)
   await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("handler");
   if (req.method !== 'GET' && req.method !== 'PATCH') {
     res.setHeader('Allow', ['GET', 'PATCH']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
