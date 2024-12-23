@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import qs from 'qs';
 import { Box, FormControl, FormGroup, Stack, useTheme, Typography } from '@mui/material';
 import CustomButton from 'components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { AppContext } from 'contexts/AppContext';
 
 //mock data
 import { filterKeys, filterKeysMap } from 'data/datafilters';
@@ -97,6 +98,9 @@ const DataFilterWidget = () => {
   const theme = useTheme();
   const router = useRouter();
   const { dashboardState, onChangeDashboardState } = useDashboardState();
+  const { widgetLoadingState } = useContext(AppContext); // Access widgetLoadingState
+const allWidgetsLoaded = Object.values(widgetLoadingState).every((isLoaded) => isLoaded === true); // Check if all widgets are loaded
+
   const worksetMetadata = dashboardState?.worksetInfo?.volumes || [];
   const [filterGroup, setFilterGroup] = useState<any>({});
   const [selectedGroup, setSelectedGroup] = useState<any>(convertFromUrl(dashboardState?.filters));
@@ -350,6 +354,7 @@ const DataFilterWidget = () => {
               textTransform: 'none'
             }}
             onClick={() => handleApplyFilter(selectedGroup)}
+            disabled={!allWidgetsLoaded}
           >
             Apply filters
           </CustomButton>

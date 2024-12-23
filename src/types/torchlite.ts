@@ -107,7 +107,9 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
 export type DashboardContextProps = {
   dashboardState?: DashboardState;
   widgetState: any;
+  widgetLoadingState:Record<string, boolean>;
   availableWorksets?: WorksetList;
   onChangeDashboardState: (e: DashboardStatePatch) => void;
   onChangeWidgetState: (e: any) => void;
+  updateWidgetLoadingState: (widgetType: string, isLoaded: boolean) => void;
 };

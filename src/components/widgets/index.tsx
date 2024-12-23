@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { ChorloplethMap } from './ChorloplethMap';
 import { PublicationTimeLineChart } from './PublicationTimeLineChart';
 import MainCard from 'components/MainCard';
@@ -6,8 +6,9 @@ import { CircularProgress, useTheme } from '@mui/material';
 import { WidgetType } from 'data/constants';
 import { DashboardState } from 'types/torchlite';
 import WidgetTitle from './WidgetTitle';
-import {WordCloudTag} from './WordCloud';
+import { WordCloudTag } from './WordCloud';
 import { Summary } from './Summary';
+import { AppContext } from 'contexts/AppContext'; // Import the AppContext
 
 type WidgetProps = {
   dashboardState: DashboardState;
@@ -31,6 +32,7 @@ const fetchData = async (dashboardState: DashboardState, widgetType: string) => 
 
 const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
   const theme = useTheme();
+  const { widgetLoadingState, updateWidgetLoadingState } = useContext(AppContext); // Access AppContext
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
 
@@ -45,6 +47,7 @@ const Widget = ({ dashboardState, widgetType, isDetailsPage }: WidgetProps) => {
         console.error(error);
       } finally {
         setLoading(false);
+        updateWidgetLoadingState(widgetType, true); // Set widget as loaded in widgetLoadingState
       }
     };
 
