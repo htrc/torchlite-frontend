@@ -24,11 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const dashboardId = req.query.id as string;
     const dataType = req.query.data_type as string;
-    const filtered = req.query.filtered; 
+    const filtered = JSON.parse(req.query.filtered as string); 
 
-    console.log(filtered)
-    console.log(dashboardId) 
-    console.log(dataType)
     const response = await axios.get(`/dashboards/${dashboardId}/${dataType}${filtered ? '?filtered=true' : ''}`, {
       headers: headers
     });
