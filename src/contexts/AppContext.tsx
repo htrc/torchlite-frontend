@@ -6,7 +6,7 @@ import qs from 'qs';
 // types
 import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
-import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState, getWorksetData } from 'services';
+import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
 
 // initial state
@@ -42,17 +42,6 @@ function AppProvider({ children }: AppProviderProps) {
       });
     }
     setWidgetLoadingState(initialState);
-    console.log('Initialized widgetLoadingState:', initialState); 
-  };
-
-  const fetchWorksetData = async (dashboardId: any, dataType: string, filtered: boolean = false) => {
-    try {
-      const data = await getWorksetData(dashboardId, dataType, filtered);
-      console.log('Fetched Workset Data:', data);
-      return data;
-    } catch (error) {
-      console.error('Error fetching workset data:', error);
-    }
   };
 
   useEffect(() => {
@@ -134,10 +123,6 @@ function AppProvider({ children }: AppProviderProps) {
           initializeWidgetLoadingState(dashboardState.widgets);
         }
 
-        // Fetch workset data once dashboard state is set
-        if (dashboardState) {
-          await fetchWorksetData(dashboardState.id, 'metadata', true);  // Example to fetch metadata with filtering
-        }
 
       } catch (error) {
         console.error(error);
@@ -174,7 +159,6 @@ function AppProvider({ children }: AppProviderProps) {
         ...prevState,
         [widgetType]: isLoaded,
       };
-      console.log(`Updated widgetLoadingState for widget ${widgetType} to ${isLoaded}:`, updatedState); // Log each update
       return updatedState;
     });
   };
