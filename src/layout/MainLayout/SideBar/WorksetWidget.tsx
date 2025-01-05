@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+
+import { AppContext } from 'contexts/AppContext';
 import {
   FormControl,
   Stack,
@@ -25,7 +27,7 @@ const WorksetWidget = () => {
   const theme = useTheme();
   const router = useRouter();
   const { dashboardState, availableWorksets, onChangeDashboardState } = useDashboardState();
-
+  const { widgetLoadingState, updateWidgetLoadingState } = useContext(AppContext); // Access AppContext
   const [type, setType] = useState<string>('featured');
   const [selected, setSelected] = useState<WorksetSummary | null>(null);
   const [worksetData, setWorksetData] = useState<WorksetSummary[]>(availableWorksets?.featured || []);
@@ -37,6 +39,9 @@ const WorksetWidget = () => {
 
   const handleSelectWorkSet = (prop: WorksetSummary) => {
     if (prop.id !== dashboardState?.worksetId) {
+      dashboardState?.widgets.forEach((widget) => {
+        updateWidgetLoadingState(widget.type, false); // Set widget to loading (false) initially
+      });
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }

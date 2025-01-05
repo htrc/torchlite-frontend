@@ -12,10 +12,11 @@ import CustomBackdrop from 'components/Backdrop';
 // initial state
 const initialState: DashboardContextProps = {
   widgetState: {},
+  widgetLoadingState: {},
   onChangeDashboardState: (e: DashboardStatePatch) => {},
-  onChangeWidgetState: (e: any) => {}
+  onChangeWidgetState: (e: any) => {},
+  updateWidgetLoadingState: (widgetType: string, isLoaded: boolean) => {},
 };
-
 // ==============================|| CONFIG CONTEXT & PROVIDER ||============================== //
 
 const AppContext = createContext(initialState);
@@ -28,9 +29,20 @@ function AppProvider({ children }: AppProviderProps) {
   const [widgetState, setWidgetState] = useState<any>({});
   const [dashboardState, setDashboardState] = useState<DashboardState>();
   const [availableWorksets, setAvailableWorksets] = useState<WorksetList>();
+  const [widgetLoadingState, setWidgetLoadingState] = useState<any>({});
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const { data: session, status } = useSession();
+
+  const initializeWidgetLoadingState = (dashboardWidgets: any) => {
+    const initialState: Record<string, boolean> = {};
+    if (dashboardWidgets) {
+      dashboardWidgets.forEach((widget: any) => {
+        initialState[widget.type] = false; // Initialize each widget to 'not loaded' (false)
+      });
+    }
+    setWidgetLoadingState(initialState);
+  };
 
   useEffect(() => {
     const initApp = async () => {
@@ -105,6 +117,13 @@ function AppProvider({ children }: AppProviderProps) {
           });
         }
         setDashboardState(dashboardState);
+
+        // Initialize widget loading state based on dashboard widgets
+        if (dashboardState && dashboardState.widgets) {
+          initializeWidgetLoadingState(dashboardState.widgets);
+        }
+
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -134,6 +153,16 @@ function AppProvider({ children }: AppProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.pathname]);
 
+  const updateWidgetLoadingState = (widgetType: string, isLoaded: boolean) => {
+    setWidgetLoadingState((prevState: any) => {
+      const updatedState = {
+        ...prevState,
+        [widgetType]: isLoaded,
+      };
+      return updatedState;
+    });
+  };
+
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
     try {
       if (dashboardState) {
@@ -162,10 +191,12 @@ function AppProvider({ children }: AppProviderProps) {
     <AppContext.Provider
       value={{
         widgetState,
+        widgetLoadingState, // Pass widgetLoadingState to the context
         dashboardState,
         availableWorksets,
         onChangeDashboardState,
-        onChangeWidgetState
+        onChangeWidgetState,
+        updateWidgetLoadingState // Provide function to update widget loading state
       }}
     >
       <CustomBackdrop loading={loading} />
