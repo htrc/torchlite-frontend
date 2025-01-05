@@ -99,7 +99,7 @@ const DataFilterWidget = () => {
   const router = useRouter();
   const { dashboardState, onChangeDashboardState } = useDashboardState();
   const { widgetLoadingState } = useContext(AppContext); // Access widgetLoadingState
-const allWidgetsLoaded = Object.values(widgetLoadingState).every((isLoaded) => isLoaded === true); // Check if all widgets are loaded
+  const allWidgetsLoaded = Object.values(widgetLoadingState).every((isLoaded) => isLoaded === true); // Check if all widgets are loaded
 
   const worksetMetadata = dashboardState?.worksetInfo?.volumes || [];
   const [filterGroup, setFilterGroup] = useState<any>({});

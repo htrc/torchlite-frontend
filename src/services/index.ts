@@ -29,9 +29,6 @@ export async function getWidgetData(dashboardId: any, widgetType: any) {
 }
 
 export async function getWorksetData(dashboardId: any, dataType: string, filtered: boolean = false) {
-  //console.log("working here")
-
-  //const filterQuery = filtered ? '?filtered=true' : '';
   return defaultAxios
     .get(`/api/dashboards/${dashboardId}/${dataType}/${filtered}`)
     .then((response) => response.data)

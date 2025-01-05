@@ -20,8 +20,6 @@ const CleanDataWidget = () => {
   // Check if all widgets are loaded by verifying widgetLoadingState
   const allWidgetsLoaded = Object.values(widgetLoadingState).every((isLoaded) => isLoaded === true);
 
-  console.log("Download button enabled:", allWidgetsLoaded); // Debug log to check button status
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
   };

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState, useContext } from 'react';
-import { WidgetType } from 'data/constants';
 
 import { AppContext } from 'contexts/AppContext';
 import {
