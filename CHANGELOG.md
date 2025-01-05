@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- CSV Download the Data options
+- CSV Download the Data options [#129](https://github.com/htrc/torchlite-frontend/issues/129)
 
 ## [0.1.0] – 2024-12-09
 
