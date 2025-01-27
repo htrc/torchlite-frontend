@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 // scroll bar
 import 'simplebar/src/simplebar.css';
@@ -63,7 +63,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     return (
       <>
         <CustomBackdrop loading={isLoading} />
-        <GoogleTagManager gtmId="G-XPLYSCJRWG" />
+        <GoogleAnalytics gaId="G-XPLYSCJRWG" />
       </>
     );
   }
@@ -107,7 +107,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
           </ConfigProvider>
         </ReduxProvider>
       </SWRConfig>
-      <GoogleTagManager gtmId="G-XPLYSCJRWG" />
+      <GoogleAnalytics gaId="G-XPLYSCJRWG" />
     </>
   );
 }

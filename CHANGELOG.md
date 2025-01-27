@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Google Tag Manager code
+- Google Tag Manager code [#156](https://github.com/htrc/torchlite-frontend/issues/156)
 
 ## [0.2.0] – 2025-01-06
 
