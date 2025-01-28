@@ -63,7 +63,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     return (
       <>
         <CustomBackdrop loading={isLoading} />
-        <GoogleAnalytics gaId="G-XPLYSCJRWG" />
+        <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ''} />
       </>
     );
   }
@@ -107,7 +107,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
           </ConfigProvider>
         </ReduxProvider>
       </SWRConfig>
-      <GoogleAnalytics gaId="G-XPLYSCJRWG" />
+      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ''} />
     </>
   );
 }
