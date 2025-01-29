@@ -59,6 +59,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     setIsLoading(false);
   }, []);
 
+  console.log("test2")
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID)
+
   if (isLoading) {
     return (
       <>

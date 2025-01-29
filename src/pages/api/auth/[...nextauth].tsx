@@ -8,6 +8,9 @@ import { AuthInfo } from 'types/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSession, getSessionAuthInfo, setSessionAuthInfo, setSessionExpiration } from 'utils/database';
 
+console.log("test1")
+console.log(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID)
+
 const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_CLIENT_ID || '',
   clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
