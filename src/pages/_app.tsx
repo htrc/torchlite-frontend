@@ -60,7 +60,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   }, []);
 
   console.log("ID:")
-  console.log(process.env.GOOGLE_ANALYTICS_ID)
+  console.log(process.env.KEYCLOAK_ISSUER_BASE_URL)
 
   if (isLoading) {
     return (
