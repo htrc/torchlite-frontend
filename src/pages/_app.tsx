@@ -59,14 +59,11 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     setIsLoading(false);
   }, []);
 
-  console.log("ID:")
-  console.log(process.env.KEYCLOAK_ISSUER_BASE_URL)
-
   if (isLoading) {
     return (
       <>
         <CustomBackdrop loading={isLoading} />
-        <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ''} />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
       </>
     );
   }
@@ -110,7 +107,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
           </ConfigProvider>
         </ReduxProvider>
       </SWRConfig>
-      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ''} />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
     </>
   );
 }

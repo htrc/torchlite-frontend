@@ -8,8 +8,6 @@ import { AuthInfo } from 'types/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSession, getSessionAuthInfo, setSessionAuthInfo, setSessionExpiration } from 'utils/database';
 
-console.log("Test")
-console.log(process.env.KEYCLOAK_ISSUER_BASE_URL)
 const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_CLIENT_ID || '',
   clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
