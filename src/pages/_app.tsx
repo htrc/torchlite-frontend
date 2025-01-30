@@ -1,4 +1,5 @@
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 // scroll bar
 import 'simplebar/src/simplebar.css';
@@ -59,46 +60,54 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   }, []);
 
   if (isLoading) {
-    return <CustomBackdrop loading={isLoading} />;
+    return (
+      <>
+        <CustomBackdrop loading={isLoading} />
+        <GoogleAnalytics gaId="G-XPLYSCJRWG" />
+      </>
+    );
   }
 
   return (
-    <SWRConfig value={swrConfig}>
-      <ReduxProvider store={store}>
-        <ConfigProvider>
-          <ThemeCustomization>
-            <Locales>
-              <ScrollTop>
-                <SessionProvider session={session} refetchInterval={0}>
-                  <AppProvider>
-                    <Notistack>
-                      <Snackbar />
-                      {getLayout(<Component {...pageProps} />)}
-                      <div
-                        id="tooltip"
-                        style={{
-                          position: 'absolute',
-                          textAlign: 'left',
-                          width: 'auto',
-                          height: 'auto',
-                          padding: '5px 10px',
-                          font: '12px sans-serif',
-                          background: 'lightsteelblue',
-                          border: '0px',
-                          borderRadius: '8px',
-                          pointerEvents: 'none',
-                          zIndex: '10',
-                          opacity: '0'
-                        }}
-                      ></div>
-                    </Notistack>
-                  </AppProvider>
-                </SessionProvider>
-              </ScrollTop>
-            </Locales>
-          </ThemeCustomization>
-        </ConfigProvider>
-      </ReduxProvider>
-    </SWRConfig>
+    <>
+      <SWRConfig value={swrConfig}>
+        <ReduxProvider store={store}>
+          <ConfigProvider>
+            <ThemeCustomization>
+              <Locales>
+                <ScrollTop>
+                  <SessionProvider session={session} refetchInterval={0}>
+                    <AppProvider>
+                      <Notistack>
+                        <Snackbar />
+                        {getLayout(<Component {...pageProps} />)}
+                        <div
+                          id="tooltip"
+                          style={{
+                            position: 'absolute',
+                            textAlign: 'left',
+                            width: 'auto',
+                            height: 'auto',
+                            padding: '5px 10px',
+                            font: '12px sans-serif',
+                            background: 'lightsteelblue',
+                            border: '0px',
+                            borderRadius: '8px',
+                            pointerEvents: 'none',
+                            zIndex: '10',
+                            opacity: '0'
+                          }}
+                        ></div>
+                      </Notistack>
+                    </AppProvider>
+                  </SessionProvider>
+                </ScrollTop>
+              </Locales>
+            </ThemeCustomization>
+          </ConfigProvider>
+        </ReduxProvider>
+      </SWRConfig>
+      <GoogleAnalytics gaId="G-XPLYSCJRWG" />
+    </>
   );
 }

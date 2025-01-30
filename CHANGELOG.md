@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Google Tag Manager code [#156](https://github.com/htrc/torchlite-frontend/issues/156)
+
 ## [0.2.0] – 2025-01-06
 
 ### Added
@@ -29,6 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
-[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.1.0...HEAD
+[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...HEAD
 [0.1.0]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...0.1.0
 [0.2.0]: https://github.com/htrc/torchlite-frontend/releases/tag/0.2.0
