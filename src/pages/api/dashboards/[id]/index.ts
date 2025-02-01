@@ -51,11 +51,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (isValidBody<DashboardStatePatch>(req.body, DashboardStatePatchSchema)) {
           await patchDashboard(dashboardId, req.body, headers);
           res.status(204).end();
-        } else return res.status(400).end();
+        }
         break;
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err: any) {
+    console.log(typeof err);
+    if (err.status == 400) {
+      res.status(400).end();
+    }
+    else {
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 }
