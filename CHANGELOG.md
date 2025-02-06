@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Google Tag Manager code [#156](https://github.com/htrc/torchlite-frontend/issues/156)
 
+### Fixed
+- Fix widgets not getting displayed after user refresh token expires by signing out user. [#98](https://github.com/htrc/torchlite-frontend/issues/98)  
+
 ## [0.2.0] – 2025-01-06
 
 ### Added
@@ -33,5 +36,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
 [unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...HEAD
-[0.1.0]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...0.1.0
-[0.2.0]: https://github.com/htrc/torchlite-frontend/releases/tag/0.2.0
+[0.2.0]: https://github.com/htrc/torchlite-frontend/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/htrc/torchlite-frontend/releases/tag/0.1.0
