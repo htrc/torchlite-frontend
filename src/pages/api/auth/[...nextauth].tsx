@@ -7,6 +7,7 @@ import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { AuthInfo } from 'types/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteSession, getSessionAuthInfo, setSessionAuthInfo, setSessionExpiration } from 'utils/database';
+import { signIn } from 'next-auth/react';
 
 const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_CLIENT_ID || '',
@@ -64,6 +65,10 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     console.debug(error);
 
     await deleteSession(token.sessionId);
+
+    // Ref: https://github.com/htrc/torchlite-frontend/issues/98
+    // This is a temporary fix, and we may need to revisit how NextAuth is implemented/refactor code for better exception handling.
+    await signIn();
 
     return {
       ...token,
