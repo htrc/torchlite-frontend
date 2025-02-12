@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] – 2025-02-12
+
 ### Fixed
 - Fix widgets not getting displayed after user refresh token expires by signing out user. [#98](https://github.com/htrc/torchlite-frontend/issues/98)  
 
@@ -37,7 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
-[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.1...HEAD
+[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.2...HEAD
+[0.2.2]: https://github.com/htrc/torchlite-frontend/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/htrc/torchlite-frontend/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/htrc/torchlite-frontend/releases/tag/0.1.0
