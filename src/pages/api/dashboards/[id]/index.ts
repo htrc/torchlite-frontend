@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
     }
   } catch (err: any) {
+    console.log("HERE");
     console.log(typeof err);
     if (err.status == 400) {
       res.status(400).end();
