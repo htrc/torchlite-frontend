@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Max public or user workset size dropped to 400 volumes. [#78](https://github.com/htrc/torchlite-app/issues/78) 
 
 ### Fixed
-- Error handling for unauthorized or non-existent workset, should now throw meaningful error
+- Error handling for unauthorized or non-existent workset, should now throw meaningful error [#146](https://github.com/htrc/torchlite-backend/issues/146)
 
 ## [0.2.2] – 2025-02-12
 
