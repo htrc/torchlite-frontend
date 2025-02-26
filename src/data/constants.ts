@@ -19,10 +19,10 @@ export const WidgetInfoLinks: any = {
 };
 
 export const WidgetTitles: any = {
-  MappingContributorData: 'Mapping Contributor Data',
+  MappingContributorData: 'Mapping Creator Birthplaces',
   PublicationDateTimeline: 'Publication Date Timeline',
-  Summary: 'Summary',
-  SimpleTagCloud: 'Simple Word Cloud'
+  Summary: 'Workset Summary',
+  SimpleTagCloud: 'Word Frequency Cloud'
 };
 
 export const TableColumns: any = {
