@@ -81,7 +81,7 @@ const WorksetWidget = () => {
       <Stack sx={{ margin: theme.spacing(1) }} spacing={2}>
         <FormControl sx={{ minWidth: 120 }}>
           <Select value={type} color="secondary" onChange={handleChange}>
-            <MenuItem value={'featured'}>Recommended Worksets</MenuItem>
+            <MenuItem value={'featured'}>Featured Worksets</MenuItem>
             <MenuItem value={'public'}>All Worksets</MenuItem>
             {availableWorksets?.user?.length ? <MenuItem value={'user'}>My Worksets</MenuItem> : <></>}
           </Select>
