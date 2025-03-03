@@ -28,7 +28,7 @@ axiosServices.interceptors.response.use(
         })
       );
     }
-    return Promise.reject((error.response && error.response.data) || 'Wrong Services');
+    return Promise.reject((error.response && {data: error.response.data, status: error.response.status}) || 'Wrong Services');
   }
 );
 

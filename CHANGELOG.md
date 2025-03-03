@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] – 2025-02-26
+
+### Changed
+- Names of some widgets and workset sections. [#85](https://github.com/htrc/torchlite-app/issues/85)
+- Max public or user workset size dropped to 400 volumes. [#78](https://github.com/htrc/torchlite-app/issues/78) 
+
+### Fixed
+- Error handling for unauthorized or non-existent workset, should now throw meaningful error [#146](https://github.com/htrc/torchlite-backend/issues/146)
+
+## [0.2.2] – 2025-02-12
+
+### Fixed
+- Fix widgets not getting displayed after user refresh token expires by signing out user. [#98](https://github.com/htrc/torchlite-frontend/issues/98)  
+
+## [0.2.1] – 2025-01-29
+
+### Added
+- Google Analytics code [#156](https://github.com/htrc/torchlite-frontend/issues/156)
+
+## [0.2.0] – 2025-01-06
+
 ### Added
 - Disable buttons on sidebar until all widgets have loaded and whenever widgets are reloaded from a change 
 - Download indicator and message for Download the Data [#131](https://github.com/htrc/torchlite-frontend/issues/131)
@@ -27,5 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
-[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.1.0...HEAD
+[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.3...HEAD
+[0.2.3]: https://github.com/htrc/torchlite-frontend/compare/0.2.2...0.2.3
+[0.2.2]: https://github.com/htrc/torchlite-frontend/compare/0.2.1...0.2.2
+[0.2.1]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...0.2.1
+[0.2.0]: https://github.com/htrc/torchlite-frontend/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/htrc/torchlite-frontend/releases/tag/0.1.0

@@ -58,10 +58,10 @@ function AppProvider({ children }: AppProviderProps) {
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
         if (worksets?.public) {
-          worksets.public = worksets.public.filter((workset) => workset.numVolumes < 1000)
+          worksets.public = worksets.public.filter((workset) => workset.numVolumes < 400)
         }
         if (worksets?.user) {
-          worksets.user = worksets.user.filter((workset) => workset.numVolumes < 1000)
+          worksets.user = worksets.user.filter((workset) => workset.numVolumes < 400)
         }
         setAvailableWorksets(worksets);
 
