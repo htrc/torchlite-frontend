@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { toZod } from 'tozod';
+import languageData from 'data/languageData';
 
 type VolumeMetadata = {
   htid: string; // the HathiTrust volume identifier
@@ -53,6 +54,10 @@ export type Widget = {
   type: string; // the widget type (PubDateTimeline, ContributorMap, ...)
 };
 
+export type DataCleaningSettings = {
+  language?: string;
+};
+
 export type DashboardSummary = {
   id: string; // the unique dashboard identifier
   owner?: string; // the dashboard owner (or undefined if anonymous)
@@ -60,6 +65,7 @@ export type DashboardSummary = {
   // description?: string; // (optional) the dashboard description
   worksetId: string; // the selected workset id in ef api
   filters: FilterSettings; // the filter selections for the dashboard
+  datacleaning: DataCleaningSettings;
   widgets: Widget[]; // the widgets selected for the dashboard
   isShared: boolean; // whether the dashboard has been shared or not
   importedId: string; // the selected workset id in registry api
@@ -73,6 +79,7 @@ export type DashboardStatePatch = {
 //  worksetId?: string;
   importedId?: string
   filters?: FilterSettings;
+  datacleaning?: DataCleaningSettings;
   widgets?: Widget[];
   isShared?: boolean;
 };
@@ -100,6 +107,11 @@ export const DashboardStatePatchSchema: toZod<DashboardStatePatch> = z.object({
       type: z.string()
     })
     .array()
+    .optional(),
+  datacleaning: z
+    .object({
+      language: z.string().optional()
+    })
     .optional(),
   isShared: z.boolean().optional()
 });
