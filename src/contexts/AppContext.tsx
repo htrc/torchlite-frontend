@@ -50,7 +50,7 @@ function AppProvider({ children }: AppProviderProps) {
         // Get workset and filter from router query
         const { worksetId } = router.query;
         const filters: any = qs.parse(router.query.filters as string, { comma: true });
-        const dataClean = router.query.datacleaning as DataCleaningSettings;
+        const dataClean = qs.parse(router.query.datacleaning as string, { comma: true });
         let selectedWorksetId: string,
           appliedFilters: any = {},
           dataCleaning: DataCleaningSettings;
