@@ -47,6 +47,7 @@ const WorksetWidget = () => {
         query: { ...router.query, worksetId: prop.id, filters: undefined }
       });
       setSelected(prop);
+      console.log('ww')
       onChangeDashboardState({
         importedId: prop.id,
         filters: {}

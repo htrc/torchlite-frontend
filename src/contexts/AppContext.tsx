@@ -99,6 +99,7 @@ function AppProvider({ children }: AppProviderProps) {
               }
             }
           }
+          console.log("A");
           await updateDashboardState(dashboardState.id, {
             importedId: selectedWorksetId,
             filters: appliedFilters
@@ -167,6 +168,7 @@ function AppProvider({ children }: AppProviderProps) {
     try {
       if (dashboardState) {
         setLoading(true);
+        console.log("B");
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
         setDashboardState(updatedState);

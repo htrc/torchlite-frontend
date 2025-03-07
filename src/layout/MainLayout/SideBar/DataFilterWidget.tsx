@@ -126,7 +126,7 @@ const DataFilterWidget = () => {
     }, {});
 
     updateFiltersRoute(transformed);
-
+    console.log('dfw')
     onChangeDashboardState({
       filters: transformed
     });
