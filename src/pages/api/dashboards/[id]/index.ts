@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
     }
   } catch (err: any) {
+    console.log(`${req.method} /dashboards/${req.query.id}`)
     console.log(err);
     if (err.status == 400) {
       res.status(400).end();
