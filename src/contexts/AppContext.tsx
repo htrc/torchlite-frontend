@@ -76,8 +76,13 @@ function AppProvider({ children }: AppProviderProps) {
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
-          const dashboards = await getAvailableDashboards(dashboardId);
-          dashboardState = dashboards[0];
+          try {
+            const dashboards = await getAvailableDashboards(dashboardId);
+            dashboardState = dashboards[0];
+          } catch (err) {
+            console.error(`Error loading available dashboards while authenticated: ${err}`);
+            dashboardState = { id: "", worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+          }
 
           if (dashboardId) {
             sessionStorage.removeItem('dashboard_id');
