@@ -103,9 +103,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const dashboardState: DashboardState = { ...dashboardSummary, worksetInfo: worksetInfo };
     res.status(200).json([dashboardState]);
-  } catch (err) {
+  } catch (err: any) {
     console.error(`${req.method} /dashboards/`);
     console.error(err);
+    if (err.status == 404) {
+      res.status(404).end();
+    }
     res.status(500).json({ message: 'Internal server error' });
   }
 }
