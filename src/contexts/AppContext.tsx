@@ -84,6 +84,7 @@ function AppProvider({ children }: AppProviderProps) {
           } catch (err) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
             setErrorAlert(true);
+            console.log(`dashboard id: ${dashboardId}`)
             dashboardState = { id: "", worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
 
