@@ -85,7 +85,7 @@ function AppProvider({ children }: AppProviderProps) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
             setErrorAlert(true);
             console.log(`dashboard id: ${dashboardId}`)
-            dashboardState = { id: "", worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+            dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
 
           if (dashboardId) {
