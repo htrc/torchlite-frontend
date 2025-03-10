@@ -8,6 +8,7 @@ import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
+import AlertDialog from 'components/AlertDialog';
 
 // initial state
 const initialState: DashboardContextProps = {
@@ -32,6 +33,7 @@ function AppProvider({ children }: AppProviderProps) {
   const [widgetLoadingState, setWidgetLoadingState] = useState<any>({});
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorAlert, setErrorAlert] = useState<boolean>(false);
   const { data: session, status } = useSession();
 
   const initializeWidgetLoadingState = (dashboardWidgets: any) => {
@@ -81,6 +83,7 @@ function AppProvider({ children }: AppProviderProps) {
             dashboardState = dashboards[0];
           } catch (err) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
+            setErrorAlert(true);
             dashboardState = { id: "", worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
 
@@ -205,6 +208,11 @@ function AppProvider({ children }: AppProviderProps) {
       }}
     >
       <CustomBackdrop loading={loading} />
+      {!loading && errorAlert ? 
+        <AlertDialog 
+          message='The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.' 
+        /> : <></>
+      }
       {children}
     </AppContext.Provider>
   );
