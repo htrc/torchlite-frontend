@@ -13,14 +13,20 @@ export async function getAvailableWorksets() {
 }
 
 export async function updateDashboardState(dashboardId: string, body: DashboardStatePatch) {
+  console.log('updateDashboardState')
+  console.log(dashboardId)
   return defaultAxios.patch(`/api/dashboards/${dashboardId}`, body).then((response) => response.data);
 }
 
 export async function getAvailableDashboards(dashboardId?: string | null) {
+  console.log('getAvailableDashboards')
+  console.log(dashboardId)
   return defaultAxios.get(`/api/dashboards${dashboardId ? `?ref=${dashboardId}` : ''}`).then((response) => response.data);
 }
 
 export async function getDashboardState(dashboardId: string) {
+  console.log('getDashboardState')
+  console.log(dashboardId)
   return defaultAxios.get(`/api/dashboards/${dashboardId}`).then((response) => response.data);
 }
 
