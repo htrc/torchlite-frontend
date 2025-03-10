@@ -23,6 +23,8 @@ async function patchDashboard(dashboardId: string, patch: DashboardStatePatch, h
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log('get or patch dashboard')
+  console.log(req.method)
   if (req.method !== 'GET' && req.method !== 'PATCH') {
     res.setHeader('Allow', ['GET', 'PATCH']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -55,8 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
     }
   } catch (err: any) {
-    console.log(`${req.method} /dashboards/${req.query.id}`)
-    console.log(err);
+    console.error(`${req.method} /dashboards/${req.query.id}`);
+    console.error(err);
     if (err.status == 400) {
       res.status(400).end();
     }

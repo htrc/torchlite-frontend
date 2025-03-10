@@ -175,6 +175,9 @@ function AppProvider({ children }: AppProviderProps) {
     try {
       if (dashboardState) {
         setLoading(true);
+        console.log('running onChangeDashboardState')
+        console.log(dashboardState.id)
+        console.log(newDashboardState)
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
         setDashboardState(updatedState);
