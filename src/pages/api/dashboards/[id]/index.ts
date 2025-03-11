@@ -8,9 +8,11 @@ import { getSessionAuthInfo } from 'utils/database';
 import { isValidBody } from 'utils/helpers';
 
 async function getDashboard(dashboardId: string, headers: any): Promise<DashboardState> {
+  console.log('getDashboard!')
   const dashboardSummary = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headers
   });
+  console.log('getMetadata!')
   const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
     headers: headers
   });
