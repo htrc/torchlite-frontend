@@ -34,6 +34,7 @@ function AppProvider({ children }: AppProviderProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [errorAlert, setErrorAlert] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
   const { data: session, status } = useSession();
 
   const initializeWidgetLoadingState = (dashboardWidgets: any) => {
@@ -75,6 +76,7 @@ function AppProvider({ children }: AppProviderProps) {
             } catch (err) {
               console.error(`Error loading available dashboards while unauthenticated: ${err}`);
               setErrorAlert(true);
+              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
               console.log(`dashboard id: ${dashboardId}`)
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
             }
@@ -91,6 +93,7 @@ function AppProvider({ children }: AppProviderProps) {
           } catch (err) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
             setErrorAlert(true);
+            setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
             console.log(`dashboard id: ${dashboardId}`)
             dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
@@ -115,10 +118,17 @@ function AppProvider({ children }: AppProviderProps) {
               }
             }
           }
-          await updateDashboardState(dashboardState.id, {
-            importedId: selectedWorksetId,
-            filters: appliedFilters
-          });
+          try {
+            await updateDashboardState(dashboardState.id, {
+              importedId: selectedWorksetId,
+              filters: appliedFilters
+            });
+          } catch (err) {
+            console.error(`Error loading workset from URL: ${err}`);
+            setErrorAlert(true);
+            setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset public to see their dashboard.');
+            console.log(`workset id: ${selectedWorksetId}`)
+          }
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
           selectedWorksetId = dashboardState.importedId;
@@ -222,7 +232,7 @@ function AppProvider({ children }: AppProviderProps) {
       <CustomBackdrop loading={loading} />
       {!loading && errorAlert ? 
         <AlertDialog 
-          message='The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.' 
+          message={errorText} 
         /> : <></>
       }
       {children}
