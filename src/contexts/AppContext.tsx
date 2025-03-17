@@ -70,7 +70,14 @@ function AppProvider({ children }: AppProviderProps) {
         let dashboardState: DashboardState;
         if (status === 'unauthenticated') {
           if (dashboardId) {
-            dashboardState = await getDashboardState(dashboardId);
+            try {
+              dashboardState = await getDashboardState(dashboardId);
+            } catch (err) {
+              console.error(`Error loading available dashboards while unauthenticated: ${err}`);
+              setErrorAlert(true);
+              console.log(`dashboard id: ${dashboardId}`)
+              dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+            }
           } else {
             const dashboards = await getAvailableDashboards();
             dashboardState = dashboards[0];
