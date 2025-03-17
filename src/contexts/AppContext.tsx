@@ -191,6 +191,7 @@ function AppProvider({ children }: AppProviderProps) {
         setDashboardState(updatedState);
       }
     } catch (error) {
+      console.log("ERROR RUNNING onChangeDashboardState")
       console.error(error);
     } finally {
       setLoading(false);
