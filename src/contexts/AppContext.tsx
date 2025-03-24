@@ -126,7 +126,7 @@ function AppProvider({ children }: AppProviderProps) {
           } catch (err) {
             console.error(`Error loading workset from URL: ${err}`);
             setErrorAlert(true);
-            setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset public to see their dashboard.');
+            setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset is public to see their dashboard.');
             console.log(`workset id: ${selectedWorksetId}`)
           }
           dashboardState = await getDashboardState(dashboardState.id);
