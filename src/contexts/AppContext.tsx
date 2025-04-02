@@ -81,8 +81,15 @@ function AppProvider({ children }: AppProviderProps) {
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
             }
           } else {
-            const dashboards = await getAvailableDashboards();
-            dashboardState = dashboards[0];
+            try {
+              const dashboards = await getAvailableDashboards();
+              dashboardState = dashboards[0];
+            } catch (err) {
+              console.error(`Error loading available worksets while unauthenticated: ${err}`);
+              setErrorAlert(true);
+              setErrorText('Worksets are currently unavailable, please try again later.')
+              dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+            }
           }
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
