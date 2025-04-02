@@ -111,6 +111,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (err.status == 404) {
       res.status(404).end();
     }
+    else if (err.status == 503) {
+      res.status(503).end();
+    }
     res.status(500).json({ message: 'Internal server error' });
   }
 }
