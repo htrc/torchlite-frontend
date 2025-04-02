@@ -86,7 +86,7 @@ function AppProvider({ children }: AppProviderProps) {
               dashboardState = dashboards[0];
             } catch (err) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
-              console.log(typeof err)
+              console.log(JSON.stringify(err))
               setErrorAlert(true);
               setErrorText('Worksets are currently unavailable, please try again later.')
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
