@@ -84,9 +84,14 @@ function AppProvider({ children }: AppProviderProps) {
             try {
               const dashboards = await getAvailableDashboards();
               dashboardState = dashboards[0];
-            } catch (err) {
+            } catch (err: unknown) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
-              console.log(JSON.stringify(err))
+              if (err instanceof Error) {
+                console.log(err?.status)
+              }
+              else {
+                console.log(JSON.stringify(err))
+              }
               setErrorAlert(true);
               setErrorText('Worksets are currently unavailable, please try again later.')
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
