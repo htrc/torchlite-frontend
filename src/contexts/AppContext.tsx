@@ -106,7 +106,12 @@ function AppProvider({ children }: AppProviderProps) {
           } catch (err) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
             setErrorAlert(true);
-            setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
+            if (err?.status == 503) {
+              setErrorText('Worksets are currently unavailable, please try again later.');
+            }
+            else {
+              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
+            }
             console.log(`dashboard id: ${dashboardId}`)
             dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
