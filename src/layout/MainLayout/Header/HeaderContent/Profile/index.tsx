@@ -41,12 +41,12 @@ const Profile = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    signOut({ redirect: true });
+    signOut({ callbackUrl: APP_DEFAULT_PATH, redirect: true });
 
-    router.push({
+/*    router.push({
       pathname: APP_DEFAULT_PATH,
       query: {}
-    });
+    });*/
   };
 
   const anchorRef = useRef<any>(null);
