@@ -210,6 +210,7 @@ function AppProvider({ children }: AppProviderProps) {
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
     try {
       if (dashboardState) {
+        setErrorAlert(false);
         setLoading(true);
         console.log('running onChangeDashboardState')
         console.log(dashboardState.id)
@@ -221,6 +222,8 @@ function AppProvider({ children }: AppProviderProps) {
     } catch (error) {
       console.log("ERROR RUNNING onChangeDashboardState")
       console.error(error);
+      setErrorAlert(true);
+      setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.');
     } finally {
       setLoading(false);
     }
