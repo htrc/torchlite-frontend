@@ -79,6 +79,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const dashboards = await axios.get<DashboardSummary[]>(`/dashboards/`, {
         headers: headers
       });
+      console.log("Authenticated dashboards:")
+      console.log(dashboards)
 
       if (dashboards.length) dashboardSummary = dashboards[0]; // we can only handle one dashboard right now
       else if (req.query.ref) {
