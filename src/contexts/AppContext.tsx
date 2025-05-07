@@ -84,7 +84,7 @@ function AppProvider({ children }: AppProviderProps) {
             try {
               const dashboards = await getAvailableDashboards();
               dashboardState = dashboards[0];
-              console.log("DASHBOARD STATE")
+              console.log("DASHBOARD STATE INIT")
               console.log(dashboardState)
             } catch (err: unknown) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
