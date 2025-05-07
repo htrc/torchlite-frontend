@@ -84,6 +84,8 @@ function AppProvider({ children }: AppProviderProps) {
             try {
               const dashboards = await getAvailableDashboards();
               dashboardState = dashboards[0];
+              console.log("DASHBOARD STATE")
+              console.log(dashboardState)
             } catch (err: unknown) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
               if (err instanceof Error) {
@@ -98,6 +100,7 @@ function AppProvider({ children }: AppProviderProps) {
             }
           }
 
+          console.log(dashboardState.id)
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
           try {
@@ -160,6 +163,8 @@ function AppProvider({ children }: AppProviderProps) {
             }
           });
         }
+        console.log("SETTING DASHBOARD STATE")
+        console.log(dashboardState)
         setDashboardState(dashboardState);
 
         // Initialize widget loading state based on dashboard widgets
