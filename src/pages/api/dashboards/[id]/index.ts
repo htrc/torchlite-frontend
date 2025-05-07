@@ -24,7 +24,9 @@ async function patchDashboard(dashboardId: string, patch: DashboardStatePatch, h
   console.log('patchDashboard')
   console.log(dashboardId)
   console.log(headers)
-  await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
+  const results = await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
+  console.log("results")
+  console.log(results)
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
