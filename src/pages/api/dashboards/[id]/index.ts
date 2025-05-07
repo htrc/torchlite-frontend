@@ -53,6 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
       case 'GET':
         const dashboardState = await getDashboard(dashboardId, headers);
+        console.log("GET dashboardState")
+        console.log(dashboardState)
         res.status(200).json(dashboardState);
         break;
 
