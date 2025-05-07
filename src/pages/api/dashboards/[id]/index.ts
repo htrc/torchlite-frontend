@@ -21,6 +21,9 @@ async function getDashboard(dashboardId: string, headers: any): Promise<Dashboar
 }
 
 async function patchDashboard(dashboardId: string, patch: DashboardStatePatch, headers: any) {
+  console.log('patchDashboard')
+  console.log(dashboardId)
+  console.log(headers)
   await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
 }
 
