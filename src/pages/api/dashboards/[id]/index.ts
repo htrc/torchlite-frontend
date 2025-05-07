@@ -56,6 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'PATCH':
         if (isValidBody<DashboardStatePatch>(req.body, DashboardStatePatchSchema)) {
+          console.log("Session")
+          console.log(session)
           await patchDashboard(dashboardId, req.body, headers);
           res.status(204).end();
         }
