@@ -106,6 +106,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
     const dashboardState: DashboardState = { ...dashboardSummary, worksetInfo: worksetInfo };
+    console.log("DASHBOARD STATE")
+    console.log(dashboardState)
     res.status(200).json([dashboardState]);
   } catch (err: any) {
     console.error(`${req.method} /dashboards/`);
