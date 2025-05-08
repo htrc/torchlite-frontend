@@ -108,8 +108,11 @@ function AppProvider({ children }: AppProviderProps) {
             dashboardState = dashboards[0];
           } catch (err) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
+            console.log(typeof err)
             setErrorAlert(true);
             if (err instanceof Error) {
+              console.log("Custom message")
+              console.log(err.message)
               setErrorText(err.message);
             } else {
               setErrorText('Undefined Error');
