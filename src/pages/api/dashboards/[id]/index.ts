@@ -10,6 +10,7 @@ import { isValidBody } from 'utils/helpers';
 async function getDashboard(dashboardId: string | null, headers: any): Promise<DashboardState> {
   console.log('getDashboard!')
   const request_url = `/dashboards/${dashboardId ? dashboardId : 'private'}`;
+  console.log(request_url)
   const dashboardSummary = await axios.get<DashboardSummary>(request_url, {
     headers: headers
   });
@@ -50,6 +51,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const dashboardId = req.query.id as string;
+    console.log("Session")
+    console.log(session)
 
     switch (req.method) {
       case 'GET':
@@ -59,8 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'PATCH':
         if (isValidBody<DashboardStatePatch>(req.body, DashboardStatePatchSchema)) {
-          console.log("Session")
-          console.log(session)
           await patchDashboard(dashboardId, req.body, headers);
           res.status(204).end();
         }
