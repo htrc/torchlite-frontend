@@ -124,7 +124,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('4503')
       res.status(503).json({ message: 'Worksets are currently unavailable, please try again later.' });
     }
-    console.log('500')
-    res.status(500).json({ message: 'Internal server error' });
+    else {
+      console.log('500')
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 }
