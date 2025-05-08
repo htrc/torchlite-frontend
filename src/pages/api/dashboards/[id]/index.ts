@@ -7,9 +7,10 @@ import { DashboardState, DashboardStatePatch, DashboardStatePatchSchema, Dashboa
 import { getSessionAuthInfo } from 'utils/database';
 import { isValidBody } from 'utils/helpers';
 
-async function getDashboard(dashboardId: string, headers: any): Promise<DashboardState> {
+async function getDashboard(dashboardId: string | null, headers: any): Promise<DashboardState> {
   console.log('getDashboard!')
-  const dashboardSummary = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
+  const request_url = `/dashboards/${dashboardId ? dashboardId : 'private'}`;
+  const dashboardSummary = await axios.get<DashboardSummary>(request_url, {
     headers: headers
   });
   console.log('getMetadata!')
@@ -52,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch (req.method) {
       case 'GET':
-        const dashboardState = await getDashboard(dashboardId, headers);
+        const dashboardState = await getDashboard(session ? null : dashboardId, headers);
         res.status(200).json(dashboardState);
         break;
 
