@@ -89,22 +89,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         dashboardSummary = await cloneDashboard(oldDashboardId, headers, {});
       }
     }
-
+    console.log("A")
     if (!dashboardSummary)
       // the user doesn't have any dashboards (probably first time logging in)
       [dashboardSummary, featuredDashboardId] = await getFeaturedDashboardClone(headers);
-
+    console.log("B")
     const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
       headers: headers
     });
-
+    console.log("C")
     if (featuredDashboardId)
       setCookie('featured_dashboard_id', featuredDashboardId, {
         req,
         res,
         maxAge: 60 * 60 * 24 * 1 // 1 day
       });
-
+    console.log("D")
     const dashboardState: DashboardState = { ...dashboardSummary, worksetInfo: worksetInfo };
     console.log("DASHBOARD STATE")
     console.log(dashboardState)
