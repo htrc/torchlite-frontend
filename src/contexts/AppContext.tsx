@@ -112,7 +112,7 @@ function AppProvider({ children }: AppProviderProps) {
             setErrorAlert(true);
             if (err instanceof Error) {
               console.log("Custom message")
-              console.log(err.message)
+              console.log(JSON.stringify(err))
               setErrorText(err.message);
             } else {
               setErrorText('Undefined Error');
