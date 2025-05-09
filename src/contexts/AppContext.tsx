@@ -113,7 +113,7 @@ function AppProvider({ children }: AppProviderProps) {
             setErrorAlert(true);
 
             if (err.status == 404) {
-              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
+              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must be public in order to have access to it in the dashboard.');
             } else if (err.status == 422) {
               setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.')
             } else if (err.status == 503) {
