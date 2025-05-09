@@ -1,6 +1,7 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { NextApiResponse } from 'next';
 import qs from 'qs';
 
 // types
@@ -106,26 +107,20 @@ function AppProvider({ children }: AppProviderProps) {
           try {
             const dashboards = await getAvailableDashboards(dashboardId);
             dashboardState = dashboards[0];
-          } catch (err) {
+          } catch (err: any) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
             console.log(typeof err)
             setErrorAlert(true);
-            if (err instanceof Error) {
-              console.log("Custom message")
-              console.log(JSON.stringify(err))
-              setErrorText(err.message);
-            } else {
-              setErrorText('Undefined Error');
-            }
-/*            if (err?.status == 503) {
-              setErrorText('Worksets are currently unavailable, please try again later.');
-            }
-            if (err?.status == 422) {
 
-            }
-            else {
+            if (err.status == 404) {
               setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
-            }*/
+            } else if (err.status == 422) {
+              setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.')
+            } else if (err.status == 503) {
+              setErrorText('Worksets are currently unavailable, please try again later.');
+            } else {
+              setErrorText('Internal server error');
+            }
             console.log(`dashboard id: ${dashboardId}`)
             dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }

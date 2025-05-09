@@ -113,20 +113,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error(`${req.method} /dashboards/`);
     console.error(err);
     if (err.status == 404) {
-      console.log('404')
-      res.json({ status: 404 , message: 'The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.'});
+      res.status(404).end();
     }
     else if (err.status == 422) {
-      console.log('422')
-      res.json({ status: 422, message: 'The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.' });
+      res.status(422).end();
     }
     else if (err.status == 503) {
-      console.log('503')
-      res.json({ status: 503, message: 'Worksets are currently unavailable, please try again later.' });
+      res.status(503).end();
     }
     else {
-      console.log('500')
-      res.json({ status: 500, message: 'Internal server error' });
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
