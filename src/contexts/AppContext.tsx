@@ -141,7 +141,6 @@ function AppProvider({ children }: AppProviderProps) {
             });
           } catch (err) {
             console.error(`Error loading workset from URL: ${err}`);
-            console.log(status)
             setErrorAlert(true);
             setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset is public to see their dashboard.');
           }
