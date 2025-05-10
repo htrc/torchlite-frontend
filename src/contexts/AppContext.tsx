@@ -78,26 +78,20 @@ function AppProvider({ children }: AppProviderProps) {
               console.error(`Error loading available dashboards while unauthenticated: ${err}`);
               setErrorAlert(true);
               setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
-              console.log(`dashboard id: ${dashboardId}`)
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
             }
           } else {
             try {
               const dashboards = await getAvailableDashboards();
               dashboardState = dashboards[0];
-              console.log("DASHBOARD STATE INIT")
-              console.log(dashboardState)
             } catch (err: any) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
-              console.log(err.status)
-
               setErrorAlert(true);
               setErrorText('Worksets are currently unavailable, please try again later.')
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
             }
           }
 
-          console.log(dashboardState.id)
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
           try {
@@ -105,7 +99,6 @@ function AppProvider({ children }: AppProviderProps) {
             dashboardState = dashboards[0];
           } catch (err: any) {
             console.error(`Error loading available dashboards while authenticated: ${err}`);
-            console.log(typeof err)
             setErrorAlert(true);
 
             if (err.status == 404) {
@@ -117,7 +110,7 @@ function AppProvider({ children }: AppProviderProps) {
             } else {
               setErrorText('Internal server error');
             }
-            console.log(`dashboard id: ${dashboardId}`)
+
             dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
           }
 
@@ -142,18 +135,15 @@ function AppProvider({ children }: AppProviderProps) {
             }
           }
           try {
-            console.log('trying to update dashboard state')
-            console.log(dashboardState.id)
-            console.log(selectedWorksetId)
             await updateDashboardState(dashboardState.id, {
               importedId: selectedWorksetId,
               filters: appliedFilters
             });
           } catch (err) {
             console.error(`Error loading workset from URL: ${err}`);
+            console.log(status)
             setErrorAlert(true);
             setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset is public to see their dashboard.');
-            console.log(`workset id: ${selectedWorksetId}`)
           }
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
@@ -168,8 +158,6 @@ function AppProvider({ children }: AppProviderProps) {
             }
           });
         }
-        console.log("SETTING DASHBOARD STATE")
-        console.log(dashboardState)
         setDashboardState(dashboardState);
 
         // Initialize widget loading state based on dashboard widgets
@@ -222,15 +210,11 @@ function AppProvider({ children }: AppProviderProps) {
       if (dashboardState) {
         setErrorAlert(false);
         setLoading(true);
-        console.log('running onChangeDashboardState')
-        console.log(dashboardState.id)
-        console.log(newDashboardState)
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
         setDashboardState(updatedState);
       }
     } catch (error) {
-      console.log("ERROR RUNNING onChangeDashboardState")
       console.error(error);
       setErrorAlert(true);
       setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.');

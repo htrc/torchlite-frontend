@@ -8,13 +8,11 @@ import { getSessionAuthInfo } from 'utils/database';
 import { isValidBody } from 'utils/helpers';
 
 async function getDashboard(dashboardId: string | null, headers: any): Promise<DashboardState> {
-  console.log('getDashboard!')
   const request_url = `/dashboards/${dashboardId ? dashboardId : 'private'}`;
-  console.log(request_url)
   const dashboardSummary = await axios.get<DashboardSummary>(request_url, {
     headers: headers
   });
-  console.log('getMetadata!')
+
   const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
     headers: headers
   });
@@ -23,17 +21,10 @@ async function getDashboard(dashboardId: string | null, headers: any): Promise<D
 }
 
 async function patchDashboard(dashboardId: string, patch: DashboardStatePatch, headers: any) {
-  console.log('patchDashboard')
-  console.log(dashboardId)
-  console.log(headers)
-  const results = await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
-  console.log("results")
-  console.log(results)
+  await axios.patch(`/dashboards/${dashboardId}`, patch, { headers: headers });
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('get or patch dashboard')
-  console.log(req.method)
   if (req.method !== 'GET' && req.method !== 'PATCH') {
     res.setHeader('Allow', ['GET', 'PATCH']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -51,8 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const dashboardId = req.query.id as string;
-    console.log("Session")
-    console.log(session)
 
     switch (req.method) {
       case 'GET':

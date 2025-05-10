@@ -42,15 +42,11 @@ const WorksetWidget = () => {
       dashboardState?.widgets.forEach((widget) => {
         updateWidgetLoadingState(widget.type, false); // Set widget to loading (false) initially
       });
-      console.log(router.pathname)
-      console.log(router.query)
-      console.log(prop.id)
       router.push({
         pathname: router.pathname,
         query: { ...router.query, worksetId: prop.id, filters: undefined }
       });
       setSelected(prop);
-      console.log('ww')
       onChangeDashboardState({
         importedId: prop.id,
         filters: {}

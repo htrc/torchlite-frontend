@@ -55,8 +55,6 @@ async function getFeaturedDashboardClone(headers: any): Promise<[DashboardSummar
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('get dashboard')
-  console.log(req.method)
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -79,8 +77,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const dashboards = await axios.get<DashboardSummary[]>(`/dashboards/`, {
         headers: headers
       });
-      console.log("Authenticated dashboards:")
-      console.log(dashboards)
 
       if (dashboards.length) dashboardSummary = dashboards[0]; // we can only handle one dashboard right now
       else if (req.query.ref) {
@@ -89,25 +85,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         dashboardSummary = await cloneDashboard(oldDashboardId, headers, {});
       }
     }
-    console.log("A")
+
     if (!dashboardSummary)
       // the user doesn't have any dashboards (probably first time logging in)
       [dashboardSummary, featuredDashboardId] = await getFeaturedDashboardClone(headers);
-    console.log("B")
+
     const worksetInfo = await axios.get<WorksetInfo>(`/worksets/${dashboardSummary.importedId}/metadata`, {
       headers: headers
     });
-    console.log("C")
+
     if (featuredDashboardId)
       setCookie('featured_dashboard_id', featuredDashboardId, {
         req,
         res,
         maxAge: 60 * 60 * 24 * 1 // 1 day
       });
-    console.log("D")
+
     const dashboardState: DashboardState = { ...dashboardSummary, worksetInfo: worksetInfo };
-    console.log("DASHBOARD STATE")
-    console.log(dashboardState)
     res.status(200).json([dashboardState]);
   } catch (err: any) {
     console.error(`${req.method} /dashboards/`);
