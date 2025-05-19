@@ -42,25 +42,15 @@ const WorksetWidget = () => {
       dashboardState?.widgets.forEach((widget) => {
         updateWidgetLoadingState(widget.type, false); // Set widget to loading (false) initially
       });
-      try {
-        router.push({
-          pathname: router.pathname,
-          query: { ...router.query, worksetId: prop.id, filters: undefined }
-        });
-      }
-      catch (err) {
-        console.error(err);
-      }
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, worksetId: prop.id, filters: undefined }
+      });
       setSelected(prop);
-      try {
-        onChangeDashboardState({
-          importedId: prop.id,
-          filters: {}
-        });
-      }
-      catch (err) {
-        console.error(err);
-      }
+      onChangeDashboardState({
+        importedId: prop.id,
+        filters: {}
+      });
     }
   };
 
