@@ -1,6 +1,7 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { NextApiResponse } from 'next';
 import qs from 'qs';
 
 // types
@@ -8,6 +9,7 @@ import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
+import AlertDialog from 'components/AlertDialog';
 
 // initial state
 const initialState: DashboardContextProps = {
@@ -32,6 +34,8 @@ function AppProvider({ children }: AppProviderProps) {
   const [widgetLoadingState, setWidgetLoadingState] = useState<any>({});
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorAlert, setErrorAlert] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
   const { data: session, status } = useSession();
 
   const initializeWidgetLoadingState = (dashboardWidgets: any) => {
@@ -68,16 +72,47 @@ function AppProvider({ children }: AppProviderProps) {
         let dashboardState: DashboardState;
         if (status === 'unauthenticated') {
           if (dashboardId) {
-            dashboardState = await getDashboardState(dashboardId);
+            try {
+              dashboardState = await getDashboardState(dashboardId);
+            } catch (err) {
+              console.error(`Error loading available dashboards while unauthenticated: ${err}`);
+              setErrorAlert(true);
+              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must me public in order to have access to it in the dashboard.');
+              dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+            }
           } else {
-            const dashboards = await getAvailableDashboards();
-            dashboardState = dashboards[0];
+            try {
+              const dashboards = await getAvailableDashboards();
+              dashboardState = dashboards[0];
+            } catch (err: any) {
+              console.error(`Error loading available worksets while unauthenticated: ${err}`);
+              setErrorAlert(true);
+              setErrorText('Worksets are currently unavailable, please try again later.')
+              dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+            }
           }
 
           sessionStorage.setItem('dashboard_id', dashboardState.id);
         } else {
-          const dashboards = await getAvailableDashboards(dashboardId);
-          dashboardState = dashboards[0];
+          try {
+            const dashboards = await getAvailableDashboards(dashboardId);
+            dashboardState = dashboards[0];
+          } catch (err: any) {
+            console.error(`Error loading available dashboards while authenticated: ${err}`);
+            setErrorAlert(true);
+
+            if (err.status == 404) {
+              setErrorText('The workset you are trying to access had been deleted or been made private. Contact the workset owner to check the workset status. Worksets must be public in order to have access to it in the dashboard.');
+            } else if (err.status == 422) {
+              setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.')
+            } else if (err.status == 503) {
+              setErrorText('Worksets are currently unavailable, please try again later.');
+            } else {
+              setErrorText('Internal server error');
+            }
+
+            dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
+          }
 
           if (dashboardId) {
             sessionStorage.removeItem('dashboard_id');
@@ -99,10 +134,16 @@ function AppProvider({ children }: AppProviderProps) {
               }
             }
           }
-          await updateDashboardState(dashboardState.id, {
-            importedId: selectedWorksetId,
-            filters: appliedFilters
-          });
+          try {
+            await updateDashboardState(dashboardState.id, {
+              importedId: selectedWorksetId,
+              filters: appliedFilters
+            });
+          } catch (err) {
+            console.error(`Error loading workset from URL: ${err}`);
+            setErrorAlert(true);
+            setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset is public to see their dashboard.');
+          }
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
           selectedWorksetId = dashboardState.importedId;
@@ -166,6 +207,7 @@ function AppProvider({ children }: AppProviderProps) {
   const onChangeDashboardState = async (newDashboardState: DashboardStatePatch) => {
     try {
       if (dashboardState) {
+        setErrorAlert(false);
         setLoading(true);
         await updateDashboardState(dashboardState.id, newDashboardState);
         const updatedState = await getDashboardState(dashboardState.id);
@@ -173,6 +215,8 @@ function AppProvider({ children }: AppProviderProps) {
       }
     } catch (error) {
       console.error(error);
+      setErrorAlert(true);
+      setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.');
     } finally {
       setLoading(false);
     }
@@ -200,6 +244,11 @@ function AppProvider({ children }: AppProviderProps) {
       }}
     >
       <CustomBackdrop loading={loading} />
+      {!loading && errorAlert ? 
+        <AlertDialog 
+          message={errorText} 
+        /> : <></>
+      }
       {children}
     </AppContext.Provider>
   );
