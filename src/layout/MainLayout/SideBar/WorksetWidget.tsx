@@ -38,25 +38,29 @@ const WorksetWidget = () => {
   };
 
   const handleSelectWorkSet = (prop: WorksetSummary) => {
-    console.log("A")
     if (prop.id !== dashboardState?.worksetId) {
-      console.log("B")
       dashboardState?.widgets.forEach((widget) => {
         updateWidgetLoadingState(widget.type, false); // Set widget to loading (false) initially
       });
-      console.log("C")
-      router.push({
-        pathname: router.pathname,
-        query: { ...router.query, worksetId: prop.id, filters: undefined }
-      });
-      console.log("D")
+      try {
+        router.push({
+          pathname: router.pathname,
+          query: { ...router.query, worksetId: prop.id, filters: undefined }
+        });
+      }
+      catch (err) {
+        console.error(err);
+      }
       setSelected(prop);
-      console.log("E")
-      onChangeDashboardState({
-        importedId: prop.id,
-        filters: {}
-      });
-      console.log("F")
+      try {
+        onChangeDashboardState({
+          importedId: prop.id,
+          filters: {}
+        });
+      }
+      catch (err) {
+        console.error(err);
+      }
     }
   };
 
