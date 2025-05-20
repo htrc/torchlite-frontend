@@ -28,6 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     res.status(200).json(worksets);
   } catch (err) {
+    console.error(`${req.method} /worksets/`);
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });
   }
