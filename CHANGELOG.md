@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] – 2025-05-19
+
+### Added
+- Dialog component that displays error messages to the user to explain why widgets aren't loading
+- Error message for loading a shared link to a dashbaord using private workset while unauthenticated
+- Error message for when the workset an authenticated user has been working on has been removed since they last logged in.
+- Error message when trying to load a workset where none of the HTIDs are in TORCHLITE
+- Error message for when Analytics Gateway is inaccessible
+
+### Fixed
+- Bug where logging out while viewing a private workset would try to load the same workset while unauthenticated. Now logouts redirect to the default URL.
+
 ## [0.2.3] – 2025-02-26
 
 ### Changed
@@ -48,7 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
-[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.3...HEAD
+[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.4...HEAD
+[0.2.4]: https://github.com/htrc/torchlite-frontend/compare/0.2.3...0.2.4
 [0.2.3]: https://github.com/htrc/torchlite-frontend/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/htrc/torchlite-frontend/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/htrc/torchlite-frontend/compare/0.2.0...0.2.1
