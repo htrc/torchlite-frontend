@@ -72,8 +72,6 @@
     "simplebar": "^5.3.8",
     "simplebar-react": "^2.4.1",
     "socks": "^2.8.3",
-    "sqlite": "^5.0.1",
-    "sqlite3": "^5.1.7",
     "stylis-plugin-rtl": "^2.1.1",
     "swr": "^2.2.4",
     "tar": "^6.2.1",

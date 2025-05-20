@@ -7,7 +7,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
 #RUN apk add --no-cache dumb-init bash gawk
-RUN apt-get update && apt-get -y install dumb-init bash gawk sqlite3
+RUN apt-get update && apt-get -y install dumb-init bash gawk
 
 COPY public ./public
 COPY env.sh ./
