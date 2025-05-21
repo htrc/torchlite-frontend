@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+import { Link } from '@mui/material';
 //import EditIcon from '@mui/icons-material/Edit';
 //import Divider from '@mui/material/Divider';
 //import ArchiveIcon from '@mui/icons-material/Archive';
@@ -86,10 +87,12 @@ export default function GetHelpMenu() {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
-          <FeedOutlinedIcon />
-          Documentation
-        </MenuItem>
+        <li>
+          <MenuItem onClick={handleClose} disableRipple component="a" href="https://htrc.github.io/torchlite-documentation/" target="_blank" rel="noopener noreferrer">
+            <FeedOutlinedIcon />
+            Documentation 
+          </MenuItem>
+        </li>
         <MenuItem onClick={handleClose} disableRipple>
           <ContactSupportOutlinedIcon />
           Contact Us
