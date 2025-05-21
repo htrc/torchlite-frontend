@@ -4,7 +4,7 @@ import useDashboardState from 'hooks/useDashboardState';
 
 const DashboardHeader = ({ csrfToken }: any) => {
   const theme = useTheme();
-  const widgetList1 = ['Mapping Contributor Data', 'Publication Date Timeline', 'Workset Languages'];
+  const widgetList1 = ['Mapping Creator Birthplaces', 'Publication Date Timeline', 'Workset Languages'];
   const widgetList2 = [
     'Jupyter Notebooks',
     'Extracted Features API Demo',
@@ -52,7 +52,7 @@ const DashboardHeader = ({ csrfToken }: any) => {
     >
         <Box>
           <FormControl sx={{ m: 1, mr: '25px' }}>
-            <Select
+            {/*<Select
               value={widget1}
               name={'widget_1'}
               sx={{
@@ -72,7 +72,7 @@ const DashboardHeader = ({ csrfToken }: any) => {
                   {item}
                 </MenuItem>
               ))}
-            </Select>
+            </Select>*/}
           </FormControl>
           <FormControl sx={{ m: 1 }}>
             <Select
