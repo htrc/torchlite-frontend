@@ -50,20 +50,6 @@ const NestedList = ({ widgetType }: { widgetType: string }) => {
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemText>
-              <Link href={WidgetInfoLinks[widgetType]?.insights} target="_blank" rel="noopener noreferrer">
-                Results Insights
-              </Link>
-            </ListItemText>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemText primary="Export as Jupyter Notebook" />
-          </ListItemButton>
-        </ListItem>
       </List>
     </MainCard>
   );
