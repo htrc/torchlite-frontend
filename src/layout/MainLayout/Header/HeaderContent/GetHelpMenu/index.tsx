@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import { Link } from '@mui/material';
+
 //import EditIcon from '@mui/icons-material/Edit';
 //import Divider from '@mui/material/Divider';
 //import ArchiveIcon from '@mui/icons-material/Archive';
@@ -93,7 +93,7 @@ export default function GetHelpMenu() {
             Documentation 
           </MenuItem>
         </li>
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={handleClose} disableRipple component="a" href="mailto:htrc-help@hathitrust.org">
           <ContactSupportOutlinedIcon />
           Contact Us
         </MenuItem>
