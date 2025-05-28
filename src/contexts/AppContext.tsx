@@ -5,7 +5,7 @@ import { NextApiResponse } from 'next';
 import qs from 'qs';
 
 // types
-import { DashboardContextProps, DashboardState, DashboardStatePatch, WorksetList } from 'types/torchlite';
+import { DashboardContextProps, DashboardState, DashboardStatePatch, DataCleaningSettings, WorksetList } from 'types/torchlite';
 import { useSession } from 'next-auth/react';
 import { getAvailableDashboards, getAvailableWorksets, getDashboardState, updateDashboardState } from 'services';
 import CustomBackdrop from 'components/Backdrop';
@@ -54,8 +54,10 @@ function AppProvider({ children }: AppProviderProps) {
         // Get workset and filter from router query
         const { worksetId } = router.query;
         const filters: any = qs.parse(router.query.filters as string, { comma: true });
+        const dataClean = qs.parse(router.query.datacleaning as string, { comma: true });
         let selectedWorksetId: string,
-          appliedFilters: any = {};
+          appliedFilters: any = {},
+          dataCleaning: DataCleaningSettings;
 
         // Get worksets
         let worksets: WorksetList = await getAvailableWorksets();
@@ -134,26 +136,33 @@ function AppProvider({ children }: AppProviderProps) {
               }
             }
           }
+
+          dataCleaning = dataClean
+
           try {
             await updateDashboardState(dashboardState.id, {
               importedId: selectedWorksetId,
-              filters: appliedFilters
+              filters: appliedFilters,
+              datacleaning: dataCleaning
             });
           } catch (err) {
             console.error(`Error loading workset from URL: ${err}`);
             setErrorAlert(true);
             setErrorText('This dashboard’s workset is private. Contact the workset’s owner to make the workset is public to see their dashboard.');
           }
+
           dashboardState = await getDashboardState(dashboardState.id);
         } else {
           selectedWorksetId = dashboardState.importedId;
           appliedFilters = dashboardState.filters;
+          dataCleaning = dashboardState.datacleaning;
           router.push({
             pathname: router.pathname,
             query: {
               ...router.query,
               worksetId: selectedWorksetId,
-              filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+              filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false }),
+              datacleaning: qs.stringify(dataCleaning, { arrayFormat: 'comma', encode: false })
             }
           });
         }
@@ -182,12 +191,14 @@ function AppProvider({ children }: AppProviderProps) {
     if (dashboardState) {
       const selectedWorksetId = dashboardState.worksetId;
       const appliedFilters = dashboardState.filters;
+      const dataCleaning = dashboardState.datacleaning;
       router.push({
         pathname: router.pathname,
         query: {
           ...router.query,
           worksetId: selectedWorksetId,
-          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false })
+          filters: qs.stringify(appliedFilters, { arrayFormat: 'comma', encode: false }),
+          datacleaning: qs.stringify(dataCleaning, { arrayFormat: 'comma', encode: false })
         }
       });
     }
