@@ -11,15 +11,19 @@ import { pickRandom } from 'utils/helpers';
 const torchliteUid: string = '95164779-1fc9-4592-9c74-7a014407f46d';
 
 async function cloneDashboard(dashboardId: string, headers: any, headersGet: any = headers): Promise<DashboardSummary> {
-  const { worksetId, filters, widgets, importedId } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
+  console.log("dashboardId",dashboardId);
+  console.log("headers",headers);
+  const { worksetId, filters, datacleaning, widgets, importedId } = await axios.get<DashboardSummary>(`/dashboards/${dashboardId}`, {
     headers: headersGet
   });
+  console.log("data cleaning",datacleaning);
 
   return await axios.post<DashboardSummary>(
     `/dashboards/`,
     {
       worksetId: worksetId,
       filters: filters,
+      datacleaning: datacleaning,
       widgets: widgets,
       importedId: importedId
     },

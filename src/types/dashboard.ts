@@ -18,6 +18,7 @@ export type IDashboardProps = {
   error: object | string | null;
   loading: boolean;
   loadingMap: boolean;
+  dataCleaning: string | null;
 };
 
 export interface IWorkset {
