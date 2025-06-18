@@ -87,7 +87,7 @@ function AppProvider({ children }: AppProviderProps) {
             } catch (err: any) {
               console.error(`Error loading available worksets while unauthenticated: ${err}`);
               setErrorAlert(true);
-              setErrorText('Worksets are currently unavailable, please try again later.')
+              setErrorText('');
               dashboardState = { id: (dashboardId ? dashboardId : ""), worksetId: "", filters: {}, widgets: [], isShared: true, importedId: "", worksetInfo: { id: "", name: "", author: "", isPublic: true, numVolumes: 0, volumes: []} }
             }
           }
@@ -106,7 +106,7 @@ function AppProvider({ children }: AppProviderProps) {
             } else if (err.status == 422) {
               setErrorText('The selected workset contains invalid htids. The workset cannot be loaded into the dashboard. Please select a different workset. For more information about valid htids, review the documentation.')
             } else if (err.status == 503) {
-              setErrorText('Worksets are currently unavailable, please try again later.');
+              setErrorText('');
             } else {
               setErrorText('Internal server error');
             }
