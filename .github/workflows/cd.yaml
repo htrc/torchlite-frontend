@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -49,7 +49,7 @@ jobs:
         run: |
           tar czf build-artifacts.tgz .next/standalone .next/static
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-artifacts
           path: build-artifacts.tgz
@@ -83,7 +83,7 @@ jobs:
           labels: |
             org.opencontainers.image.vendor=HathiTrust Research Center
       - name: Retrieve saved build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: build
@@ -110,7 +110,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Repository Dispatch
         if: github.event.inputs.environment == ''
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         env:
           HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
         with:
@@ -128,7 +128,7 @@ jobs:
             }
       - name: Manual Repository Dispatch
         if: github.event.inputs.environment != ''
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         env:
           HEAD_COMMIT_MESSAGE: ${{ toJSON(github.event.head_commit.message) }}
         with:
