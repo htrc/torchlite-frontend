@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] – 2026-04-03
+
+### Changed
+- Next.js version from 14 to 15
+
+### Security
+- Large number of security updates for various packages
+
 ## [0.2.4] – 2025-05-19
 
 ### Added
