@@ -68,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - Share button and popup [#61](https://github.com/htrc/torchlite-app/issues/61)
 
-[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.4...HEAD
+[unreleased]: https://github.com/htrc/torchlite-frontend/compare/0.2.5...HEAD
+[0.2.5]: https://github.com/htrc/torchlite-frontend/compare/0.2.4...0.2.5
 [0.2.4]: https://github.com/htrc/torchlite-frontend/compare/0.2.3...0.2.4
 [0.2.3]: https://github.com/htrc/torchlite-frontend/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/htrc/torchlite-frontend/compare/0.2.1...0.2.2
