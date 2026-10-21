@@ -25,7 +25,6 @@ const DrawerHeader = ({ open }: Props) => {
 
   return (
     <DrawerHeaderStyled
-      theme={theme}
       open={open}
       sx={{
         minHeight: isHorizontal ? 'unset' : '60px',
