@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Next.js version from 15 to 16
+- Material UI version from 5 to 6
+- @emotion version from 11.10 to 11.14
+
 ## [0.2.5] – 2026-04-03
 
 ### Changed
