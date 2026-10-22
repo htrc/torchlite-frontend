@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,7 +16,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "baseUrl": "src",
     "downlevelIteration": true,
@@ -22,12 +26,28 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "types": ["node", "webpack-env"],
-    "typeRoots": ["../node_modules/@types", "../@types", "./types"],
+    "types": [
+      "node",
+      "webpack-env"
+    ],
+    "typeRoots": [
+      "../node_modules/@types",
+      "../@types",
+      "./types"
+    ],
     "paths": {
-      "@/auth/*": ["pages/api/auth/*"]
+      "@/auth/*": [
+        "pages/api/auth/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "**/*.js"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.js"
+  ]
 }
