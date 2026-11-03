@@ -28,7 +28,6 @@ const DashboardHeader = ({ csrfToken }: any) => {
       justifyContent="space-between"
     >
       <Grid item 
-        direction="row"
         alignItems="center"
         justifyContent="flex-start"
       >
@@ -46,7 +45,6 @@ const DashboardHeader = ({ csrfToken }: any) => {
         padding: theme.spacing(2),
         '& .MuiButton-root::after': { boxShadow: 'none' }
       }}
-      direction="row"
       alignItems="center"
       justifyContent="flex-end"
     >

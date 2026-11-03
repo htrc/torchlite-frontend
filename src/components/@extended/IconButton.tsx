@@ -158,10 +158,8 @@ export interface Props extends IconButtonProps {
 }
 
 const IconButton = forwardRef(({ variant, shape, children, color, tooltip, ...others }: Props, ref: Ref<HTMLButtonElement>) => {
-  const theme = useTheme();
-
   return (
-    <IconButtonStyle ref={ref} disableRipple variant={variant} shape={shape} theme={theme} color={color} {...others}>
+    <IconButtonStyle ref={ref} disableRipple variant={variant} shape={shape} color={color} {...others}>
       {children}
     </IconButtonStyle>
   );

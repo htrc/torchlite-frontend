@@ -1,7 +1,6 @@
 // material ui
 import { Theme } from '@mui/material/styles';
 import { ButtonProps, ChipProps, IconButtonProps, SliderProps } from '@mui/material';
-import { LoadingButtonProps } from '@mui/lab';
 
 // ==============================|| EXTENDED COMPONENT - TYPES  ||============================== //
 
@@ -11,7 +10,6 @@ type TooltipColor = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | '
 export type ColorProps =
   | ChipProps['color']
   | ButtonProps['color']
-  | LoadingButtonProps['color']
   | IconButtonProps['color']
   | SliderProps['color']
   | TooltipColor;

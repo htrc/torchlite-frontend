@@ -10,7 +10,7 @@ module.exports = {
   reactStrictMode: false,
   output: 'standalone',
   images: {
-    domains: ['flagcdn.com']
+    remotePatterns: [new URL('https://flagcdn.com/**')]
   },
   env: {},
   typescript: {
